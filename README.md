@@ -1,13 +1,18 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Re:pol (가제) SNS Fullstack Repo 입니다.
 
 ## Getting Started
 
-First, run the development server:
+클라이언트 개발 환경 띄우는 커맨드
 
 ```bash
 npm run dev
 # or
 yarn dev
+```
+데이터 모델 바꾸고 반영하는 커맨드
+
+```
+npm run generate
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
