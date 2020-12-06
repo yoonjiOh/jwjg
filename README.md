@@ -5,14 +5,23 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 First, run the development server:
 
 ```bash
+1. db 변경이나, graphQL 코드 변경 없을 경우
 npm run dev
+2. 있을 경우
+npm run generate
 # or
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+localhost:3000 -> client
+localhost:3000/api -> graphQL API playground
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## 기타 명령어
+
+```
+npx prisam2 introspect -> npx prisma2 generate // db 에서 변경 사항이 있을 경우, 이를 모델링으로 instropect 해준다
+결과는 prisma/schema.prisma 에서 확인 가능
+```
 
 ## Learn More
 

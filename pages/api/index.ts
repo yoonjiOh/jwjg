@@ -64,4 +64,3 @@ export default new ApolloServer({ schema }).createHandler({
   path: '/api',
 })
 
-
