@@ -10,17 +10,17 @@ const User = objectType({
   definition(t) {
     t.int('id')
     t.string('name')
-    t.list.field('posts', {  // User 와 Post 는 1:N 관계 by yoonji
-      type: 'Post', 
-        resolve: parent => 
+    t.list.field('posts', {
+      type: 'Post',
+        resolve: parent =>
           prisma.user
             .findOne({
               where: { id: Number(parent.id) },
             })
-            .posts(),
+            .post(),
     })
   }
-})
+});
 
 const Post = objectType({
   name: 'Post',
@@ -28,9 +28,6 @@ const Post = objectType({
     t.int('id')
     t.int('owner_id')
     t.string('title')
-    t.string('content', {
-      nullable: true,
-    })
   }
 })
 
@@ -39,9 +36,6 @@ const Query = objectType({
   definition(t) {
     t.field('post', {
       type: 'Post',
-      args: {
-        postId: stringArg({ nullable: false }),
-      },
       resolve: (_, args) => {
         return prisma.post.findOne({
           where: { id: Number(args.postId) },
