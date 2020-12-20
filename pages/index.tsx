@@ -12,7 +12,7 @@ const Home = () => {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          이슈 페이지 데모
+          이슈 페이지 데모 하이하이
         </h1>
 
         <p className={styles.description}>
