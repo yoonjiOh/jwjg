@@ -6,6 +6,6 @@ chmod u+x deploy.sh
 npm cache clean --force
 rm -rf node_modules package-lock.json
 
-npm install
-npm run build
-npm run start
+yarn install
+yarn build
+yarn start
