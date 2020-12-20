@@ -2,8 +2,8 @@
 cd ./build
 
 npm cache clean --force
-
+rm -rf node_modules package-lock.json
 
 npm install
 npm run build
-pm2 start npm --name "next" -- start
+npm run start
