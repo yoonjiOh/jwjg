@@ -1,10 +1,10 @@
 #!/bin/bash
-cd ./build
+cd /home/ec2-user/build
 
-sudo npm cache clean --force
-sudo rm -rf node_modules package-lock.json
+npm cache clean --force
+rm -rf node_modules package-lock.json
 
-sudo npm install
+npm install
 
-sudo npm run build
-sudo npm run start
+npm run build
+npm run start
