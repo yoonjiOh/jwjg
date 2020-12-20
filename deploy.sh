@@ -1,4 +1,6 @@
 #!/bin/bash
+cd ./build
+
 chmod u+x deploy.sh
 
 npm install
