@@ -2,7 +2,7 @@
 cd ./build
 
 npm cache clean --force
-rm -rf node_modules package-lock.json
+rm -rf node_modules/
 
 npm install
 npm run build
