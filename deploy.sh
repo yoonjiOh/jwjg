@@ -1,6 +1,4 @@
 #!/bin/bash
-cd ./build
-
 npm cache clean --force
 rm -rf node_modules/
 
