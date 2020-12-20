@@ -6,4 +6,4 @@ files:
 hooks:
   AfterInstall:
     - location: deploy.sh
-      timeout: 30
+      timeout: 120
