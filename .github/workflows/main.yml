@@ -25,4 +25,4 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: deploy with aws codeDeploy
-        run: aws deploy create-deployment --application-name repol-product --deployment-group-name repol-deployment-group --revision gitHubLocation --deployment-config-name CodeDeployDefault.AllAtOnce --github-location repository=${GITHUB_REPOSITORY},commitId=${GITHUB_SHA}        
+        run: aws deploy create-deployment --application-name repol-product --deployment-group-name repol-deployment-group --deployment-config-name CodeDeployDefault.AllAtOnce --github-location repository=${GITHUB_REPOSITORY},commitId=${GITHUB_SHA}        
