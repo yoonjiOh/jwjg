@@ -2,7 +2,7 @@
 
 name: Deploy Re:pol project to Amazon EC2
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
@@ -22,7 +22,12 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      
+
+      - name: Build Code
+        run:  |
+          npm install
+          npm run build
+
       - name: Configure AWS credentials from Production account
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -32,4 +37,4 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: deploy with aws codeDeploy
-        run: aws deploy create-deployment --application-name repol-product --deployment-group-name repol-deployment-group --deployment-config-name CodeDeployDefault.AllAtOnce --github-location repository=${GITHUB_REPOSITORY},commitId=${GITHUB_SHA}        
+        run: aws deploy create-deployment --application-name repol-product --deployment-group-name repol-deployment-group --deployment-config-name CodeDeployDefault.AllAtOnce --github-location repository=${GITHUB_REPOSITORY},commitId=${GITHUB_SHA}
