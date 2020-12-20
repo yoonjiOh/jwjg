@@ -1,6 +1,6 @@
 #!/bin/bash
 cd ./build
 
-yarn install
-yarn build
-yarn start
+npm install
+npm run build
+pm2 start npm --name "next" -- start
