@@ -29,7 +29,6 @@ export interface NexusGenScalars {
 
 export interface NexusGenObjects {
   Post: { // root type
-    content?: string | null; // String
     id?: number | null; // Int
     owner_id?: number | null; // Int
     title?: string | null; // String
@@ -53,7 +52,6 @@ export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
   Post: { // field return type
-    content: string | null; // String
     id: number | null; // Int
     owner_id: number | null; // Int
     title: string | null; // String
@@ -70,7 +68,6 @@ export interface NexusGenFieldTypes {
 
 export interface NexusGenFieldTypeNames {
   Post: { // field return type name
-    content: 'String'
     id: 'Int'
     owner_id: 'Int'
     title: 'String'
@@ -86,11 +83,6 @@ export interface NexusGenFieldTypeNames {
 }
 
 export interface NexusGenArgTypes {
-  Query: {
-    post: { // args
-      postId: string; // String!
-    }
-  }
 }
 
 export interface NexusGenAbstractTypeMembers {
