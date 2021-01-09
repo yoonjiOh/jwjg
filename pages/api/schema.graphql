@@ -2,15 +2,20 @@
 ### Do not make changes to this file directly
 
 
-type Post {
+type Issue {
   content: String
+  id: Int
+  issue_title: String
+}
+
+type Post {
   id: Int
   owner_id: Int
   title: String
 }
 
 type Query {
-  post(postId: String!): Post
+  post: Post
 }
 
 type User {

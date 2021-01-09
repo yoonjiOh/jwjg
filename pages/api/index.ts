@@ -29,7 +29,16 @@ const Post = objectType({
     t.int('owner_id')
     t.string('title')
   }
-})
+});
+
+const Issue = objectType({
+  name: 'Issue',
+  definition(t) {
+    t.int('id')
+    t.string('issue_title')
+    t.string('content')
+  }
+});
 
 const Query = objectType({
   name: 'Query',
@@ -47,7 +56,7 @@ const Query = objectType({
 
 
 export const schema = makeSchema({
-  types: [Query, Post, User],
+  types: [Query, Post, User, Issue],
   outputs: {
     typegen: path.join(process.cwd(), 'pages', 'api', 'nexus-typegen.ts'),
     schema: path.join(process.cwd(), 'pages', 'api', 'schema.graphql')
