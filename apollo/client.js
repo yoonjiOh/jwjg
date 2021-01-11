@@ -134,10 +134,12 @@ function createApolloClient(initialState = {}) {
   })
 }
 
+const prod = process.env.NODE_ENV === 'production';
+
 function createIsomorphLink() {
   const { HttpLink } = require('apollo-link-http')
   return new HttpLink({
-    uri: 'http://localhost:3000/api',
+    uri: prod ? "" :  'http://localhost:3000/api',
     credentials: 'same-origin',
   })
 }
