@@ -18,8 +18,6 @@ let apolloClient = null
 export function withApollo(PageComponent, { ssr = true } = {}) {
   const WithApollo = ({ apolloClient, apolloState, ...pageProps }) => {
     const client = apolloClient || initApolloClient(apolloState)
-    console.log('client', client)
-    console.log('PageComponent', PageComponent)
     return (
       <ApolloProvider client={client}>
         <PageComponent {...pageProps} />
