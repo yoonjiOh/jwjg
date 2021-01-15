@@ -4,9 +4,23 @@
  */
 
 
-
-
-
+import { core } from "nexus"
+declare global {
+  interface NexusGenCustomInputMethods<TypeName extends string> {
+    /**
+     * A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+     */
+    date<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "Date";
+  }
+}
+declare global {
+  interface NexusGenCustomOutputMethods<TypeName extends string> {
+    /**
+     * A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+     */
+    date<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "Date";
+  }
+}
 
 
 declare global {
@@ -25,11 +39,18 @@ export interface NexusGenScalars {
   Float: number
   Boolean: boolean
   ID: string
+  Date: any
 }
 
 export interface NexusGenObjects {
-  Post: { // root type
+  Issue: { // root type
     content?: string | null; // String
+    id?: number | null; // Int
+    tag_id?: number | null; // Int
+    title?: string | null; // String
+  }
+  Mutation: {};
+  Post: { // root type
     id?: number | null; // Int
     owner_id?: number | null; // Int
     title?: string | null; // String
@@ -52,14 +73,22 @@ export type NexusGenRootTypes = NexusGenObjects
 export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
-  Post: { // field return type
+  Issue: { // field return type
     content: string | null; // String
+    id: number | null; // Int
+    tag_id: number | null; // Int
+    title: string | null; // String
+  }
+  Mutation: { // field return type
+    createIssue: NexusGenRootTypes['Issue'] | null; // Issue
+  }
+  Post: { // field return type
     id: number | null; // Int
     owner_id: number | null; // Int
     title: string | null; // String
   }
   Query: { // field return type
-    post: NexusGenRootTypes['Post'] | null; // Post
+    user: NexusGenRootTypes['User'] | null; // User
   }
   User: { // field return type
     id: number | null; // Int
@@ -69,14 +98,22 @@ export interface NexusGenFieldTypes {
 }
 
 export interface NexusGenFieldTypeNames {
-  Post: { // field return type name
+  Issue: { // field return type name
     content: 'String'
+    id: 'Int'
+    tag_id: 'Int'
+    title: 'String'
+  }
+  Mutation: { // field return type name
+    createIssue: 'Issue'
+  }
+  Post: { // field return type name
     id: 'Int'
     owner_id: 'Int'
     title: 'String'
   }
   Query: { // field return type name
-    post: 'Post'
+    user: 'User'
   }
   User: { // field return type name
     id: 'Int'
@@ -86,9 +123,12 @@ export interface NexusGenFieldTypeNames {
 }
 
 export interface NexusGenArgTypes {
-  Query: {
-    post: { // args
-      postId: string; // String!
+  Mutation: {
+    createIssue: { // args
+      c_time?: NexusGenScalars['Date'] | null; // Date
+      content?: string | null; // String
+      tag_id?: number | null; // Int
+      title?: string | null; // String
     }
   }
 }
@@ -127,6 +167,7 @@ export interface NexusGenTypes {
   context: any;
   inputTypes: NexusGenInputs;
   rootTypes: NexusGenRootTypes;
+  inputTypeShapes: NexusGenInputs & NexusGenEnums & NexusGenScalars;
   argTypes: NexusGenArgTypes;
   fieldTypes: NexusGenFieldTypes;
   fieldTypeNames: NexusGenFieldTypeNames;

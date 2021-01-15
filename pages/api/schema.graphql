@@ -2,15 +2,30 @@
 ### Do not make changes to this file directly
 
 
-type Post {
+"""
+A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar Date
+
+type Issue {
   content: String
+  id: Int
+  tag_id: Int
+  title: String
+}
+
+type Mutation {
+  createIssue(c_time: Date, content: String, tag_id: Int, title: String): Issue
+}
+
+type Post {
   id: Int
   owner_id: Int
   title: String
 }
 
 type Query {
-  post(postId: String!): Post
+  user: User
 }
 
 type User {
