@@ -5,16 +5,17 @@ import { new_issue_var } from "../../apollo/localState";
 import { useReactiveVar, gql, useMutation } from '@apollo/client';
 
 const ADD_NEW_ISSUE = gql`
-  mutation AddNewIssue($type: String!) {
-    addTodo(type: $type) {
+  mutation CreateIssue($title: String!, $content: String!) {
+    createIssue(title: $title, content: $content) {
       title
-      type
+      content
     }
   }
 `;
 
 const Post = (props) => {
     const {issue_title, issue_detail} = useReactiveVar(new_issue_var);
+    const [createIssue, { data }] = useMutation(ADD_NEW_ISSUE);
 
     const handleChange = (value, key) => {
         const prev_var = new_issue_var();
@@ -30,7 +31,7 @@ const Post = (props) => {
             </Head>
 
             <main className={styles.main}>
-                <button>발제하기</button>
+                <button onClick={() => createIssue({ variables: { title: issue_title, content: issue_detail }})}>발제하기</button>
                 <form>
                     <div>
                         <p>이슈 제목</p>
