@@ -48,19 +48,16 @@ model comment {
 }
 
 model issue {
-  id            Int             @id @default(autoincrement())
-  title         String
-  c_time        DateTime
-  m_time        DateTime?
-  content       String
-  tag_id        Int
-  tag           tag             @relation(fields: [tag_id], references: [id])
-  article       article[]
-  issue_has_tag issue_has_tag[]
-  post          post[]
-  response      response[]
-
-  @@index([tag_id], name: "tag_id")
+  id               Int             @id @default(autoincrement())
+  title            String?
+  content          String?
+  option_list_json String?
+  m_time           DateTime        @default(now())
+  c_time           DateTime        @default(now())
+  article          article[]
+  issue_has_tag    issue_has_tag[]
+  post             post[]
+  response         response[]
 }
 
 model issue_has_tag {
@@ -108,13 +105,12 @@ model tag {
   id            Int             @id @default(autoincrement())
   name          String
   type          String?
-  issue         issue[]
   issue_has_tag issue_has_tag[]
 }
 
 model user {
   id           Int            @id @default(autoincrement())
-  nickname     String
+  name         String
   email        String         @unique
   birth_year   DateTime?
   sns          String?
