@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "generate": "prisma2 generate"
+    "generate": "prisma2 generate",
+    "lint": "eslint --ext .js, .jsx, .ts, .tsx ."
   },
   "dependencies": {
     "@apollo/client": "^3.3.6",
@@ -33,6 +34,12 @@
     "@types/graphql": "14.5.0",
     "@types/node": "14.14.10",
     "@types/react": "17.0.0",
+    "@typescript-eslint/eslint-plugin": "^4.14.0",
+    "@typescript-eslint/parser": "^4.14.0",
+    "eslint": "^7.18.0",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "prettier": "^2.2.1",
     "ts-node": "^9.1.0",
     "typescript": "^4.1.2"
   }
