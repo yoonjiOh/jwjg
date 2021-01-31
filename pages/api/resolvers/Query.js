@@ -2,21 +2,18 @@ function users(parent, args, context) {
 	return context.prisma.user.findMany();
 }
 
-function issue_list(parent, args, context) {
-	return context.prisma.issue.findMany();
-}
+async function issues(parent, args, context) {
+	const where = args.id ? { id: args.id } : {};
 
-function issue(parent, args, context) {
-	return context.prisma.issue.findUnique({
-		where: {
-			id: args.id
-		}
+	const issues = await context.prisma.issue.findMany({
+		where
 	});
-}
+
+	return issues
+};
 
 module.exports = {
 	users,
-	issue,
-	issue_list
+	issues
 };
 

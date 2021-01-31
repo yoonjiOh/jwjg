@@ -8,8 +8,8 @@ import _ from 'lodash';
 
 
 const GET_ISSUE = gql`
-    query issue($id: Int!) {
-        issue(id: $id) {
+    query issues($id: Int!) {
+        issues(id: $id) {
             id
             title
             content
@@ -64,18 +64,13 @@ const IssueDetail = () => {
 
     const { loading, error, data: first_data } = useQuery(GET_ISSUE, { variables: { id: issue_id }});
 
-    if (loading) return 'Loading...';
-    if (error) return `Error! ${error.message}`;
-
     const initial_state = {
-        title: first_data && first_data.issue.title,
-        content: first_data && first_data.issue.content,
-        option_list: first_data && first_data.issue.option_list_json ? JSON.parse(first_data.issue.option_list_json) : {},
+        title: first_data ? _.head(first_data.issues).title : '',
+        content: first_data ? _.head(first_data.issues).content : '',
+        option_list: first_data && _.head(first_data.issues).option_list_json ? JSON.parse(_.head(first_data.issues).option_list_json) : {},
         add_option_mode: false,
         new_option: ''
     };
-
-    console.log('initial_state', initial_state);
 
     const [state, dispatch] = useReducer(reducer, initial_state);
     const { title, content, option_list, add_option_mode, new_option } = state;
@@ -115,6 +110,9 @@ const IssueDetail = () => {
             value: new_option_list
         });
     };
+
+    if (loading) return 'Loading...';
+    if (error) return `Error! ${error.message}`;
 
     return (
         <div className={styles.container}>

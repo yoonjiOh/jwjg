@@ -5,9 +5,9 @@ import { withApollo } from "../../apollo/client";
 import { gql, useQuery } from '@apollo/client';
 import Link from 'next/link';
 
-const GET_ISSUE_LIST = gql`
-  query FetchIssueList {
-      issue_list {
+const GET_ISSUES = gql`
+  query FetchIssues {
+      issues {
           id
           title
       }
@@ -15,7 +15,7 @@ const GET_ISSUE_LIST = gql`
 `;
 
 const IssueList = () => {
-    const { loading, error, data } = useQuery(GET_ISSUE_LIST);
+    const { loading, error, data } = useQuery(GET_ISSUES);
 
     if (loading) return 'Loading...';
     if (error) return `Error! ${error.message}`;
@@ -24,7 +24,7 @@ const IssueList = () => {
         <div className={styles.container}>
             <Header />
 
-            {data.issue_list.map(issue => (
+            {data.issues.map(issue => (
                 <Link key={issue.title} href={`/issue_detail?id=${issue.id}`}>{issue.title}</Link>
             ))}
 

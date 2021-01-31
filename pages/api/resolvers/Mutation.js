@@ -1,5 +1,5 @@
 async function createIssue(parent, args, context) {
-	const newIssue = await context.prisma.issue.create({
+	const new_issue = await context.prisma.issue.create({
 		data: {
 			id: args.id,
 			title: args.title,
@@ -8,7 +8,7 @@ async function createIssue(parent, args, context) {
 		}
 	});
 
-	return newIssue;
+	return new_issue;
 }
 
 async function updateIssue(parent, args, context) {

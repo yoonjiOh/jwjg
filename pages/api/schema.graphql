@@ -21,7 +21,7 @@ input IssueInput {
 type Query {
   users: [User]
   issue(id: Int!): Issue
-  issue_list: [Issue]
+  issues(id: Int): [Issue]
 }
 
 type Mutation {
