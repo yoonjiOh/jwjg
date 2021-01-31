@@ -17,18 +17,32 @@ type Issue {
   is_published: Int
 }
 
+<<<<<<< HEAD
 type AuthPayload {
   token: String
   user: User
+=======
+input IssueInput {
+  title: String!
+  content: String!
+  option_list_json: String
+>>>>>>> 4796e8a9b5865ff943d7a063846f984c88b48f10
 }
 
 type Query {
   users: [User]
+  issue(id: Int!): Issue
+  issues(id: Int): [Issue]
 }
 
 type Mutation {
+<<<<<<< HEAD
   createIssue(title: String, content: String, tag_id: Int): Issue!
   signup(email: String!, password: String!, name: String!): AuthPayload
+=======
+  createIssue(title: String, content: String, option_list_json: String): Issue!
+  updateIssue(id: Int!, title: String, content: String, option_list_json: String): Issue!
+>>>>>>> 4796e8a9b5865ff943d7a063846f984c88b48f10
 }
 
 

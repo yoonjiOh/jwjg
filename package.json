@@ -19,10 +19,15 @@
     "apollo-link-schema": "1.2.5",
     "apollo-server": "^2.19.2",
     "apollo-server-micro": "^2.19.2",
+<<<<<<< HEAD
     "bcrypt": "^5.0.0",
     "bcryptjs": "^2.4.3",
+=======
+    "deepmerge": "^4.2.2",
+>>>>>>> 4796e8a9b5865ff943d7a063846f984c88b48f10
     "express": "4.17.1",
     "graphql": "15.4.0",
+    "graphql-request": "^3.4.0",
     "graphql-tag": "2.11.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.20",
