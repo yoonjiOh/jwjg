@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
     "generate": "prisma2 generate"
@@ -18,9 +18,12 @@
     "apollo-link-schema": "1.2.5",
     "apollo-server": "^2.19.2",
     "apollo-server-micro": "^2.19.2",
+    "bcrypt": "^5.0.0",
+    "bcryptjs": "^2.4.3",
     "express": "4.17.1",
     "graphql": "15.4.0",
     "graphql-tag": "2.11.0",
+    "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.20",
     "next": "10.0.3",
     "react": "17.0.1",
