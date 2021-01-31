@@ -1,6 +1,9 @@
 type User {
   id: Int
   name: String
+  pic_url: String
+  info: String
+  bio: String
 }
 
 type Issue {
@@ -10,6 +13,7 @@ type Issue {
   option_list_json: String
   c_time: DateTime
   m_time: DateTime
+  is_published: Int
 }
 
 type Query {
