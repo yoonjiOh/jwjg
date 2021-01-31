@@ -17,6 +17,7 @@ async function createIssue(parent, args, context) {
 const APP_SECRET = 'jwjg-best-luck34';
 
 // For type:user
+// TODO(jurampark): accepts firebase id token to support social auth like google/apple login.
 async function signup(parent, args, context, info) {
 	const password = await bcrypt.hash(args.password, 10)
 	const user = await context.prisma.user.create({ data: { ...args, password } })
