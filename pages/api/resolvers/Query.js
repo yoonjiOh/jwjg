@@ -1,8 +1,18 @@
 function users(parent, args, context) {
-	return context.prisma.user.findMany();
+  return context.prisma.user.findMany();
 }
 
-module.exports = {
-	users
+async function issues(parent, args, context) {
+  const where = args.id ? { id: args.id } : {};
+
+  const issues = await context.prisma.issue.findMany({
+    where,
+  });
+
+  return issues;
 }
 
+export default {
+  users,
+  issues,
+};
