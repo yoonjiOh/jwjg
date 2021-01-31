@@ -1,36 +1,14 @@
-import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import { withApollo } from "../apollo/client";
+import Header from '../components/Header';
 
 const Home = () => {
   return (
     <div className={styles.container}>
-      <Head>
-        <title>Repol project</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <Header />
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          이슈 페이지 데모 하이하이
-        </h1>
-
-        <p className={styles.description}>
-          이슈 페이지 데모 입니다.
-          {/* <code className={styles.code}>pages/index.js</code> */}
-        </p>
-
-        {/* <div className={styles.grid}>
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div> */}
+          <a href="/issue_list">이슈 페이지 리스트</a>
       </main>
 
       <footer className={styles.footer}>
@@ -38,7 +16,7 @@ const Home = () => {
       </footer>
     </div>
   )
-}
+};
 
 
 export default withApollo(Home);

@@ -16,12 +16,21 @@ type Issue {
   is_published: Int
 }
 
+input IssueInput {
+  title: String!
+  content: String!
+  option_list_json: String
+}
+
 type Query {
   users: [User]
+  issue(id: Int!): Issue
+  issues(id: Int): [Issue]
 }
 
 type Mutation {
-  createIssue(title: String, content: String, tag_id: Int): Issue!
+  createIssue(title: String, content: String, option_list_json: String): Issue!
+  updateIssue(id: Int!, title: String, content: String, option_list_json: String): Issue!
 }
 
 
