@@ -5,6 +5,7 @@ import Mutation from "./resolvers/Mutation";
 import User from "./resolvers/User";
 import fs from "fs";
 import path from "path";
+import { getUserId } from "./utils";
 
 const prisma = new PrismaClient();
 
@@ -24,6 +25,7 @@ const apolloServer = new ApolloServer({
     return {
       ...req,
       prisma,
+      userId: req && req.headers.authorization ? getUserId(req) : null,
     };
   },
 });
