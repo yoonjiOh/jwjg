@@ -1,5 +1,7 @@
-import { hash } from "bcryptjs";
-import { sign } from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { APP_SECRET } from "../utils";
+import { UserInputError } from "apollo-server";
 
 async function createIssue(parent, args, context) {
   const new_issue = await context.prisma.issue.create({
@@ -27,24 +29,56 @@ async function updateIssue(parent, args, context) {
   return updated_issue;
 }
 
-const APP_SECRET = "jwjg-best-luck34";
-
 // For type:user
 // TODO(jurampark): accepts firebase id token to support social auth like google/apple login.
 async function signup(parent, args, context, info) {
-  const password = await hash(args.password, 10);
-  const user = await context.prisma.user.create({
-    data: { ...args, password },
-  });
-  const token = sign({ userId: user.id }, APP_SECRET);
+  const password = await bcrypt.hash(args.password, 10);
+  var user;
+  try {
+    user = await context.prisma.user.create({
+      data: { ...args, password },
+    });
+  } catch (e) {
+    // https://www.prisma.io/docs/concepts/components/prisma-client/error-reference
+    switch (e.code) {
+      case "P2002":
+        throw new Error("User name already exists.");
+    }
+  }
+
+  const token = jwt.sign({ userId: user.id }, APP_SECRET);
 
   return {
     token,
     user,
   };
 }
+
+// TODO(jurampark): accepts firebase id token to support social auth like google/apple login.
+async function login(parent, args, context, info) {
+  const user = await context.prisma.user.findUnique({
+    where: { email: args.email },
+  });
+  if (!user) {
+    throw new Error("No such user found");
+  }
+
+  const valid = await bcrypt.compare(args.password, user.password);
+  if (!valid) {
+    throw new Error("Invalid password");
+  }
+
+  const token = jwt.sign({ userId: user.id }, APP_SECRET);
+
+  return {
+    token,
+    user,
+  };
+}
+
 export default {
   createIssue,
   updateIssue,
   signup,
+  login,
 };
