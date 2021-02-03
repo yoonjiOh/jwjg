@@ -1,8 +1,7 @@
 function name(parent, args, context) {
-	return context.prisma.user
-	.findUnique({ where: { id: parent.id } })
+  return context.prisma.user.findUnique({ where: { id: parent.id } }).name();
 }
 
-module.exports = {
-	name
+export default {
+  name,
 };

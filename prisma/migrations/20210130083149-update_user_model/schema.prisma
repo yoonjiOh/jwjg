@@ -4,7 +4,17 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  url = "***"
+}
+
+model apt_response {
+  id           Int  @default(autoincrement())
+  apt_response Int
+  user_id      Int
+  user         user @relation(fields: [user_id], references: [id])
+
+  @@id([id, apt_response])
+  @@index([user_id], name: "fk_user_response_user1_idx")
 }
 
 model article {
@@ -44,7 +54,6 @@ model issue {
   option_list_json String?
   m_time           DateTime        @default(now())
   c_time           DateTime        @default(now())
-  is_published     Int             @default(0)
   article          article[]
   issue_has_tag    issue_has_tag[]
   post             post[]
@@ -70,10 +79,8 @@ model post {
   content      String
   author_id    Int
   issue_id     Int
-  url          String?
-  liked        Int       @default(0)
-  exposed      Int       @default(0)
-  clicked      Int       @default(0)
+  is_published Int       @default(0)
+  title        String?
   user         user      @relation(fields: [author_id], references: [id])
   issue        issue     @relation(fields: [issue_id], references: [id])
   comment      comment[]
@@ -107,11 +114,11 @@ model user {
   email        String         @unique
   birth_year   DateTime?
   sns          String?
+  token        String
   password     String
   role         Int            @default(1)
-  pic_url      String?
-  info         String?
-  bio          String?
+  c_time       DateTime
+  apt_response apt_response[]
   comment      comment[]
   post         post[]
   response     response[]

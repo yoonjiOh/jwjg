@@ -1,37 +1,37 @@
-import { PrismaClient } from '@prisma/client'
-import { ApolloServer, gql } from 'apollo-server-micro'
-import Query from './resolvers/Query'
-import Mutation from './resolvers/Mutation'
-import User from './resolvers/User'
-import fs from 'fs'
-import path from 'path'
+import { PrismaClient } from "@prisma/client";
+import { ApolloServer } from "apollo-server-micro";
+import Query from "./resolvers/Query";
+import Mutation from "./resolvers/Mutation";
+import User from "./resolvers/User";
+import fs from "fs";
+import path from "path";
 
 const prisma = new PrismaClient();
 
 const resolvers = {
-    Query,
-    Mutation,
-    User,
+  Query,
+  Mutation,
+  User,
 };
 
 const apolloServer = new ApolloServer({
-    typeDefs: fs.readFileSync(
-        path.join(process.cwd(), 'pages', 'api', 'schema.graphql'),
-        'utf8'
-    ),
-    resolvers,
-    context: ({ req }) => {
-        return {
-            ...req,
-            prisma,
-        }
-    },
+  typeDefs: fs.readFileSync(
+    path.join(process.cwd(), "pages", "api", "schema.graphql"),
+    "utf8"
+  ),
+  resolvers,
+  context: ({ req }) => {
+    return {
+      ...req,
+      prisma,
+    };
+  },
 });
 
 export const config = {
-    api: {
-        bodyParser: false,
-    },
+  api: {
+    bodyParser: false,
+  },
 };
 
-export default apolloServer.createHandler({ path: '/api' });
+export default apolloServer.createHandler({ path: "/api" });

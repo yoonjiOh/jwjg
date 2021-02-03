@@ -1,6 +1,7 @@
 type User {
-  id: Int
+  id: ID!
   name: String
+  email: String
   pic_url: String
   info: String
   bio: String
@@ -14,6 +15,11 @@ type Issue {
   c_time: DateTime
   m_time: DateTime
   is_published: Int
+}
+
+type AuthPayload {
+  token: String
+  user: User
 }
 
 input IssueInput {
@@ -31,6 +37,7 @@ type Query {
 type Mutation {
   createIssue(title: String, content: String, option_list_json: String): Issue!
   updateIssue(id: Int!, title: String, content: String, option_list_json: String): Issue!
+  signup(email: String!, password: String!, name: String!): AuthPayload
 }
 
 
