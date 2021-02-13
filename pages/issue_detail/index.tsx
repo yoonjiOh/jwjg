@@ -29,9 +29,13 @@ const UPDATE_ISSUE = gql`
     }
 `;
 
-// useReducer 써서 상태를 관리해주자
 const reducer = (state, action) => {
     switch (action.type) {
+        case 'FETCH_DATA':
+            return {
+                ...state,
+                issue: action.data
+            };
         case 'CHANGE_ISSUE_INPUT':
             const { key, value } = action.payload;
             return {
@@ -65,20 +69,31 @@ const IssueDetail = () => {
     const { loading, error, data: first_data } = useQuery(GET_ISSUE, { variables: { id: issue_id }});
 
     const initial_state = {
-        title: first_data ? _.head(first_data.issues).title : '',
-        content: first_data ? _.head(first_data.issues).content : '',
-        option_list: first_data && _.head(first_data.issues).option_list_json ? JSON.parse(_.head(first_data.issues).option_list_json) : {},
+        issue: {
+            id: null,
+            title: '',
+            content: '',
+            option_list: {},
+        },
         add_option_mode: false,
         new_option: ''
     };
 
     const [state, dispatch] = useReducer(reducer, initial_state);
-    const { title, content, option_list, add_option_mode, new_option } = state;
+    const { issue, add_option_mode, new_option } = state;
 
     const [updateIssue, { data }] = useMutation(UPDATE_ISSUE);
 
     useEffect(() => {
-        // 얘는 데이터 업데이트 순서를 위해 필요한데, 이 안에 어떤 추가적인 일을 할 지는 좀 더 봐야 함 BY yoonji
+        dispatch({
+            type: 'FETCH_DATA',
+            data: {
+                id: first_data && _.head(first_data.issues).id,
+                title: first_data && _.head(first_data.issues).title,
+                content: first_data && _.head(first_data.issues).content,
+                option_list: first_data && _.head(first_data.issues).option_list_json ? JSON.parse(_.head(first_data.issues).option_list_json) : {},
+            },
+        });
     }, []);
 
     const handleChange = (value, key) => {
@@ -102,8 +117,8 @@ const IssueDetail = () => {
     };
 
     const handleAddOptionBtn = () => {
-        const option_idx = _.isEmpty(option_list) ? 1 : _.size(option_list) + 1;
-        const new_option_list = { ...option_list, [option_idx]: new_option };
+        const option_idx = _.isEmpty(issue.option_list) ? 1 : _.size(issue.option_list) + 1;
+        const new_option_list = { ...issue.option_list, [option_idx]: new_option };
 
         dispatch({
             type: 'ADD_OPTION',
@@ -119,21 +134,21 @@ const IssueDetail = () => {
             <Header />
 
             <main className={styles.main}>
-                <button onClick={() => updateIssue({ variables: { id: issue_id, title: title, content: content, option_list_json: JSON.stringify(option_list) }})}>발제하기</button>
+                <button onClick={() => updateIssue({ variables: { id: issue_id, title: issue.title, content: issue.content, option_list_json: JSON.stringify(issue.option_list) }})}>수정</button>
 
                 <form>
                     <div>
                         <p>이슈 제목</p>
-                        <textarea value={title} onChange={(e) => handleChange(e.target.value, 'title')} />
+                        <textarea value={issue.title} onChange={(e) => handleChange(e.target.value, 'title')} />
                     </div>
                     <div>
-                        <p>이슈 설명하기</p>
-                        <textarea value={content} onChange={(e) => handleChange(e.target.value, 'content')} />
+                        <p>이슈 설명</p>
+                        <textarea value={issue.content} onChange={(e) => handleChange(e.target.value, 'content')} />
                     </div>
                 </form>
             </main>
 
-            {!_.isEmpty(option_list) && _.map(_.values(option_list), (option) => (
+            {!_.isEmpty(issue.option_list) && _.map(_.values(issue.option_list), (option) => (
                 <div key={option}>{option}</div>
             ))}
 
@@ -147,6 +162,6 @@ const IssueDetail = () => {
             </footer>
         </div>
     )
-}
+};
 
 export default withApollo(IssueDetail, { ssr: true });

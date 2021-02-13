@@ -6,7 +6,6 @@ import { UserInputError } from "apollo-server";
 async function createIssue(parent, args, context) {
   const new_issue = await context.prisma.issue.create({
     data: {
-      id: args.id,
       title: args.title,
       content: args.content,
       option_list_json: args.option_list_json,
