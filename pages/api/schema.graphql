@@ -17,6 +17,12 @@ type Issue {
   is_published: Int
 }
 
+type Tag {
+  id: Int
+  name: String
+  type: String
+}
+
 type AuthPayload {
   token: String
   user: User
@@ -32,6 +38,7 @@ type Query {
   users: [User]
   issue(id: Int!): Issue
   issues(id: Int): [Issue]
+  tags(id: Int): [Tag]
 }
 
 type Mutation {

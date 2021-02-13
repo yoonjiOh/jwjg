@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "generate": "prisma2 generate",
-    "lint": "eslint --ext .js, .jsx, .ts, .tsx ."
+    "lint": "eslint --ext .js, .jsx, .ts, .tsx . --no-error-on-unmatched-pattern"
   },
   "dependencies": {
     "@apollo/client": "^3.3.6",
@@ -32,7 +32,8 @@
     "react": "17.0.1",
     "react-apollo": "3.1.5",
     "react-dom": "17.0.1",
-    "react-markdown": "5.0.3"
+    "react-markdown": "5.0.3",
+    "react-select": "^4.1.0"
   },
   "devDependencies": {
     "@prisma/cli": "2.12.1",
