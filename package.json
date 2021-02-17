@@ -6,8 +6,8 @@
     "dev": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
-    "generate": "prisma2 generate",
-    "lint": "eslint --ext .js, .jsx, .ts, .tsx .",
+    "generate": "prisma generate",
+    "lint": "eslint --ext .js, .jsx, .ts, .tsx . --no-error-on-unmatched-pattern",
     "prisma": "prisma"
   },
   "dependencies": {

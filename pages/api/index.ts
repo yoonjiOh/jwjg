@@ -3,6 +3,8 @@ import { ApolloServer } from "apollo-server-micro";
 import Query from "./resolvers/Query";
 import Mutation from "./resolvers/Mutation";
 import User from "./resolvers/User";
+import Post from "./resolvers/Post";
+import IssueHasTag from "./resolvers/IssueHasTag";
 import fs from "fs";
 import path from "path";
 import { getUserId } from "./utils";
@@ -13,6 +15,8 @@ const resolvers = {
   Query,
   Mutation,
   User,
+  Post,
+  IssueHasTag,
 };
 
 const apolloServer = new ApolloServer({
