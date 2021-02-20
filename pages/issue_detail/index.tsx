@@ -31,7 +31,7 @@ const UPDATE_ISSUE = gql`
 
 const reducer = (state, action) => {
     switch (action.type) {
-        case 'FETCH_DATA':
+        case 'FETCH_ISSUE':
             return {
                 ...state,
                 issue: action.data
@@ -86,7 +86,7 @@ const IssueDetail = () => {
 
     useEffect(() => {
         dispatch({
-            type: 'FETCH_DATA',
+            type: 'FETCH_ISSUE',
             data: {
                 id: first_data && _.head(first_data.issues).id,
                 title: first_data && _.head(first_data.issues).title,

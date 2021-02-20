@@ -28,6 +28,14 @@ async function updateIssue(parent, args, context) {
   return updated_issue;
 }
 
+async function createTags(parent, args, context) {
+  const new_tags_by_issue = await context.prisma.tag.create({
+    data: {
+
+    }
+  })
+}
+
 // For type:user
 // TODO(jurampark): accepts firebase id token to support social auth like google/apple login.
 async function signup(parent, args, context, info) {

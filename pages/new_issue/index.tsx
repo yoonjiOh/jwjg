@@ -1,6 +1,6 @@
 import Header from '../../components/Header';
 import styles from '../../styles/Home.module.css'
-import React, {useReducer} from 'react';
+import React, {useReducer, useEffect} from 'react';
 import { withApollo } from "../../apollo/client";
 import {gql, useMutation, useQuery} from '@apollo/client';
 import { useRouter } from 'next/router';
@@ -20,6 +20,7 @@ const GET_TAGS = gql`
 const CREATE_ISSUE = gql`
     mutation createIssue($title: String!, $content: String!, $option_list_json: String!) {
         createIssue(title: $title, content: $content, option_list_json: $option_list_json) {
+            id
             title,
             content,
             option_list_json
@@ -33,7 +34,10 @@ const reducer = (state, action) => {
             const { key, value } = action.payload;
             return {
                 ...state,
-                [key]: value,
+                issue: {
+                    ...state.issue,
+                    [key]: value
+                },
             };
         case 'SHOW_OPTION_INPUT':
             return {
@@ -49,6 +53,17 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 option_list: action.value
+            };
+        case 'FETCH_TAGS':
+            console.log('FETCH_TAGS', action.data)
+            return {
+                ...state,
+                tags: action.data
+            };
+        case 'SET_TAGS':
+            return {
+                ...state,
+                tags: action.data
             };
         default: return;
     }
@@ -66,7 +81,7 @@ const NewIssue = () => {
         },
         add_option_mode: false,
         new_option: '',
-        // tags: data,
+        tags: [],
     };
 
     const [state, dispatch] = useReducer(reducer, initial_state);
@@ -74,7 +89,15 @@ const NewIssue = () => {
 
     const [createIssue] = useMutation(CREATE_ISSUE);
 
+    useEffect(() => {
+        dispatch({
+            type: 'FETCH_TAGS',
+            data: data && data.tags.map(tag => { return { value: tag.id, label: tag.name }})
+        })
+    }, []);
+
     const handleChange = (value, key) => {
+        console.log('handleChange', value, key)
         dispatch({
             type: 'CHANGE_ISSUE_INPUT',
             payload: { key: key, value: value },
@@ -104,16 +127,38 @@ const NewIssue = () => {
         });
     };
 
+    const handleTagSelect = (selected_tags) => {
+        dispatch({
+            type: 'SET_TAGS',
+            data: selected_tags
+        })
+    };
+
+    const handleSubmit = () => {
+        let created_issue_id;
+
+        createIssue({
+            variables: {
+                title: issue.title,
+                content: issue.content,
+                option_list_json: JSON.stringify(issue.option_list)
+            }
+        }).then((result) => {
+            created_issue_id = result.data.createIssue.id;
+        });
+
+
+
+    };
+
     if (loading) return 'Loading...';
     if (error) return `Error! ${error.message}`;
-
-    // console.log('tags state', tags)
 
     return (
         <div className={styles.container}>
             <Header />
             <main className={styles.main}>
-                <button onClick={() => createIssue({ variables: { title: issue.title, content: issue.content, option_list_json: JSON.stringify(issue.option_list) }})}>발제하기</button>
+                <button onClick={handleSubmit}>발제하기</button>
                 <span onClick={() => router.back()}>작성취소</span>
                 <form>
                     <div>
@@ -125,14 +170,21 @@ const NewIssue = () => {
                         <textarea value={issue.content} onChange={(e) => handleChange(e.target.value, 'content')} />
                     </div>
                 </form>
+
+                {add_option_mode &&
+                <div><input onChange={(e) => handleNewOptionInput(e.target.value)}/><button onClick={handleAddOptionBtn}>+</button></div>}
+
+                <button onClick={handleSetOptionMode}>옵션 추가하기</button>
+
+                <span>태그 선택</span>
+                <Select
+                  isMulti
+                  name="tags"
+                  options={tags}
+                  className="tags-multi-select"
+                  onChange={handleTagSelect}
+                />
             </main>
-
-            {add_option_mode &&
-						<div><input onChange={(e) => handleNewOptionInput(e.target.value)}/><button onClick={handleAddOptionBtn}>+</button></div>}
-
-            <button onClick={handleSetOptionMode}>옵션 추가하기</button>
-
-            <span>태그 선택</span>
 
             <footer className={styles.footer}>
                 Powered by 좌우지간
