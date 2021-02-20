@@ -28,12 +28,17 @@ async function updateIssue(parent, args, context) {
   return updated_issue;
 }
 
-async function createTags(parent, args, context) {
-  const new_tags_by_issue = await context.prisma.tag.create({
-    data: {
+async function createTagsByIssue(parent, args, context) {
+  try {
+    const result = await context.prisma.issue_has_tag.createMany({
+      data: args.data,
+      skipDuplicates: true
+    });
 
-    }
-  })
+    return result
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 // For type:user
@@ -86,6 +91,7 @@ async function login(parent, args, context, info) {
 export default {
   createIssue,
   updateIssue,
+  createTagsByIssue,
   signup,
   login,
 };

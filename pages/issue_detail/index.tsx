@@ -1,10 +1,11 @@
-import styles from "../../styles/Home.module.css";
-import Header from '../../components/Header';
 import { useRouter } from 'next/router';
 import React, {useReducer, useEffect } from "react";
 import {gql, useMutation, useQuery} from "@apollo/client";
 import {withApollo} from "../../apollo/client";
 import _ from 'lodash';
+import Layout from '../../components/Layout';
+import common_style from "../index.module.css";
+import style from "../new_issue/new_issue.module.css";
 
 
 const GET_ISSUE = gql`
@@ -130,37 +131,35 @@ const IssueDetail = () => {
     if (error) return `Error! ${error.message}`;
 
     return (
-        <div className={styles.container}>
-            <Header />
+      <Layout title={"MAIN"}>
+        <main className={common_style.main}>
+            <button className={style.btn_submit}
+                    onClick={() => updateIssue({ variables: { id: issue_id, title: issue.title, content: issue.content, option_list_json: JSON.stringify(issue.option_list) }})}>수정</button>
 
-            <main className={styles.main}>
-                <button onClick={() => updateIssue({ variables: { id: issue_id, title: issue.title, content: issue.content, option_list_json: JSON.stringify(issue.option_list) }})}>수정</button>
-
-                <form>
-                    <div>
-                        <p>이슈 제목</p>
-                        <textarea value={issue.title} onChange={(e) => handleChange(e.target.value, 'title')} />
-                    </div>
-                    <div>
-                        <p>이슈 설명</p>
-                        <textarea value={issue.content} onChange={(e) => handleChange(e.target.value, 'content')} />
-                    </div>
-                </form>
-            </main>
+            <div className={style.wrapper}>
+                <div className={style.title}>
+                    <p className={style.title_sm}>이슈 제목</p>
+                    <textarea value={issue.title} onChange={(e) => handleChange(e.target.value, 'title')} />
+                </div>
+                <div className={style.content}>
+                    <p className={style.title_sm}>이슈 설명</p>
+                    <textarea value={issue.content} onChange={(e) => handleChange(e.target.value, 'content')} />
+                </div>
 
             {!_.isEmpty(issue.option_list) && _.map(_.values(issue.option_list), (option) => (
-                <div key={option}>{option}</div>
+              <li className={style.option} key={option}>{option}</li>
             ))}
 
             {add_option_mode &&
-						<div><input onChange={(e) => handleNewOptionInput(e.target.value)}/><button onClick={handleAddOptionBtn}>+</button></div>}
+            <div className={style.option_wrapper}>
+                <input onChange={(e) => handleNewOptionInput(e.target.value)} />
+                <button onClick={handleAddOptionBtn}>+</button>
+            </div>}
 
-            <button onClick={handleSetOptionMode}>옵션 추가하기</button>
-
-            <footer className={styles.footer}>
-                Powered by 좌우지간
-            </footer>
-        </div>
+            <button className={style.btn_add_option} onClick={handleSetOptionMode}>옵션 추가하기</button>
+            </div>
+        </main>
+      </Layout>
     )
 };
 

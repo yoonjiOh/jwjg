@@ -71,10 +71,19 @@ type AuthPayload {
   user: User
 }
 
+type bulkInsertCount {
+  count: Int
+}
+
 input IssueInput {
   title: String!
   content: String!
   option_list_json: String
+}
+
+input IssueHasTagInput {
+  issue_id: Int
+  tag_id: Int
 }
 
 type Query {
@@ -93,6 +102,7 @@ type Query {
 type Mutation {
   createIssue(title: String, content: String, option_list_json: String): Issue!
   updateIssue(id: Int!, title: String, content: String, option_list_json: String): Issue!
+  createTagsByIssue(data: [IssueHasTagInput]): bulkInsertCount
   signup(email: String!, password: String!, name: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload
 }
