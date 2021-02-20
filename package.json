@@ -6,14 +6,14 @@
     "dev": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
-    "generate": "prisma2 generate",
-    "lint": "eslint --ext .js, .jsx, .ts, .tsx . --no-error-on-unmatched-pattern"
+    "generate": "prisma generate",
+    "lint": "eslint --ext .js, .jsx, .ts, .tsx . --no-error-on-unmatched-pattern",
+    "prisma": "prisma"
   },
   "dependencies": {
     "@apollo/client": "^3.3.6",
-    "@apollo/react-hooks": "4.0.0",
     "@apollo/react-ssr": "4.0.0",
-    "@prisma/client": "2.12.1",
+    "@prisma/client": "^2.12.1",
     "apollo-boost": "0.4.9",
     "apollo-link-http": "1.5.17",
     "apollo-link-schema": "1.2.5",
@@ -48,6 +48,7 @@
     "eslint-config-prettier": "^7.2.0",
     "eslint-plugin-prettier": "^3.3.1",
     "prettier": "^2.2.1",
+    "prisma": "^2.16.1",
     "ts-node": "^9.1.0",
     "typescript": "^4.1.2"
   }
