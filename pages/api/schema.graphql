@@ -5,17 +5,66 @@ type User {
   pic_url: String
   info: String
   bio: String
+  responses: [Response]
+  comments: [Comment]
+}
+
+type Post {
+  id: Int
+  is_deleted: Int
+  c_time: DateTime
+  m_time: DateTime
+  content: String
+  author_id: Int
+  issue_id: Int
+  liked: Int
+  exposed: Int
+  clicked: Int
+  user: User
+}
+
+type Comment {
+  id: Int
+  content: String
+  is_deleted: Int
+  post_id: Int
+  user_id: Int
+  c_time: DateTime
+  m_time: DateTime
+  comments: [Comment]
 }
 
 type Issue {
   id: Int
   title: String!
   content: String!
+  img_url: String
   option_list_json: String
   c_time: DateTime
   m_time: DateTime
   is_published: Int
   # TODO(jurampark): adds user field
+  post: [Post]
+  issue_has_tag: [IssueHasTag]
+}
+
+type Response {
+  id: Int
+  issue_id: Int
+  user_id: Int
+  response: String
+}
+
+type IssueHasTag {
+  issue_id: Int
+  tag_id: Int
+  tag: Tag
+}
+
+type Tag {
+  id: Int
+  name: String
+  type: String
 }
 
 type AuthPayload {
@@ -31,8 +80,15 @@ input IssueInput {
 
 type Query {
   users: [User]
+  user(id: Int!): User
   issue(id: Int!): Issue
   issues(id: Int): [Issue]
+  posts(id: Int): [Post]
+  response(id: Int): Response
+  comments(id: Int): [Comment]
+  comment(id: Int!): Comment
+  issueHasTags(id: Int): [IssueHasTag]
+  tags(id: Int): [Tag]
 }
 
 type Mutation {

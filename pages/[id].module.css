@@ -1,0 +1,68 @@
+.main {
+  background-color: #fff;
+}
+.image{
+  height: 140px;
+}
+.image img {
+  width: 360px;
+  height: 140px;
+  object-fit: cover;
+}
+.issueBody {
+  position: relative;
+  border-radius: 20px 20px 0px 0px;
+  background-color: #FFFFFF;
+  margin: -20px 0 0 0;
+  padding: 16px 20px;
+}
+.issueTitle {
+  font-size: 24px;
+  letter-spacing: -0.01em;
+  color: #333333;
+  font-weight: bold;
+  margin: 0;
+  line-height: 1.6;
+}
+.issueSum p{
+  display: inline-block;
+  margin: 4px 16px 0 0;
+}
+.tags {
+  position: absolute;
+  top: -30px;
+  left: 20px;
+}
+.tags ol {
+  display: flex;
+}
+.tags ol li {
+  margin-right: 10px;
+  color: #fff;
+  font-size: 10px;
+  background: rgba(51, 51, 51, 0.3);
+  padding: 4px 8px;
+  backdrop-filter: blur(6px);
+  border-radius: 30px;
+}
+.line {
+  width: 100%;
+  border: 1px solid #EEEEEE;
+}
+.issueCardCommentWrap {
+  background-color: #FFFFFF;
+  padding: 16px 20px;
+}
+.issueCardComments {
+  display: flex;
+}
+.issueCardComment {
+  background-color: #FFFFFF;
+  margin-right: 16px;
+  letter-spacing: -0.01em;
+  line-height: 1.6;
+  font-size: 12px;
+}
+.responseSum, .commentSum{
+  margin: 0 0 8px 0;
+}
