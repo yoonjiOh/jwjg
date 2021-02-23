@@ -1,9 +1,14 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { APP_SECRET } from "../utils";
-import { UserInputError } from "apollo-server";
+import { AuthenticationError } from "apollo-server";
 
 async function createIssue(parent, args, context) {
+  const { userId } = context;
+  if (!userId) {
+    throw new AuthenticationError("you must be logged in");
+  }
+
   const new_issue = await context.prisma.issue.create({
     data: {
       id: args.id,

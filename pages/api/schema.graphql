@@ -15,6 +15,7 @@ type Issue {
   c_time: DateTime
   m_time: DateTime
   is_published: Int
+  # TODO(jurampark): adds user field
 }
 
 type AuthPayload {

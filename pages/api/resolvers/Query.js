@@ -1,3 +1,5 @@
+import { AuthenticationError } from "apollo-server";
+
 function users(parent, args, context) {
   return context.prisma.user.findMany();
 }

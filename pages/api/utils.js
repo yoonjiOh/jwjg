@@ -1,9 +1,15 @@
 import jwt from "jsonwebtoken";
+import { AuthenticationError } from "apollo-server";
 
 export const APP_SECRET = "jwjg-best-luck34";
 
 function getTokenPayload(token) {
-  return jwt.verify(token, APP_SECRET);
+  try {
+    return jwt.verify(token, APP_SECRET);
+  } catch (e) {
+    // TODO(jurampark): leaves log for posterity.
+    throw new AuthenticationError("Failed to verify jwt.");
+  }
 }
 
 export function getUserId(req, authToken) {
