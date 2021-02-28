@@ -29,6 +29,16 @@ async function issues(parent, args, context) {
   return issues;
 }
 
+async function tags(parent, args, context) {
+  const where = args.id ? { id: args.id } : {};
+
+  const tags = await context.prisma.tag.findMany({
+    where,
+  });
+
+  return tags;
+}
+
 async function issueHasTags(parent, args, context) {
   const where = args.id ? { id: args.id } : {};
   return await context.prisma.issue_has_tag.findMany({
@@ -59,6 +69,7 @@ export default {
   user,
   users,
   issues,
+  tags,
   posts,
   response,
   comments,

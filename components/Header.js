@@ -1,19 +1,24 @@
 import Link from 'next/link';
 
-const linkStyle = {
+const link_style = {
   marginRight: 15
 };
 
+const header_style = {
+  position: 'absolute',
+  top: 0,
+};
+
 const Header = () => (
-    <div>
+    <div style={header_style}>
       <Link href="/">
-        <a style={linkStyle}>Home</a>
+        <a style={link_style}>Home</a>
       </Link>
       <Link href="/profile">
-        <a style={linkStyle}>Profile</a>
+        <a style={link_style}>Profile</a>
       </Link>
       <Link href="/issue">
-        <a style={linkStyle}>Issue 관리</a>
+        <a style={link_style}>Issue 관리</a>
       </Link>
     </div>
 );
