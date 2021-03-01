@@ -2,9 +2,9 @@ import { PrismaClient } from "@prisma/client";
 import { ApolloServer } from "apollo-server-micro";
 import Query from "./resolvers/Query";
 import Mutation from "./resolvers/Mutation";
-import User from "./resolvers/User";
-import Post from "./resolvers/Post";
-import IssueHasTag from "./resolvers/IssueHasTag";
+import Users from "./resolvers/Users";
+import Opinions from "./resolvers/Opinions";
+import IssueHashTags from "./resolvers/IssueHashTags";
 import fs from "fs";
 import path from "path";
 import { getUserId } from "./utils";
@@ -14,9 +14,9 @@ const prisma = new PrismaClient();
 const resolvers = {
   Query,
   Mutation,
-  User,
-  Post,
-  IssueHasTag,
+  Users,
+  Opinions,
+  IssueHashTags,
 };
 
 const apolloServer = new ApolloServer({
