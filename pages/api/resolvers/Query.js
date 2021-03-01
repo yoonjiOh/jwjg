@@ -1,31 +1,28 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { AuthenticationError } from "apollo-server";
 
-function user(parent, args, context) {
-  return context.prisma.user.findUnique({
+async function user(parent, args, context) {
+  return await context.prisma.user.findUnique({
     id: args.id,
   });
 }
 
-function users(parent, args, context) {
-  return context.prisma.user.findMany();
+async function users(parent, args, context) {
+  return await context.prisma.user.findMany();
 }
 
-function stances(parent, args, context) {
+async function stances(parent, args, context) {
   const where = args.id ? { id: args.id } : {};
-  return context.prisma.stances.findMany({
+  return await context.prisma.stances.findMany({
     where,
   });
 }
 
 async function issues(parent, args, context) {
   const where = args.id ? { id: args.id } : {};
-
   const issues = await context.prisma.issues.findMany({
     where,
-    // include: { opinions: true, stances: true, issueHashTags: true },
   });
-
   return issues;
 }
 
@@ -49,9 +46,8 @@ async function issueHashTags(parent, args, context) {
 
 async function opinions(parent, args, context) {
   const where = args.id ? { id: args.id } : {};
-  const opinions = await context.prisma.opinion.findMany({
+  const opinions = await context.prisma.opinions.findMany({
     where,
-    include: { users: true, stances: true },
   });
   return opinions;
 }

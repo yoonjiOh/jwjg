@@ -5,20 +5,18 @@ import Link from "next/link";
 import _ from "lodash";
 import Layout from "../components/Layout";
 
-const GET_ISSUES_AND_POSTS = gql`
+const GET_ISSUES_AND_OPINIONS = gql`
   query {
     issues {
       id
       title
-      post {
+      imageUrl
+      opinions {
         id
-        author_id
+        usersId
         content
-        liked
         user {
-          # name
-          # FIXME: User의 name 함수를 호출해서 문제가 발생함.
-          info
+          name
         }
       }
     }
@@ -26,18 +24,16 @@ const GET_ISSUES_AND_POSTS = gql`
 `;
 
 const Main = () => {
-  const { loading, error, data } = useQuery(GET_ISSUES_AND_POSTS);
+  const { loading, error, data } = useQuery(GET_ISSUES_AND_OPINIONS);
   if (loading) return "Loading...";
   if (error) return `Error! ${error.message}`;
   const { issues } = data;
-  const hot_issue = _.maxBy(issues, (i) => i.post.length);
-  hot_issue.img_url =
-    "https://image.news1.kr/system/photos/2020/1/7/3998644/article.jpg";
+  const hot_issue = _.maxBy(issues, (i) => i.opinions.length);
   const other_issues = issues
     .map((i) => {
-      i.img_url =
+      i.imageUrl =
         "https://image.news1.kr/system/photos/2020/1/7/3998644/article.jpg";
-      i.post = i.post.slice(0, 2);
+      i.opinions = i.opinions.slice(0, 2);
       return i;
     })
     .filter((i) => i.id !== hot_issue.id);
@@ -57,7 +53,7 @@ const Main = () => {
                     </Link>
                   </h3>
                   <div className={s.image}>
-                    <img src={hot_issue.img_url} />
+                    <img src={hot_issue.imageUrl} />
                   </div>
                   <div>
                     <div className={s.issueCardTop}>
@@ -69,12 +65,24 @@ const Main = () => {
                       <p className={s.commentSum}>💬 글 {""}개</p>
                       <div className={s.issueCardComments}>
                         <div className={s.issueCardComment}>
-                          <p>{hot_issue.post[0].author_id}</p>
-                          <p>{hot_issue.post[0].content}</p>
+                          <p>
+                            {hot_issue.opinions[0] &&
+                              hot_issue.opinions[0].usersId}
+                          </p>
+                          <p>
+                            {hot_issue.opinions[0] &&
+                              hot_issue.opinions[0].content}
+                          </p>
                         </div>
                         <div className={s.issueCardComment}>
-                          <p>{hot_issue.post[1].author_id}</p>
-                          <p>{hot_issue.post[1].content}</p>
+                          <p>
+                            {hot_issue.opinions[0] &&
+                              hot_issue.opinions[1].usersId}
+                          </p>
+                          <p>
+                            {hot_issue.opinions[0] &&
+                              hot_issue.opinions[1].content}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -95,7 +103,7 @@ const Main = () => {
                   </Link>
                 </h3>
                 <div className={s.image}>
-                  <img src={issue.img_url} />
+                  <img src={issue.imageUrl} />
                 </div>
                 <div>
                   <div className={s.issueCardTop}>
@@ -105,15 +113,15 @@ const Main = () => {
                   <div className={s.line}></div>
                   <div className={s.issueCardCommentWrap}>
                     <p className={s.commentSum}>💬 글 {""}개</p>
-                    {issue.post.length > 0 && issue.post[1] && (
+                    {issue.opinions.length > 0 && issue.opinions[1] && (
                       <div className={s.issueCardComments}>
                         <div className={s.issueCardComment}>
-                          <p>{issue.post[0].author_id}</p>
-                          <p>{issue.post[0].content}</p>
+                          <p>{issue.opinions[0].author_id}</p>
+                          <p>{issue.opinions[0].content}</p>
                         </div>
                         <div className={s.issueCardComment}>
-                          <p>{issue.post[1].author_id}</p>
-                          <p>{issue.post[1].content}</p>
+                          <p>{issue.opinions[1].author_id}</p>
+                          <p>{issue.opinions[1].content}</p>
                         </div>
                       </div>
                     )}

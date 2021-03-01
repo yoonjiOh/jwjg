@@ -4,6 +4,7 @@ import Query from "./resolvers/Query";
 import Mutation from "./resolvers/Mutation";
 import Users from "./resolvers/Users";
 import Opinions from "./resolvers/Opinions";
+import Issues from "./resolvers/Issues";
 import IssueHashTags from "./resolvers/IssueHashTags";
 import fs from "fs";
 import path from "path";
@@ -17,6 +18,7 @@ const resolvers = {
   Users,
   Opinions,
   IssueHashTags,
+  Issues,
 };
 
 const apolloServer = new ApolloServer({

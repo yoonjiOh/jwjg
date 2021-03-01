@@ -13,8 +13,14 @@ const GET_ISSUE = gql`
       id
       title
       content
-      img_url
-      option_list_json
+      imageUrl
+      stances {
+        id
+        title
+      }
+      opinions {
+        id
+      }
     }
   }
 `;
@@ -28,11 +34,21 @@ const Issue = () => {
   if (loading) return "Loading...";
   if (error) return `Error! ${error.message}`;
   const issue = data.issues[0];
+  // const issue = {
+  //   img_url: "",
+  //   title: "추윤갈등",
+  //   post: [{}, {}],
+  //   response: [{}],
+  // };
+  // const response_result = {
+  //   name: "name",
+  //   count: 5,
+  // };
   return (
     <Layout title={"개별 이슈"}>
       <main className={s.main}>
         <div className={s.image}>
-          <img src={issue.img_url} />
+          <img src={issue.imageUrl} />
         </div>
         <div className={s.issueBody}>
           <div className={s.tags}>
@@ -44,23 +60,47 @@ const Issue = () => {
           </div>
           <h2 className={s.issueTitle}>{issue.title}</h2>
           <div className={s.issueSum}>
-            <p>🔥 참여 {/* TODO: response sum */}</p>
-            <p>💬 의견 {/* TODO: post sum */}</p>
+            <p>🔥 참여 {issue.stances.length}</p>
+            <p>💬 의견 {issue.opinions.length}</p>
           </div>
-          <h3>지금 여론</h3>
-          <div>{issue.option_list_json}</div>
-          {/* 도표 그릴 수 있는 라이브러리 찾아 보기 */}
-          <h3>내 입장</h3>
+          <div>
+            <h3>지금 여론</h3>
+            <p>
+              <span>{}</span> 입장이 전체의 <span>{}%</span>로 가장 많아요👀
+            </p>
+            <ul>
+              <li>{}</li>
+              <li>{}</li>
+              <li>{}</li>
+              <li>{}</li>
+              <li>{}</li>
+            </ul>
+          </div>
+          <div>
+            <h3>내 입장</h3>
+            <ul>
+              <li>{}</li>
+              <li>{}</li>
+              <li>{}</li>
+              <li>{}</li>
+              <li>{}</li>
+            </ul>
+          </div>
           <h3>의견</h3>
           <div>
             <div>
               <div>
                 <section>
-                  <span>김철수</span>
-                  <span>한국경제 기자</span>
-                  <div>추미애 적극 지지</div>
+                  <h4>추미애 적극 지지</h4>
                   <div>
-                    <p>blablablala~~~~~~~</p>
+                    <span>김철수</span>
+                    <span>한국경제 기자</span>
+                  </div>
+                  <div>
+                    <div>
+                      <p>blablablala~~~~~~~</p>
+                      <p>blablablala~~~~~~~</p>
+                    </div>
                     <span>더보기</span>
                   </div>
                 </section>
