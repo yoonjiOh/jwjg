@@ -1,21 +1,21 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 async function name(parent, args, context) {
-  const user = await context.prisma.user.findUnique({
+  const user = await context.prisma.users.findUnique({
     where: { id: parent.id },
   });
   return user.name;
 }
 
-function responses(parent, args, context) {
+function stances(parent, args, context) {
   return context.prisma.response.findMany({
     where: {
-      issue_id: args.issue_id,
-      user_id: parent.id,
+      issuesId: args.issue_id,
+      usersId: parent.id,
     },
   });
 }
 
 export default {
   name,
-  responses,
+  stances,
 };

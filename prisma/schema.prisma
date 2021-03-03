@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["createMany"]
 }
 
@@ -8,113 +8,242 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model article {
-  id        Int      @id @default(autoincrement())
-  pub_time  DateTime
-  url       String
-  thumbnail String?
-  title     String
-  content   String?
-  publisher String
-  author    String?
-  issue_id  Int
-  issue     issue    @relation(fields: [issue_id], references: [id])
+// TODO(jurampark): update doc about schema.prisma convention.
+model Users {
+  id              Int      @id @default(autoincrement())
+  firebaseUID     String   @unique // TODO(jurampark): update design doc for user authentication with flow chats.
+  name            String
+  intro           String?
+  profileImageUrl String? // TODO(jurampark): update dd about uploading images.
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now())
 
-  @@index([issue_id], name: "fk_article_issue1_idx")
+  UserStances          UserStances[]
+  Opinions             Opinions[]
+  OpinionComments      OpinionComments[]
+  OpinionReacts        OpinionReacts[]
+  OpinionCommentReacts OpinionCommentReacts[]
 }
 
-model comment {
-  id         Int       @id
-  content    String
-  is_deleted Int?
-  post_id    Int
-  user_id    Int?
-  m_time     DateTime? @default(now())
-  c_time     DateTime  @default(now())
-  post       post      @relation(fields: [post_id], references: [id])
-  user       user?     @relation(fields: [user_id], references: [id])
+/// Isseus written by autorities.
+model Issues {
+  id          Int      @id @default(autoincrement())
+  title       String
+  content     String?
+  imageUrl    String?
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
 
-  @@index([post_id], name: "post_id")
-  @@index([user_id], name: "user_id")
+  Stances       Stances[]
+  UserStances   UserStances[]
+  IssueHashTags IssueHashTags[]
+  Opinions      Opinions[]
 }
 
-model issue {
-  id               Int             @id @default(autoincrement())
-  title            String?
-  content          String?
-  img_url          String?
-  option_list_json String?
-  m_time           DateTime        @default(now())
-  c_time           DateTime        @default(now())
-  is_published     Int             @default(0)
-  article          article[]
-  issue_has_tag    issue_has_tag[]
-  post             post[]
-  response         response[]
-}
-
-model issue_has_tag {
-  issue_id Int
-  tag_id   Int
-  issue    issue @relation(fields: [issue_id], references: [id])
-  tag      tag   @relation(fields: [tag_id], references: [id])
-
-  @@id([issue_id, tag_id])
-  @@index([issue_id], name: "fk_issue_has_tag_issue1_idx")
-  @@index([tag_id], name: "fk_issue_has_tag_tag1_idx")
-}
-
-model post {
-  id           Int       @id @default(autoincrement())
-  c_time       DateTime  @default(now())
-  m_time       DateTime? @default(now())
-  is_deleted   Int?
-  content      String
-  author_id    Int
-  issue_id     Int
-  url          String?
-  liked        Int       @default(0)
-  exposed      Int       @default(0)
-  clicked      Int       @default(0)
-  user         user      @relation(fields: [author_id], references: [id])
-  issue        issue     @relation(fields: [issue_id], references: [id])
-  comment      comment[]
-
-  @@index([issue_id], name: "fk_post_issue1_idx")
-  @@index([author_id], name: "fk_post_user_idx")
-}
-
-model response {
+model Stances {
   id       Int    @id @default(autoincrement())
-  issue_id Int
-  user_id  Int
-  response String
-  issue    issue  @relation(fields: [issue_id], references: [id])
-  user     user   @relation(fields: [user_id], references: [id])
+  issue    Issues @relation(fields: [issuesId], references: [id])
+  title    String
+  orderNum Int    @default(0)
 
-  @@index([issue_id], name: "fk_user_issue_response_issue1_idx")
-  @@index([user_id], name: "fk_user_issue_response_user1_idx")
+  issuesId Int
+
+  UserStances     UserStances[]
+  Opinions        Opinions[]
+  OpinionComments OpinionComments[]
 }
 
-model tag {
-  id            Int             @id @default(autoincrement())
-  name          String
-  type          String?
-  issue_has_tag issue_has_tag[]
+model UserStances {
+  user   Users   @relation(fields: [usersId], references: [id])
+  issue  Issues  @relation(fields: [issuesId], references: [id])
+  stance Stances @relation(fields: [stancesId], references: [id])
+
+  usersId   Int
+  issuesId  Int
+  stancesId Int
+
+  @@id([usersId, issuesId])
 }
 
-model user {
-  id           Int            @id @default(autoincrement())
-  name         String
-  email        String         @unique
-  birth_year   DateTime?
-  sns          String?
-  password     String
-  role         Int            @default(1)
-  pic_url      String?
-  info         String?
-  bio          String?
-  comment      comment[]
-  post         post[]
-  response     response[]
+model HashTags {
+  id      Int    @id @default(autoincrement())
+  content String
+
+  IssueHashTags IssueHashTags[]
 }
+
+model IssueHashTags {
+  issue   Issues   @relation(fields: [issuesId], references: [id])
+  hashTag HashTags @relation(fields: [hashTagsId], references: [id])
+
+  issuesId   Int
+  hashTagsId Int
+
+  @@id([issuesId, hashTagsId])
+}
+
+model Opinions {
+  id        Int      @id @default(autoincrement())
+  user      Users    @relation(fields: [usersId], references: [id])
+  issue     Issues   @relation(fields: [issuesId], references: [id])
+  stance    Stances  @relation(fields: [stancesId], references: [id])
+  content   String
+  createdAt DateTime @default(now())
+
+  usersId   Int
+  issuesId  Int
+  stancesId Int
+
+  OpinionComments OpinionComments[]
+  OpinionReacts   OpinionReacts[]
+}
+
+model OpinionComments {
+  id        Int      @id @default(autoincrement())
+  user      Users    @relation(fields: [usersId], references: [id])
+  opinion   Opinions @relation(fields: [opinionsId], references: [id])
+  stance    Stances  @relation(fields: [stancesId], references: [id])
+  content   String
+  createdAt DateTime @default(now())
+
+  usersId    Int
+  opinionsId Int
+  stancesId  Int
+
+  OpinionCommentReacts OpinionCommentReacts[]
+}
+
+model OpinionReacts {
+  user    Users    @relation(fields: [usersId], references: [id])
+  opinion Opinions @relation(fields: [opinionsId], references: [id])
+  like    Boolean  @default(false)
+
+  usersId    Int
+  opinionsId Int
+
+  @@id([usersId, opinionsId])
+}
+
+model OpinionCommentReacts {
+  user           Users           @relation(fields: [usersId], references: [id])
+  opinionComment OpinionComments @relation(fields: [opinionCommentsId], references: [id])
+  like           Boolean         @default(false)
+
+  usersId           Int
+  opinionCommentsId Int
+
+  @@id([usersId, opinionCommentsId])
+}
+
+// ***** Obsolete since 20210301 *****
+// model article {
+//   id        Int      @id @default(autoincrement())
+//   pub_time  DateTime
+//   url       String
+//   thumbnail String?
+//   title     String
+//   content   String?
+//   publisher String
+//   author    String?
+//   issue_id  Int
+//   issue     issue    @relation(fields: [issue_id], references: [id])
+
+//   @@index([issue_id], name: "fk_article_issue1_idx")
+// }
+
+// model comment {
+//   id         Int       @id
+//   content    String
+//   is_deleted Int?
+//   post_id    Int
+//   user_id    Int?
+//   m_time     DateTime? @default(now())
+//   c_time     DateTime  @default(now())
+//   post       post      @relation(fields: [post_id], references: [id])
+//   user       user?     @relation(fields: [user_id], references: [id])
+
+//   @@index([post_id], name: "post_id")
+//   @@index([user_id], name: "user_id")
+// }
+
+// model issue {
+//   id               Int             @id @default(autoincrement())
+//   title            String?
+//   content          String?
+//   img_url          String?
+//   option_list_json String?
+//   m_time           DateTime        @default(now())
+//   c_time           DateTime        @default(now())
+//   is_published     Int             @default(0)
+//   article          article[]
+//   issue_has_tag    issue_has_tag[]
+//   post             post[]
+//   response         response[]
+// }
+
+// model issue_has_tag {
+//   issue_id Int
+//   tag_id   Int
+//   issue    issue @relation(fields: [issue_id], references: [id])
+//   tag      tag   @relation(fields: [tag_id], references: [id])
+
+//   @@id([issue_id, tag_id])
+//   @@index([issue_id], name: "fk_issue_has_tag_issue1_idx")
+//   @@index([tag_id], name: "fk_issue_has_tag_tag1_idx")
+// }
+
+// model post {
+//   id           Int       @id @default(autoincrement())
+//   c_time       DateTime  @default(now())
+//   m_time       DateTime? @default(now())
+//   is_deleted   Int?
+//   content      String
+//   author_id    Int
+//   issue_id     Int
+//   url          String?
+//   liked        Int       @default(0)
+//   exposed      Int       @default(0)
+//   clicked      Int       @default(0)
+//   user         user      @relation(fields: [author_id], references: [id])
+//   issue        issue     @relation(fields: [issue_id], references: [id])
+//   comment      comment[]
+
+//   @@index([issue_id], name: "fk_post_issue1_idx")
+//   @@index([author_id], name: "fk_post_user_idx")
+// }
+
+// model response {
+//   id       Int    @id @default(autoincrement())
+//   issue_id Int
+//   user_id  Int
+//   response String
+//   issue    issue  @relation(fields: [issue_id], references: [id])
+//   user     user   @relation(fields: [user_id], references: [id])
+
+//   @@index([issue_id], name: "fk_user_issue_response_issue1_idx")
+//   @@index([user_id], name: "fk_user_issue_response_user1_idx")
+// }
+
+// model tag {
+//   id            Int             @id @default(autoincrement())
+//   name          String
+//   type          String?
+//   issue_has_tag issue_has_tag[]
+// }
+
+// model user {
+//   id           Int            @id @default(autoincrement())
+//   name         String
+//   email        String         @unique
+//   birth_year   DateTime?
+//   sns          String?
+//   password     String
+//   role         Int            @default(1)
+//   pic_url      String?
+//   info         String?
+//   bio          String?
+//   comment      comment[]
+//   post         post[]
+//   response     response[]
+// }

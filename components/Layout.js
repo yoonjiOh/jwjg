@@ -1,6 +1,6 @@
-import Head from "next/head";
-import s from "./Layout.module.css";
-import Link from "next/link";
+import Head from 'next/head';
+import s from './Layout.module.css';
+import Link from 'next/link';
 
 const Layout = ({ title, children }) => {
   return (

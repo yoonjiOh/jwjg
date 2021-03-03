@@ -37,12 +37,12 @@ async function updateIssue(parent, args, context) {
 
 async function createTagsByIssue(parent, args, context) {
   try {
-    const result = await context.prisma.issue_has_tag.createMany({
+    const result = await context.prisma.issuesHashTags.createMany({
       data: args.data,
-      skipDuplicates: true
+      skipDuplicates: true,
     });
 
-    return result
+    return result;
   } catch (e) {
     console.error(e);
   }

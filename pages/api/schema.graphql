@@ -1,82 +1,77 @@
-type User {
+type Users {
   id: ID!
+  firebaseUID: String
   name: String
-  email: String
-  pic_url: String
-  info: String
-  bio: String
-  responses: [Response]
-  comments: [Comment]
+  intro: String
+  profileImageUrl: String
+  createdAt: DateTime
+  updatedAt: DateTime
+  stances: [Stances]
+  opinionComments: [OpinionComments]
 }
 
-type Post {
-  id: Int
-  is_deleted: Int
-  c_time: DateTime
-  m_time: DateTime
-  content: String
-  author_id: Int
-  issue_id: Int
-  liked: Int
-  exposed: Int
-  clicked: Int
-  user: User
-}
-
-type Comment {
+type Opinions {
   id: Int
   content: String
-  is_deleted: Int
-  post_id: Int
-  user_id: Int
-  c_time: DateTime
-  m_time: DateTime
-  comments: [Comment]
+  createdAt: DateTime
+  usersId: Int
+  issuesId: Int
+  stancesId: Int
+  user: Users
 }
 
-type Issue {
+type OpinionComments {
+  id: Int
+  content: String
+  createdAt: DateTime
+  usersId: Int
+  opinionsId: Int
+  stancesId: Int
+  opinionComments: [OpinionComments]
+}
+
+type Issues {
   id: Int
   title: String!
   content: String!
-  img_url: String
-  option_list_json: String
-  c_time: DateTime
-  m_time: DateTime
-  is_published: Int
+  imageUrl: String
+  isPublished: Int
+  createdAt: DateTime
+  updatedAt: DateTime
   # TODO(jurampark): adds user field
-  post: [Post]
-  issue_has_tag: [IssueHasTag]
+  opinions: [Opinions]
+  issueHashTags: [IssueHashTags]
+  stances: [Stances]
 }
 
-type Response {
+type Stances {
   id: Int
-  issue_id: Int
-  user_id: Int
-  response: String
+  title: String
+  orderNum: Int
+  issuesId: Int
 }
 
-type IssueHasTag {
-  issue_id: Int
-  tag_id: Int
-  tag: Tag
+type IssueHashTags {
+  issuesId: Int
+  hashTagsId: Int
+  hashTags: [HashTags]
 }
 
-type Tag {
+type HashTags {
   id: Int
-  name: String
-  type: String
+  content: String
 }
 
 type AuthPayload {
   token: String
-  user: User
+  user: Users
 }
 
 type bulkInsertCount {
   count: Int
 }
 
-input IssueInput {
+input IssuesInput {
   title: String!
   content: String!
   option_list_json: String
@@ -88,21 +83,21 @@ input IssueHasTagInput {
 }
 
 type Query {
-  users: [User]
-  user(id: Int!): User
-  issue(id: Int!): Issue
-  issues(id: Int): [Issue]
-  posts(id: Int): [Post]
-  response(id: Int): Response
-  comments(id: Int): [Comment]
-  comment(id: Int!): Comment
-  issueHasTags(id: Int): [IssueHasTag]
-  tags(id: Int): [Tag]
+  users: [Users]
+  user(id: Int!): Users
+  issue(id: Int!): Issues
+  issues(id: Int): [Issues]
+  opinions(id: Int): [Opinions]
+  stances(id: Int): [Stances]
+  opinionComments(id: Int): [OpinionComments]
+  opinionComment(id: Int!): OpinionComments
+  issueHashTags(id: Int): [IssueHashTags]
+  hashTags(id: Int): [HashTags]
 }
 
 type Mutation {
-  createIssue(title: String, content: String, img_url: String, option_list_json: String): Issue!
-  updateIssue(id: Int!, title: String, content: String, img_url: String, option_list_json: String): Issue!
+  createIssue(title: String, content: String, img_url: String, option_list_json: String): Issues!
+  updateIssue(id: Int!, title: String, content: String, img_url: String, option_list_json: String): Issues!
   createTagsByIssue(data: [IssueHasTagInput]): bulkInsertCount
   signup(email: String!, password: String!, name: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload
