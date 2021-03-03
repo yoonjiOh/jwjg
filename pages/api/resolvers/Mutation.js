@@ -13,6 +13,7 @@ async function createIssue(parent, args, context) {
     data: {
       title: args.title,
       content: args.content,
+      img_url: args.img_url,
       option_list_json: args.option_list_json,
     },
   });
@@ -26,6 +27,7 @@ async function updateIssue(parent, args, context) {
     data: {
       title: args.title,
       content: args.content,
+      img_url: args.img_url,
       option_list_json: args.option_list_json,
     },
   });

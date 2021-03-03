@@ -14,17 +14,19 @@ const GET_ISSUE = gql`
             id
             title
             content
+            img_url
             option_list_json
         }
     }
 `;
 
 const UPDATE_ISSUE = gql`
-    mutation updateIssue($id: Int!, $title: String!, $content: String!, $option_list_json: String!) {
-        updateIssue(id: $id, title: $title, content: $content, option_list_json: $option_list_json) {
+    mutation updateIssue($id: Int!, $title: String!, $content: String!, $img_url: String!, $option_list_json: String!) {
+        updateIssue(id: $id, title: $title, content: $content, img_url: $img_url, option_list_json: $option_list_json) {
             id
             title
             content
+            img_url
             option_list_json
         }
     }
@@ -74,6 +76,7 @@ const IssueDetail = () => {
             id: null,
             title: '',
             content: '',
+            img_url: '',
             option_list: {},
         },
         add_option_mode: false,
@@ -92,6 +95,7 @@ const IssueDetail = () => {
                 id: first_data && _.head(first_data.issues).id,
                 title: first_data && _.head(first_data.issues).title,
                 content: first_data && _.head(first_data.issues).content,
+                img_url: first_data && _.head(first_data.issues).img_url,
                 option_list: first_data && _.head(first_data.issues).option_list_json ? JSON.parse(_.head(first_data.issues).option_list_json) : {},
             },
         });
@@ -137,6 +141,10 @@ const IssueDetail = () => {
                     onClick={() => updateIssue({ variables: { id: issue_id, title: issue.title, content: issue.content, option_list_json: JSON.stringify(issue.option_list) }})}>수정</button>
 
             <div className={style.wrapper}>
+                <div className={style.img_wrapper}>
+                    <p className={style.title_sm}>대표 이미지</p>
+                    <img alt="issue_img" src={issue.img_url} />
+                </div>
                 <div className={style.title}>
                     <p className={style.title_sm}>이슈 제목</p>
                     <textarea value={issue.title} onChange={(e) => handleChange(e.target.value, 'title')} />

@@ -20,11 +20,12 @@ const GET_TAGS = gql`
 `;
 
 const CREATE_ISSUE = gql`
-    mutation createIssue($title: String!, $content: String!, $option_list_json: String!) {
-        createIssue(title: $title, content: $content, option_list_json: $option_list_json) {
+    mutation createIssue($title: String!, $content: String!, $img_url: String!, $option_list_json: String!) {
+        createIssue(title: $title, content: $content, img_url: $img_url, option_list_json: $option_list_json) {
             id
             title,
             content,
+            img_url,
             option_list_json
         }
     }
@@ -91,6 +92,7 @@ const NewIssue = () => {
         issue: {
             title: '',
             content: '',
+            img_url: '',
             option_list: {},
         },
         add_option_mode: false,
@@ -157,6 +159,7 @@ const NewIssue = () => {
                 variables: {
                     title: issue.title,
                     content: issue.content,
+                    img_url: issue.img_url,
                     option_list_json: JSON.stringify(issue.option_list)
                 }
             }).then((result) => {
@@ -195,6 +198,10 @@ const NewIssue = () => {
             </div>
 
             <div className={style.wrapper}>
+                <div className={style.img_wrapper}>
+                    <p className={style.title_sm}>대표 이미지</p>
+                    <img alt="new_issue_img" src={issue.img_url} />
+                </div>
                 <div className={style.title}>
                     <p className={style.title_sm}>이슈 제목</p>
                     <textarea value={issue.title} onChange={(e) => handleChange(e.target.value, 'title')} />
@@ -216,14 +223,13 @@ const NewIssue = () => {
 
                 <button className={style.btn_add_option} onClick={handleSetOptionMode}>옵션 추가하기</button>
 
-                <p className={style.title_sm}>태그 선택</p>
+                <p className={style.title_sm} style={{ marginBottom: "15px" }}>태그 선택</p>
                 <Select
                   isMulti
                   name="tags"
                   options={tags}
                   className="tags-multi-select"
                   onChange={handleTagSelect}
-                  style={{ marginTop: "15px" }}
                 />
             </div>
         </main>
