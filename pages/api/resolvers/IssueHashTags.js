@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
-function tag(parent, args, context) {
-  const tag = context.prisma.tag.findUnique({
+function hashTags(parent, args, context) {
+  const hashTag = context.prisma.hashTags.findUnique({
     where: { id: parent.tag_id },
   });
-  return tag;
+  return hashTag;
 }
 
 export default {
-  tag,
+  hashTags,
 };

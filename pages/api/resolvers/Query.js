@@ -1,77 +1,73 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { AuthenticationError } from "apollo-server";
 
-function user(parent, args, context) {
-  return context.prisma.user.findUnique({
+async function user(parent, args, context) {
+  return await context.prisma.user.findUnique({
     id: args.id,
   });
 }
 
-function users(parent, args, context) {
-  return context.prisma.user.findMany();
+async function users(parent, args, context) {
+  return await context.prisma.user.findMany();
 }
 
-function response(parent, args, context) {
+async function stances(parent, args, context) {
   const where = args.id ? { id: args.id } : {};
-  return context.prisma.response.findMany({
+  return await context.prisma.stances.findMany({
     where,
   });
 }
 
 async function issues(parent, args, context) {
   const where = args.id ? { id: args.id } : {};
-
-  const issues = await context.prisma.issue.findMany({
+  const issues = await context.prisma.issues.findMany({
     where,
-    include: { post: true, response: true, issue_has_tag: true },
   });
-
   return issues;
 }
 
-async function tags(parent, args, context) {
+async function hashTags(parent, args, context) {
   const where = args.id ? { id: args.id } : {};
 
-  const tags = await context.prisma.tag.findMany({
+  const tags = await context.prisma.hashTags.findMany({
     where,
   });
 
   return tags;
 }
 
-async function issueHasTags(parent, args, context) {
+async function issueHashTags(parent, args, context) {
   const where = args.id ? { id: args.id } : {};
-  return await context.prisma.issue_has_tag.findMany({
+  return await context.prisma.issueHashTags.findMany({
     where,
-    include: { tag: true },
+    include: { hashTags: true },
   });
 }
 
-async function posts(parent, args, context) {
+async function opinions(parent, args, context) {
   const where = args.id ? { id: args.id } : {};
-  const posts = await context.prisma.post.findMany({
+  const opinions = await context.prisma.opinions.findMany({
     where,
-    include: { user: true, response: true },
   });
-  return posts;
+  return opinions;
 }
 
-async function comments(parent, args, context) {
+async function opinionComments(parent, args, context) {
   const where = args.id ? { id: args.id } : {};
-  const comments = await context.prisma.comment.findMany({
+  const opinionComments = await context.prisma.opinionComments.findMany({
     where,
   });
 
-  return comments;
+  return opinionComments;
 }
 
 export default {
   user,
   users,
   issues,
-  tags,
-  posts,
-  response,
-  comments,
-  issueHasTags,
+  hashTags,
+  opinions,
+  stances,
+  opinionComments,
+  issueHashTags,
 };
