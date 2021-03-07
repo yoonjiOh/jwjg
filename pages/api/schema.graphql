@@ -4,6 +4,7 @@ type Users {
   name: String
   intro: String
   profileImageUrl: String
+  isAdmin: Int
   createdAt: DateTime
   updatedAt: DateTime
   stances: [Stances]
