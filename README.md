@@ -12,6 +12,7 @@ npm run generate
 # or
 yarn dev
 ```
+
 데이터 모델 바꾸고 반영하는 커맨드
 
 ```

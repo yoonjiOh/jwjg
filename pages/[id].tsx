@@ -1,11 +1,11 @@
-import s from "./[id].module.css";
+import s from './[id].module.css';
 
-import { useRouter } from "next/router";
-import React from "react";
-import { gql, useQuery } from "@apollo/client";
-import { withApollo } from "../apollo/client";
+import { useRouter } from 'next/router';
+import React from 'react';
+import { gql, useQuery } from '@apollo/client';
+import { withApollo } from '../apollo/client';
 
-import Layout from "../components/Layout";
+import Layout from '../components/Layout';
 
 const GET_ISSUE = gql`
   query issues($id: Int!) {
@@ -31,7 +31,7 @@ const Issue = () => {
   const { loading, error, data } = useQuery(GET_ISSUE, {
     variables: { id: issue_id },
   });
-  if (loading) return "Loading...";
+  if (loading) return 'Loading...';
   if (error) return `Error! ${error.message}`;
   const issue = data.issues[0];
   // const issue = {
@@ -45,7 +45,7 @@ const Issue = () => {
   //   count: 5,
   // };
   return (
-    <Layout title={"개별 이슈"}>
+    <Layout title={'개별 이슈'}>
       <main className={s.main}>
         <div className={s.image}>
           <img src={issue.imageUrl} />
