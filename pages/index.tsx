@@ -76,11 +76,11 @@ const Main = () => {
                         </div>
                         <div className={s.issueCardComment}>
                           <p>
-                            {hot_issue.opinions[0] &&
+                            {hot_issue.opinions[1] &&
                               hot_issue.opinions[1].usersId}
                           </p>
                           <p>
-                            {hot_issue.opinions[0] &&
+                            {hot_issue.opinions[1] &&
                               hot_issue.opinions[1].content}
                           </p>
                         </div>
