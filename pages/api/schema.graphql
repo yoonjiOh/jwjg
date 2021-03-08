@@ -67,6 +67,7 @@ type AuthPayload {
   user: Users
 }
 
+# bulk insert 쿼리의 return 이 count 임
 type bulkInsertCount {
   count: Int
 }
@@ -77,9 +78,15 @@ input IssuesInput {
   option_list_json: String
 }
 
-input IssueHasTagInput {
+input IssueHashTagInput {
   issue_id: Int
   tag_id: Int
+}
+
+input IssueStancesInput {
+  title: String
+  orderNum: Int
+  IssueId: Int
 }
 
 type Query {
@@ -96,9 +103,10 @@ type Query {
 }
 
 type Mutation {
-  createIssue(title: String, content: String, img_url: String, option_list_json: String): Issues!
-  updateIssue(id: Int!, title: String, content: String, img_url: String, option_list_json: String): Issues!
-  createTagsByIssue(data: [IssueHasTagInput]): bulkInsertCount
+  createIssue(title: String, content: String, imageUrl: String, option_list_json: String): Issues!
+  updateIssue(id: Int!, title: String, content: String, imageUrl: String, option_list_json: String): Issues!
+  createTagsByIssue(data: [IssueHashTagInput]): bulkInsertCount
+  createStancesByIssue(data: [IssueStancesInput]): bulkInsertCount
   signup(email: String!, password: String!, name: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload
 }

@@ -9,31 +9,43 @@ import Layout from '../../components/Layout';
 import common_style from "../index.module.css";
 import style from "./new_issue.module.css";
 
+interface Stance {
+    title: String,
+    orderNum: Number,
+    IssueId: Number
+}
 
 const GET_TAGS = gql`
     query FetchTags {
-        tags {
+        hashTags {
             id
-            name
+            content
         }
     }
 `;
 
 const CREATE_ISSUE = gql`
-    mutation createIssue($title: String!, $content: String!, $img_url: String!, $option_list_json: String!) {
-        createIssue(title: $title, content: $content, img_url: $img_url, option_list_json: $option_list_json) {
+    mutation createIssue($title: String!, $content: String!, $imageUrl: String!, $option_list_json: String!) {
+        createIssue(title: $title, content: $content, imageUrl: $imageUrl, option_list_json: $option_list_json) {
             id
             title,
             content,
-            img_url,
-            option_list_json
+            imageUrl,
         }
     }
 `;
 
 const CREATE_TAGS_BY_ISSUE = gql`
-    mutation createTagsByIssue($data: [IssueHasTagInput]) {
+    mutation createTagsByIssue($data: [IssueHashTagInput]) {
         createTagsByIssue(data: $data) {
+            count
+        }
+    }
+`;
+
+const CREATE_STANCES_BY_ISSUE = gql`
+    mutation createStancesByIssue($data: [IssueStancesInput]) {
+        createStancesByIssue(data: $data) {
             count
         }
     }
@@ -50,32 +62,28 @@ const reducer = (state, action) => {
                     [key]: value
                 },
             };
-        case 'SHOW_OPTION_INPUT':
+        case 'SHOW_STANCE_INPUT':
             return {
                 ...state,
-                add_option_mode: true
+                addStanceMode: true
             };
-        case 'INPUT_NEW_OPTION':
+        case 'INPUT_NEW_STANCE_TITLE':
             return {
                 ...state,
-                new_option: action.value
+                newStance: action.value
             };
-        case 'ADD_OPTION':
+        case 'ADD_STANCE':
             return {
                 ...state,
-                issue: {
-                    ...state.issue,
-                    option_list: action.value
-                },
-                add_option_mode: false
+                stances: state.stances.concat(action.value),
+                addStanceMode: false
             };
-        case 'FETCH_TAGS':
-            console.log('FETCH_TAGS', action.data)
+        case 'FETCH_HASHTAGS':
             return {
                 ...state,
                 tags: action.data
             };
-        case 'SET_TAGS':
+        case 'SET_HASHTAGS':
             return {
                 ...state,
                 selected_tags: action.data
@@ -92,24 +100,25 @@ const NewIssue = () => {
         issue: {
             title: '',
             content: '',
-            img_url: '',
-            option_list: {},
+            imgUrl: '',
         },
-        add_option_mode: false,
-        new_option: '',
+        stances: [],
+        newStance: { title: '', orderNum: null, issueId: null },
+        addStanceMode: false,
         tags: [],
         selected_tags: [],
     };
 
     const [state, dispatch] = useReducer(reducer, initial_state);
-    const { issue, add_option_mode, new_option, tags, selected_tags } = state;
+    const { issue, addStanceMode, newStance, stances, tags, selected_tags } = state;
 
     const [createIssue] = useMutation(CREATE_ISSUE);
     const [createTagsByIssue] = useMutation(CREATE_TAGS_BY_ISSUE);
+    const [createStancesByIssue] = useMutation(CREATE_STANCES_BY_ISSUE);
 
     useEffect(() => {
         dispatch({
-            type: 'FETCH_TAGS',
+            type: 'FETCH_HASHTAGS',
             data: data && data.tags.map(tag => { return { value: tag.id, label: tag.name }})
         })
     }, []);
@@ -123,60 +132,69 @@ const NewIssue = () => {
 
     const handleSetOptionMode = () => {
         dispatch({
-            type: 'SHOW_OPTION_INPUT'
+            type: 'SHOW_STANCE_INPUT'
         });
     };
 
     const handleNewOptionInput = (value) => {
         dispatch({
-            type: 'INPUT_NEW_OPTION',
+            type: 'INPUT_NEW_STANCE_TITLE',
             value: value,
         });
     };
 
     const handleAddOptionBtn = () => {
-        const option_idx = _.isEmpty(issue.option_list) ? 1 : _.size(issue.option_list) + 1;
-        const new_option_list = { ...issue.option_list, [option_idx]: new_option };
+        const stanceIdx = _.isEmpty(stances) ? 1 : _.size(stances) + 1;
+        const payload: Stance = { ...newStance, orderNum: stanceIdx };
 
         dispatch({
-            type: 'ADD_OPTION',
-            value: new_option_list
+            type: 'ADD_STANCE',
+            value: payload
         });
     };
 
-    const handleTagSelect = (selected_tags) => {
+    const handleTagSelect = (selectedHashTags) => {
         dispatch({
-            type: 'SET_TAGS',
-            data: selected_tags
+            type: 'SET_HASHTAGS',
+            data: selectedHashTags
         })
     };
 
     const handleSubmit = async () => {
-        let created_issue_id;
+        let createdIssueId;
 
         try {
             await createIssue({
                 variables: {
                     title: issue.title,
                     content: issue.content,
-                    img_url: issue.img_url,
-                    option_list_json: JSON.stringify(issue.option_list)
+                    imgUrl: issue.imgUrl,
                 }
             }).then((result) => {
-                created_issue_id = result.data.createIssue.id;
+                createdIssueId = result.data.createIssue.id;
             }).then(() => {
-                const payload = selected_tags.map((tag) => {
-                    return { issue_id: created_issue_id, tag_id: tag.value }
+                const tagsPayload = selected_tags.map((tag) => {
+                    return { issueId: createdIssueId, hashTagsId: tag.value }
                 });
 
                 createTagsByIssue({
                     variables: {
-                        data: payload
+                        data: tagsPayload
+                    }
+                });
+
+                const stancesPayload = stances.map((stance) => {
+                    return { title: stance.title, orderNum: stance.orderNum, issueId: createdIssueId }
+                });
+
+                createStancesByIssue({
+                    variables: {
+                        data: stancesPayload
                     }
                 });
 
                 if (window.confirm('이슈가 성공적으로 발제되었습니다. 해당 이슈 페이지로 넘어가시겠습니까?')) {
-                    window.location.href = `${config.host}/${created_issue_id}`;
+                    window.location.href = `${config.host}/${createdIssueId}`;
                 } else {
                     window.location.href = `${config.host}`;
                 }
@@ -200,7 +218,7 @@ const NewIssue = () => {
             <div className={style.wrapper}>
                 <div className={style.img_wrapper}>
                     <p className={style.title_sm}>대표 이미지</p>
-                    <img alt="new_issue_img" src={issue.img_url} />
+                    <img alt="new_issue_img" src={issue.imgUrl} />
                 </div>
                 <div className={style.title}>
                     <p className={style.title_sm}>이슈 제목</p>
@@ -211,11 +229,11 @@ const NewIssue = () => {
                     <textarea value={issue.content} onChange={(e) => handleChange(e.target.value, 'content')} />
                 </div>
 
-                {!_.isEmpty(issue.option_list) && _.map(_.values(issue.option_list), (option) => (
-                  <li className={style.option} key={option}>{option}</li>
+                {!_.isEmpty(stances) && _.map(stances, (stance) => (
+                  <li className={style.option} key={stance.title}>{stance.title}</li>
                 ))}
 
-                {add_option_mode &&
+                {addStanceMode &&
                 <div className={style.option_wrapper}>
                     <input onChange={(e) => handleNewOptionInput(e.target.value)} />
                     <button onClick={handleAddOptionBtn}>+</button>
