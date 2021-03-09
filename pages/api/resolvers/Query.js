@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import { AuthenticationError } from "apollo-server";
+import { AuthenticationError } from 'apollo-server';
 
 async function user(parent, args, context) {
   return await context.prisma.user.findUnique({
