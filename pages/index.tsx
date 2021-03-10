@@ -16,6 +16,7 @@ const GET_ISSUES_AND_OPINIONS = gql`
         usersId
         content
         user {
+          id
           name
         }
       }
@@ -36,7 +37,6 @@ const Main = () => {
       return i;
     })
     .filter(i => i.id !== hot_issue.id);
-  console.log(hot_issue);
   return (
     <Layout title={'MAIN'}>
       <main className={s.main}>
@@ -68,14 +68,8 @@ const Main = () => {
                           <p>{hot_issue.opinions[0] && hot_issue.opinions[0].content}</p>
                         </div>
                         <div className={s.issueCardComment}>
-                          <p>
-                            {hot_issue.opinions[1] &&
-                              hot_issue.opinions[1].usersId}
-                          </p>
-                          <p>
-                            {hot_issue.opinions[1] &&
-                              hot_issue.opinions[1].content}
-                          </p>
+                          <p>{hot_issue.opinions[1] && hot_issue.opinions[1].usersId}</p>
+                          <p>{hot_issue.opinions[1] && hot_issue.opinions[1].content}</p>
                         </div>
                       </div>
                     </div>
