@@ -25,8 +25,8 @@ const GET_TAGS = gql`
 `;
 
 const CREATE_ISSUE = gql`
-    mutation createIssue($title: String!, $content: String!, $imageUrl: String!, $option_list_json: String!) {
-        createIssue(title: $title, content: $content, imageUrl: $imageUrl, option_list_json: $option_list_json) {
+    mutation createIssue($title: String!, $content: String!, $imageUrl: String!) {
+        createIssue(title: $title, content: $content, imageUrl: $imageUrl) {
             id
             title,
             content,
@@ -47,6 +47,17 @@ const CREATE_STANCES_BY_ISSUE = gql`
     mutation createStancesByIssue($data: [IssueStancesInput]) {
         createStancesByIssue(data: $data) {
             count
+        }
+    }
+`;
+
+const SINGLE_UPLOAD = gql`
+    mutation($file: Upload!) {
+        singleUpload(file: $file) {
+            filename
+            mimetype
+            encoding
+            url
         }
     }
 `;
@@ -88,19 +99,27 @@ const reducer = (state, action) => {
                 ...state,
                 selected_tags: action.data
             };
+        case 'SET_IMAGE_URL':
+            return {
+                ...state,
+                issue: {
+                    ...state.issue,
+                    imageUrl: action.value
+                },
+            };
         default: return;
     }
 };
 
 const NewIssue = () => {
-    const { loading, error, data } = useQuery(GET_TAGS);
+    const { data } = useQuery(GET_TAGS);
 
     const router = useRouter();
     const initial_state = {
         issue: {
             title: '',
             content: '',
-            imgUrl: '',
+            imageUrl: '',
         },
         stances: [],
         newStance: { title: '', orderNum: null, issueId: null },
@@ -114,12 +133,14 @@ const NewIssue = () => {
 
     const [createIssue] = useMutation(CREATE_ISSUE);
     const [createTagsByIssue] = useMutation(CREATE_TAGS_BY_ISSUE);
-    const [createStancesByIssue] = useMutation(CREATE_STANCES_BY_ISSUE);
+    const [createStancesByIssue] = useMutation(CREATE_STANCES_BY_ISSUE)
+
+    const [mutate, { loading, error }] = useMutation(SINGLE_UPLOAD);
 
     useEffect(() => {
         dispatch({
             type: 'FETCH_HASHTAGS',
-            data: data && data.tags.map(tag => { return { value: tag.id, label: tag.name }})
+            data: data && data.tags && data.tags.map(tag => { return { value: tag.id, label: tag.name }})
         })
     }, []);
 
@@ -160,6 +181,20 @@ const NewIssue = () => {
         })
     };
 
+    const handleFileChange = async ({ target: { validity, files: [file] }}: any) => {
+        let uploadedS3Url;
+        validity.valid && await mutate({
+            variables: { file }
+        }).then((result) => {
+            uploadedS3Url = result.data.singleUpload.url;
+        }).then(() => {
+            dispatch({
+                type: 'SET_IMAGE_URL',
+                value: uploadedS3Url
+            })
+        })
+    };
+
     const handleSubmit = async () => {
         let createdIssueId;
 
@@ -168,7 +203,7 @@ const NewIssue = () => {
                 variables: {
                     title: issue.title,
                     content: issue.content,
-                    imgUrl: issue.imgUrl,
+                    imageUrl: issue.imageUrl,
                 }
             }).then((result) => {
                 createdIssueId = result.data.createIssue.id;
@@ -204,6 +239,7 @@ const NewIssue = () => {
         }
     };
 
+
     if (loading) return 'Loading...';
     if (error) return `Error! ${error.message}`;
 
@@ -218,7 +254,11 @@ const NewIssue = () => {
             <div className={style.wrapper}>
                 <div className={style.img_wrapper}>
                     <p className={style.title_sm}>대표 이미지</p>
-                    <img alt="new_issue_img" src={issue.imgUrl} />
+                    <p>이미지를 업로드 해주세요</p>
+                    { issue.imageUrl !== ''
+                      ? <img src={issue.imageUrl} alt="new_issue_img" />
+                      : <input type="file" required onChange={handleFileChange} />
+                    }
                 </div>
                 <div className={style.title}>
                     <p className={style.title_sm}>이슈 제목</p>

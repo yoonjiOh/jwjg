@@ -2,6 +2,13 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { APP_SECRET } from "../utils";
 import { AuthenticationError } from "apollo-server";
+import { AWSS3Uploader } from '../s3';
+
+const s3Uploader = new AWSS3Uploader({
+  accessKeyId: process.env.AWS_ACCESS_KEY,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  destinationBucketName: 'jwjg-issues'
+});
 
 async function createIssue(parent, args, context) {
   const { userId } = context;
@@ -115,4 +122,5 @@ export default {
   createStancesByIssue,
   signup,
   login,
+  singleUpload: s3Uploader.singleFileUploadResolver.bind(s3Uploader),
 };

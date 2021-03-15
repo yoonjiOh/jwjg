@@ -90,6 +90,13 @@ input IssueStancesInput {
   IssueId: Int
 }
 
+type UploadedFileResponse {
+  filename: String!
+  mimetype: String!
+  encoding: String!
+  url: String!
+}
+
 type Query {
   users: [Users]
   user(id: Int!): Users
@@ -110,6 +117,7 @@ type Mutation {
   createStancesByIssue(data: [IssueStancesInput]): bulkInsertCount
   signup(email: String!, password: String!, name: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload
+  singleUpload(file: Upload!): UploadedFileResponse!
 }
 
 
