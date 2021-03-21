@@ -133,7 +133,7 @@ const NewIssue = () => {
 
     const [createIssue] = useMutation(CREATE_ISSUE);
     const [createTagsByIssue] = useMutation(CREATE_TAGS_BY_ISSUE);
-    const [createStancesByIssue] = useMutation(CREATE_STANCES_BY_ISSUE)
+    const [createStancesByIssue] = useMutation(CREATE_STANCES_BY_ISSUE);
 
     const [mutate, { loading, error }] = useMutation(SINGLE_UPLOAD);
 
@@ -151,20 +151,20 @@ const NewIssue = () => {
         });
     };
 
-    const handleSetOptionMode = () => {
+    const handleSetStanceMode = () => {
         dispatch({
             type: 'SHOW_STANCE_INPUT'
         });
     };
 
-    const handleNewOptionInput = (value) => {
+    const handleNewStanceInput = (value) => {
         dispatch({
             type: 'INPUT_NEW_STANCE_TITLE',
             value: value,
         });
     };
 
-    const handleAddOptionBtn = () => {
+    const handleAddStanceBtn = () => {
         const stanceIdx = _.isEmpty(stances) ? 1 : _.size(stances) + 1;
         const payload: Stance = { ...newStance, orderNum: stanceIdx };
 
@@ -275,11 +275,11 @@ const NewIssue = () => {
 
                 {addStanceMode &&
                 <div className={style.option_wrapper}>
-                    <input onChange={(e) => handleNewOptionInput(e.target.value)} />
-                    <button onClick={handleAddOptionBtn}>+</button>
+                    <input onChange={(e) => handleNewStanceInput(e.target.value)} />
+                    <button onClick={handleAddStanceBtn}>+</button>
                 </div>}
 
-                <button className={style.btn_add_option} onClick={handleSetOptionMode}>옵션 추가하기</button>
+                <button className={style.btn_add_option} onClick={handleSetStanceMode}>옵션 추가하기</button>
 
                 <p className={style.title_sm} style={{ marginBottom: "15px" }}>태그 선택</p>
                 <Select

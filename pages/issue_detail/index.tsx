@@ -7,6 +7,11 @@ import Layout from '../../components/Layout';
 import common_style from "../index.module.css";
 import style from "../new_issue/new_issue.module.css";
 
+interface Stance {
+    title: String,
+    orderNum: Number,
+    IssueId: Number
+}
 
 const GET_ISSUE = gql`
     query issues($id: Int!) {
@@ -14,20 +19,28 @@ const GET_ISSUE = gql`
             id
             title
             content
-            img_url
-            option_list_json
+            imageUrl
         }
     }
 `;
 
 const UPDATE_ISSUE = gql`
-    mutation updateIssue($id: Int!, $title: String!, $content: String!, $img_url: String!, $option_list_json: String!) {
-        updateIssue(id: $id, title: $title, content: $content, img_url: $img_url, option_list_json: $option_list_json) {
+    mutation updateIssue($id: Int!, $title: String!, $content: String!, $imageUrl: String!) {
+        updateIssue(id: $id, title: $title, content: $content, imageUrl: $imageUrl) {
             id
             title
             content
-            img_url
-            option_list_json
+            imageUrl
+        }
+    }
+`;
+
+const GET_STANCES = gql`
+    query stancesByIssueId($issuesId: Int!) {
+        stancesByIssueId(issuesId: $issuesId) {
+            id
+            title
+            orderNum
         }
     }
 `;
@@ -39,26 +52,32 @@ const reducer = (state, action) => {
                 ...state,
                 issue: action.data
             };
+        case 'FETCH_STANCES':
+            return {
+                ...state,
+                stances: action.data
+            };
         case 'CHANGE_ISSUE_INPUT':
             const { key, value } = action.payload;
             return {
                 ...state,
                 [key]: value,
             };
-        case 'SHOW_OPTION_INPUT':
+        case 'SHOW_STANCE_INPUT':
             return {
                 ...state,
-                add_option_mode: true
+                addStanceMode: true
             };
-        case 'INPUT_NEW_OPTION':
+        case 'INPUT_NEW_STANCE_TITLE':
             return {
                 ...state,
-                new_option: action.value
+                newStance: action.value
             };
-        case 'ADD_OPTION':
+        case 'ADD_STANCE':
             return {
                 ...state,
-                option_list: action.value
+                stances: state.stances.concat(action.value),
+                addStanceMode: false
             };
         default: return;
     }
@@ -69,22 +88,25 @@ const IssueDetail = () => {
     const router = useRouter();
     const issue_id = Number(router.query.id);
 
-    const { loading, error, data: first_data } = useQuery(GET_ISSUE, { variables: { id: issue_id }});
+    const { data: issue_data } = useQuery(GET_ISSUE, { variables: { id: issue_id }});
+    const { data: stances_data } = useQuery(GET_STANCES, { variables: { issuesId: issue_id }});
+
+    console.log('stances_data', stances_data)
 
     const initial_state = {
         issue: {
             id: null,
             title: '',
             content: '',
-            img_url: '',
-            option_list: {},
+            imageUrl: '',
         },
-        add_option_mode: false,
-        new_option: ''
+        stances: [],
+        addStanceMode: false,
+        newStance: { title: '', orderNum: null, issueId: null },
     };
 
     const [state, dispatch] = useReducer(reducer, initial_state);
-    const { issue, add_option_mode, new_option } = state;
+    const { issue, addStanceMode, stances, newStance } = state;
 
     const [updateIssue, { data }] = useMutation(UPDATE_ISSUE);
 
@@ -92,12 +114,16 @@ const IssueDetail = () => {
         dispatch({
             type: 'FETCH_ISSUE',
             data: {
-                id: first_data && _.head(first_data.issues).id,
-                title: first_data && _.head(first_data.issues).title,
-                content: first_data && _.head(first_data.issues).content,
-                img_url: first_data && _.head(first_data.issues).img_url,
-                option_list: first_data && _.head(first_data.issues).option_list_json ? JSON.parse(_.head(first_data.issues).option_list_json) : {},
+                id: issue_data && _.head(issue_data.issues).id,
+                title: issue_data && _.head(issue_data.issues).title,
+                content: issue_data && _.head(issue_data.issues).content,
+                imageUrl: issue_data && _.head(issue_data.issues).imageUrl,
             },
+        });
+
+        dispatch({
+            type: 'FETCH_STANCES',
+            data: stances_data && stances_data.stancesByIssueId
         });
     }, []);
 
@@ -108,31 +134,28 @@ const IssueDetail = () => {
         });
     };
 
-    const handleSetOptionMode = () => {
+    const handleSetStanceMode = () => {
         dispatch({
-            type: 'SHOW_OPTION_INPUT'
+            type: 'SHOW_STANCE_INPUT'
         });
     };
 
-    const handleNewOptionInput = (value) => {
+    const handleNewStanceInput = (value) => {
         dispatch({
-            type: 'INPUT_NEW_OPTION',
+            type: 'INPUT_NEW_STANCE_TITLE',
             value: value,
         });
     };
 
-    const handleAddOptionBtn = () => {
-        const option_idx = _.isEmpty(issue.option_list) ? 1 : _.size(issue.option_list) + 1;
-        const new_option_list = { ...issue.option_list, [option_idx]: new_option };
+    const handleAddStanceBtn = () => {
+        const stanceIdx = _.isEmpty(stances) ? 1 : _.size(stances) + 1;
+        const payload: Stance = { ...newStance, orderNum: stanceIdx };
 
         dispatch({
-            type: 'ADD_OPTION',
-            value: new_option_list
+            type: 'ADD_STANCE',
+            value: payload
         });
     };
-
-    if (loading) return 'Loading...';
-    if (error) return `Error! ${error.message}`;
 
     return (
       <Layout title={"MAIN"}>
@@ -143,7 +166,7 @@ const IssueDetail = () => {
             <div className={style.wrapper}>
                 <div className={style.img_wrapper}>
                     <p className={style.title_sm}>대표 이미지</p>
-                    <img alt="issue_img" src={issue.img_url} />
+                    <img alt="issue_img" src={issue.imageUrl} />
                 </div>
                 <div className={style.title}>
                     <p className={style.title_sm}>이슈 제목</p>
@@ -154,17 +177,17 @@ const IssueDetail = () => {
                     <textarea value={issue.content} onChange={(e) => handleChange(e.target.value, 'content')} />
                 </div>
 
-            {!_.isEmpty(issue.option_list) && _.map(_.values(issue.option_list), (option) => (
-              <li className={style.option} key={option}>{option}</li>
+            {!_.isEmpty(stances) && _.map(stances, (stance) => (
+              <li className={style.option} key={stance.title}>{stance.title}</li>
             ))}
 
-            {add_option_mode &&
+            {addStanceMode &&
             <div className={style.option_wrapper}>
-                <input onChange={(e) => handleNewOptionInput(e.target.value)} />
-                <button onClick={handleAddOptionBtn}>+</button>
+                <input onChange={(e) => handleNewStanceInput(e.target.value)} />
+                <button onClick={handleAddStanceBtn}>+</button>
             </div>}
 
-            <button className={style.btn_add_option} onClick={handleSetOptionMode}>옵션 추가하기</button>
+            <button className={style.btn_add_option} onClick={handleSetStanceMode}>옵션 추가하기</button>
             </div>
         </main>
       </Layout>

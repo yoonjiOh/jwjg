@@ -104,6 +104,7 @@ type Query {
   issues(id: Int): [Issues]
   opinions(id: Int): [Opinions]
   stances(id: Int): [Stances]
+  stancesByIssueId(issuesId: Int): [Stances]
   opinionComments(id: Int): [OpinionComments]
   opinionComment(id: Int!): OpinionComments
   issueHashTags(id: Int): [IssueHashTags]

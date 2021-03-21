@@ -18,6 +18,13 @@ async function stances(parent, args, context) {
   });
 }
 
+async function stancesByIssueId(parent, args, context) {
+  const where = args.issuesId ? { issuesId: args.issuesId } : {};
+  return await context.prisma.stances.findMany({
+    where,
+  });
+}
+
 async function issues(parent, args, context) {
   const where = args.id ? { id: args.id } : {};
   const issues = await context.prisma.issues.findMany({
@@ -68,6 +75,7 @@ export default {
   hashTags,
   opinions,
   stances,
+  stancesByIssueId,
   opinionComments,
   issueHashTags,
 };
