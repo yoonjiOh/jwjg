@@ -13,7 +13,7 @@ const s3Uploader = new AWSS3Uploader({
 async function createIssue(parent, args, context) {
   const { userId } = context;
   if (!userId) {
-    throw new AuthenticationError("you must be logged in");
+    throw new AuthenticationError('you must be logged in');
   }
 
   const new_issue = await context.prisma.issue.create({
@@ -80,8 +80,8 @@ async function signup(parent, args, context, info) {
   } catch (e) {
     // https://www.prisma.io/docs/concepts/components/prisma-client/error-reference
     switch (e.code) {
-      case "P2002":
-        throw new Error("User name already exists.");
+      case 'P2002':
+        throw new Error('User name already exists.');
     }
   }
 
@@ -99,12 +99,12 @@ async function login(parent, args, context, info) {
     where: { email: args.email },
   });
   if (!user) {
-    throw new Error("No such user found");
+    throw new Error('No such user found');
   }
 
   const valid = await bcrypt.compare(args.password, user.password);
   if (!valid) {
-    throw new Error("Invalid password");
+    throw new Error('Invalid password');
   }
 
   const token = jwt.sign({ userId: user.id }, APP_SECRET);

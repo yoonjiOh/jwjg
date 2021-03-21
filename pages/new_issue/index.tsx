@@ -1,11 +1,12 @@
-import React, {useReducer, useEffect} from 'react';
-import { withApollo } from "../../apollo/client";
-import {gql, useMutation, useQuery} from '@apollo/client';
+import React, { useReducer, useEffect } from 'react';
+import { withApollo } from '../../apollo/client';
+import { gql, useMutation, useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import Select from 'react-select';
 import _ from 'lodash';
 import config from '../../config';
 import Layout from '../../components/Layout';
+
 import common_style from "../index.module.css";
 import style from "./new_issue.module.css";
 
@@ -22,6 +23,7 @@ const GET_TAGS = gql`
             content
         }
     }
+  }
 `;
 
 const CREATE_ISSUE = gql`
@@ -33,6 +35,7 @@ const CREATE_ISSUE = gql`
             imageUrl,
         }
     }
+  }
 `;
 
 const CREATE_TAGS_BY_ISSUE = gql`
@@ -41,6 +44,7 @@ const CREATE_TAGS_BY_ISSUE = gql`
             count
         }
     }
+  }
 `;
 
 const CREATE_STANCES_BY_ISSUE = gql`
@@ -142,12 +146,24 @@ const NewIssue = () => {
             type: 'FETCH_HASHTAGS',
             data: data && data.tags && data.tags.map(tag => { return { value: tag.id, label: tag.name }})
         })
-    }, []);
+        .then(() => {
+          const payload = selected_tags.map(tag => {
+            return { issue_id: created_issue_id, tag_id: tag.value };
+          });
 
-    const handleChange = (value, key) => {
-        dispatch({
-            type: 'CHANGE_ISSUE_INPUT',
-            payload: { key: key, value: value },
+          createTagsByIssue({
+            variables: {
+              data: payload,
+            },
+          });
+
+          if (
+            window.confirm('이슈가 성공적으로 발제되었습니다. 해당 이슈 페이지로 넘어가시겠습니까?')
+          ) {
+            window.location.href = `${config.host}/${created_issue_id}`;
+          } else {
+            window.location.href = `${config.host}`;
+          }
         });
     };
 
@@ -290,10 +306,25 @@ const NewIssue = () => {
                   onChange={handleTagSelect}
                 />
             </div>
-        </main>
-      </Layout>
-    )
-};
+          )}
 
+          <button className={style.btn_add_option} onClick={handleSetOptionMode}>
+            옵션 추가하기
+          </button>
+
+          <p className={style.title_sm}>태그 선택</p>
+          <Select
+            isMulti
+            name="tags"
+            options={tags}
+            className="tags-multi-select"
+            onChange={handleTagSelect}
+            style={{ marginTop: '15px' }}
+          />
+        </div>
+      </main>
+    </Layout>
+  );
+};
 
 export default withApollo(NewIssue, { ssr: true });

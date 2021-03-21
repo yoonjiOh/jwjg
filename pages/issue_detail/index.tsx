@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
-import React, {useReducer, useEffect } from "react";
-import {gql, useMutation, useQuery} from "@apollo/client";
-import {withApollo} from "../../apollo/client";
+import React, { useReducer, useEffect } from 'react';
+import { gql, useMutation, useQuery } from '@apollo/client';
+import { withApollo } from '../../apollo/client';
 import _ from 'lodash';
 import Layout from '../../components/Layout';
 import common_style from "../index.module.css";
@@ -22,6 +22,7 @@ const GET_ISSUE = gql`
             imageUrl
         }
     }
+  }
 `;
 
 const UPDATE_ISSUE = gql`
@@ -43,6 +44,7 @@ const GET_STANCES = gql`
             orderNum
         }
     }
+  }
 `;
 
 const reducer = (state, action) => {
@@ -82,7 +84,6 @@ const reducer = (state, action) => {
         default: return;
     }
 };
-
 
 const IssueDetail = () => {
     const router = useRouter();
@@ -189,9 +190,15 @@ const IssueDetail = () => {
 
             <button className={style.btn_add_option} onClick={handleSetStanceMode}>옵션 추가하기</button>
             </div>
-        </main>
-      </Layout>
-    )
+          )}
+
+          <button className={style.btn_add_option} onClick={handleSetOptionMode}>
+            옵션 추가하기
+          </button>
+        </div>
+      </main>
+    </Layout>
+  );
 };
 
 export default withApollo(IssueDetail, { ssr: true });

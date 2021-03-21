@@ -6,7 +6,7 @@ name: Deploy Re:pol project to Amazon EC2
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
+    branches: [main]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Build Code
-        run:  |
+        run: |
           npm install
           npm run build
 

@@ -1,74 +1,76 @@
 .btn_submit {
-    display: block;
-    margin: 0 auto;
-    height: 40px;
-    background: #1890ff;
-    border: none;
-    color: #fff;
-    border-radius: 40px;
-    font-size: 16px;
-    padding: 6px 20px;
-    cursor: pointer;
-    width: 200px;
+  display: block;
+  margin: 0 auto;
+  height: 40px;
+  background: #1890ff;
+  border: none;
+  color: #fff;
+  border-radius: 40px;
+  font-size: 16px;
+  padding: 6px 20px;
+  cursor: pointer;
+  width: 200px;
 }
 
 .btn_cancel {
-    display: block;
-    margin: 10px auto 0;
-    height: 40px;
-    background: #fff;
-    border: 1px solid #d9d9d9;
-    color: rgba(0,0,0,.85);
-    border-radius: 40px;
-    font-size: 16px;
-    padding: 6px 20px;
-    cursor: pointer;
-    width: 200px;
+  display: block;
+  margin: 10px auto 0;
+  height: 40px;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  color: rgba(0, 0, 0, 0.85);
+  border-radius: 40px;
+  font-size: 16px;
+  padding: 6px 20px;
+  cursor: pointer;
+  width: 200px;
 }
 
 .btn_add_option {
-    display: block;
-    margin: 20px auto;
-    height: 40px;
-    background: #1890ff;
-    border: none;
-    color: #fff;
-    border-radius: 40px;
-    font-size: 16px;
-    padding: 6px 20px;
-    cursor: pointer;
-    width: 200px;
+  display: block;
+  margin: 20px auto;
+  height: 40px;
+  background: #1890ff;
+  border: none;
+  color: #fff;
+  border-radius: 40px;
+  font-size: 16px;
+  padding: 6px 20px;
+  cursor: pointer;
+  width: 200px;
 }
 
-.btn_cancel:active, .btn_submit:active, .btn_add_option:active {
-    outline: none;
-    border: none;
+.btn_cancel:active,
+.btn_submit:active,
+.btn_add_option:active {
+  outline: none;
+  border: none;
 }
 
 .button_wrapper {
-    padding-top: 50px;
+  padding-top: 50px;
 }
 
 .wrapper {
-    padding: 10px;
-    margin: 30px;
-    height: 900px;
+  padding: 10px;
+  margin: 30px;
+  height: 900px;
 }
 
 .title {
-    margin: 20px 0;
+  margin: 20px 0;
 }
 
 .title p {
-    font-size: 16px;
-    font-weight: 600;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .title textarea {
-    width: 100%;
-    min-height: 50px;
-    margin-top: 15px;
-    border: 1px solid #d9d9d9;
+  width: 100%;
+  min-height: 50px;
+  margin-top: 15px;
+  border: 1px solid #d9d9d9;
 }
 
 .img_wrapper img {
@@ -76,35 +78,35 @@
 }
 
 .title_sm {
-    font-size: 16px;
-    font-weight: 600;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .content textarea {
-    width: 100%;
-    min-height: 300px;
-    margin-top: 15px;
-    border: 1px solid #d9d9d9;
+  width: 100%;
+  min-height: 300px;
+  margin-top: 15px;
+  border: 1px solid #d9d9d9;
 }
 
 .option_wrapper {
-    padding: 10px 0;
+  padding: 10px 0;
 }
 
 .option_wrapper input {
-    width: 90%;
-    margin-right: 3px;
-    border: 1px solid #d9d9d9;
-    height: 25px;
+  width: 90%;
+  margin-right: 3px;
+  border: 1px solid #d9d9d9;
+  height: 25px;
 }
 
 .option_wrapper button {
-    border: none;
-    background: #1890ff;
-    color: #fff;
-    cursor: pointer;
+  border: none;
+  background: #1890ff;
+  color: #fff;
+  cursor: pointer;
 }
 
 .option {
-    margin: 5px;
+  margin: 5px;
 }

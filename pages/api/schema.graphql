@@ -121,5 +121,4 @@ type Mutation {
   singleUpload(file: Upload!): UploadedFileResponse!
 }
 
-
 scalar DateTime
