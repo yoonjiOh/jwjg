@@ -22,7 +22,6 @@ const GET_ISSUE = gql`
             imageUrl
         }
     }
-  }
 `;
 
 const UPDATE_ISSUE = gql`
@@ -44,7 +43,6 @@ const GET_STANCES = gql`
             orderNum
         }
     }
-  }
 `;
 
 const reducer = (state, action) => {
@@ -91,8 +89,6 @@ const IssueDetail = () => {
 
     const { data: issue_data } = useQuery(GET_ISSUE, { variables: { id: issue_id }});
     const { data: stances_data } = useQuery(GET_STANCES, { variables: { issuesId: issue_id }});
-
-    console.log('stances_data', stances_data)
 
     const initial_state = {
         issue: {
@@ -190,12 +186,6 @@ const IssueDetail = () => {
 
             <button className={style.btn_add_option} onClick={handleSetStanceMode}>옵션 추가하기</button>
             </div>
-          )}
-
-          <button className={style.btn_add_option} onClick={handleSetOptionMode}>
-            옵션 추가하기
-          </button>
-        </div>
       </main>
     </Layout>
   );
