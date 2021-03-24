@@ -1,7 +1,14 @@
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import { APP_SECRET } from '../utils';
-import { AuthenticationError } from 'apollo-server';
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { APP_SECRET } from "../utils";
+import { AuthenticationError } from "apollo-server";
+import { AWSS3Uploader } from '../s3';
+
+const s3Uploader = new AWSS3Uploader({
+  accessKeyId: process.env.AWS_ACCESS_KEY,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  destinationBucketName: 'jwjg-issues'
+});
 
 async function createIssue(parent, args, context) {
   const { userId } = context;
@@ -13,6 +20,7 @@ async function createIssue(parent, args, context) {
     data: {
       title: args.title,
       content: args.content,
+      img_url: args.img_url,
       option_list_json: args.option_list_json,
     },
   });
@@ -26,6 +34,7 @@ async function updateIssue(parent, args, context) {
     data: {
       title: args.title,
       content: args.content,
+      img_url: args.img_url,
       option_list_json: args.option_list_json,
     },
   });
@@ -36,6 +45,19 @@ async function updateIssue(parent, args, context) {
 async function createTagsByIssue(parent, args, context) {
   try {
     const result = await context.prisma.issuesHashTags.createMany({
+      data: args.data,
+      skipDuplicates: true,
+    });
+
+    return result;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+async function createStancesByIssue(parent, args, context) {
+  try {
+    const result = await context.prisma.stances.createMany({
       data: args.data,
       skipDuplicates: true,
     });
@@ -97,6 +119,8 @@ export default {
   createIssue,
   updateIssue,
   createTagsByIssue,
+  createStancesByIssue,
   signup,
   login,
+  singleUpload: s3Uploader.singleFileUploadResolver.bind(s3Uploader),
 };

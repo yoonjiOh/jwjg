@@ -4,6 +4,8 @@ import { ApolloProvider } from '@apollo/client';
 import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 
+import { createUploadLink } from 'apollo-upload-client';
+
 let apolloClient = null;
 
 /**
@@ -126,6 +128,7 @@ function createApolloClient(initialState = {}) {
 
   return new ApolloClient({
     ssrMode,
+    //@ts-ignore
     link: createIsomorphLink(),
     cache,
   });
@@ -134,9 +137,7 @@ function createApolloClient(initialState = {}) {
 const prod = process.env.NODE_ENV === 'production';
 
 function createIsomorphLink() {
-  const { HttpLink } = require('apollo-link-http');
-  return new HttpLink({
+  return createUploadLink({
     uri: prod ? '' : 'http://localhost:3000/api',
-    credentials: 'same-origin',
   });
 }
