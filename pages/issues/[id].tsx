@@ -3,9 +3,9 @@ import s from './[id].module.css';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { gql, useQuery } from '@apollo/client';
-import { withApollo } from '../apollo/client';
+import { withApollo } from '../../apollo/client';
 
-import Layout from '../components/Layout';
+import Layout from '../../components/Layout';
 
 const GET_ISSUE = gql`
   query issues($id: Int!) {
