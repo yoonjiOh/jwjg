@@ -47,7 +47,7 @@ const Main = () => {
               {
                 <div key={hot_issue.id}>
                   <h3 className={s.issueTitle}>
-                    <Link key={hot_issue.title} href={`/${hot_issue.id}`}>
+                    <Link key={hot_issue.title} href={`/issues/${hot_issue.id}`}>
                       {hot_issue.title}
                     </Link>
                   </h3>
