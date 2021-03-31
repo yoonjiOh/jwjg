@@ -92,7 +92,7 @@ const Main = () => {
             {other_issues.map(issue => (
               <section key={issue.id} className={s.issueCard}>
                 <h3 className={s.issueTitle}>
-                  <Link key={issue.title} href={`/${issue.id}`}>
+                  <Link key={issue.title} href={`/issues/${issue.id}`}>
                     {issue.title}
                   </Link>
                 </h3>

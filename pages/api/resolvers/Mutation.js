@@ -68,6 +68,20 @@ async function createStancesByIssue(parent, args, context) {
   }
 }
 
+async function createUserStance(parent, args, context) {
+  try {
+    const result = await context.prisma.userStances.create({
+      usersId: args.usersId,
+      stancesId: args.stancesId,
+      issuesId: args.issuesId,
+      skipDuplicates: true,
+    });
+    return result;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 // For type:user
 // TODO(jurampark): accepts firebase id token to support social auth like google/apple login.
 async function signup(parent, args, context, info) {
@@ -120,6 +134,7 @@ export default {
   updateIssue,
   createTagsByIssue,
   createStancesByIssue,
+  createUserStance,
   signup,
   login,
   singleUpload: s3Uploader.singleFileUploadResolver.bind(s3Uploader),

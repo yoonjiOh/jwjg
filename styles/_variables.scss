@@ -1,0 +1,27 @@
+$font-sm: 12px;
+$font-md: 16px;
+$font-lg: 20px;
+
+$blue_main: #4494FF;
+$gray_100: #F3F3F3;
+$gray_300: #C4C4C4;
+$gray_500: #999999;
+$gray_900: #333333;
+
+$apple: #F7A193;
+$lemon: #FEE075;
+$grape: #D9BEDE;
+$melon: #F3F3F3;
+$orange: #FFBF74;
+
+@mixin nextButton {
+  width: 8px;
+  height: 8px;
+  border-top: 2px solid $gray_500;
+  border-right: 2px solid $gray_500;
+  transform: rotate(45deg);
+}
+
+@mixin borderBottom {
+  border-bottom: 1px solid #E5E5E5;
+}

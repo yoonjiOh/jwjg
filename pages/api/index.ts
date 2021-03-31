@@ -6,6 +6,7 @@ import Users from './resolvers/Users';
 import Opinions from './resolvers/Opinions';
 import Issues from './resolvers/Issues';
 import IssueHashTags from './resolvers/IssueHashTags';
+import OpinionComments from './resolvers/OpinionComments';
 import fs from 'fs';
 import path from 'path';
 import { getUserId } from './utils';
@@ -17,6 +18,7 @@ const resolvers = {
   Mutation,
   Users,
   Opinions,
+  OpinionComments,
   IssueHashTags,
   Issues,
 };

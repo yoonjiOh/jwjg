@@ -59,6 +59,15 @@ async function opinions(parent, args, context) {
   return opinions;
 }
 
+async function opinionsWithIssuesId(parent, args, context) {
+  const opinions = await context.prisma.opinions.findMany({
+    where: {
+      issuesId: args.issuesId,
+    },
+  });
+  return opinions;
+}
+
 async function opinionComments(parent, args, context) {
   const where = args.id ? { id: args.id } : {};
   const opinionComments = await context.prisma.opinionComments.findMany({
@@ -78,4 +87,5 @@ export default {
   stancesByIssueId,
   opinionComments,
   issueHashTags,
+  opinionsWithIssuesId,
 };

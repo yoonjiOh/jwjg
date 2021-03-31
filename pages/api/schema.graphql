@@ -7,8 +7,14 @@ type Users {
   isAdmin: Int
   createdAt: DateTime
   updatedAt: DateTime
-  stances: [Stances]
+  userStance(issuesId: Int): UserStances
   opinionComments: [OpinionComments]
+}
+
+type UserStances {
+  usersId: Int
+  issuesId: Int
+  stancesId: Int
 }
 
 type Opinions {
@@ -19,6 +25,9 @@ type Opinions {
   issuesId: Int
   stancesId: Int
   user: Users
+  stance: Stances
+  opinionComments: [OpinionComments]
+  opinionReacts: [OpinionReacts]
 }
 
 type OpinionComments {
@@ -28,7 +37,19 @@ type OpinionComments {
   usersId: Int
   opinionsId: Int
   stancesId: Int
-  opinionComments: [OpinionComments]
+  opinionCommentReacts: [OpinionCommentReacts]
+  user: Users
+}
+
+type OpinionCommentReacts {
+  like: Int
+  usersId: Int
+  user: Users
+}
+
+type OpinionReacts {
+  like: Int
+  usersId: Int
 }
 
 type Issues {
@@ -43,6 +64,7 @@ type Issues {
   opinions: [Opinions]
   issueHashTags: [IssueHashTags]
   stances: [Stances]
+  userStances: [UserStances]
 }
 
 type Stances {
@@ -50,6 +72,7 @@ type Stances {
   title: String
   orderNum: Int
   issuesId: Int
+  userStances: [UserStances]
 }
 
 type IssueHashTags {
@@ -103,6 +126,7 @@ type Query {
   issue(id: Int!): Issues
   issues(id: Int): [Issues]
   opinions(id: Int): [Opinions]
+  opinionsWithIssuesId(issuesId: Int): [Opinions]
   stances(id: Int): [Stances]
   stancesByIssueId(issuesId: Int): [Stances]
   opinionComments(id: Int): [OpinionComments]
@@ -116,6 +140,7 @@ type Mutation {
   updateIssue(id: Int!, title: String, content: String, imageUrl: String, option_list_json: String): Issues!
   createTagsByIssue(data: [IssueHashTagInput]): bulkInsertCount
   createStancesByIssue(data: [IssueStancesInput]): bulkInsertCount
+  createUserStance(usersId: Int, issuesId: Int, stancesId: Int): UserStances
   signup(email: String!, password: String!, name: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload
   singleUpload(file: Upload!): UploadedFileResponse!
