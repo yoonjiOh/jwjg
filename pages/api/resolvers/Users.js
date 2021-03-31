@@ -6,10 +6,10 @@ async function name(parent, args, context) {
   return user.name;
 }
 
-function stances(parent, args, context) {
-  return context.prisma.response.findMany({
+async function userStance(parent, args, context) {
+  return await context.prisma.userStances.findFirst({
     where: {
-      issuesId: args.issue_id,
+      issuesId: args.issuesId,
       usersId: parent.id,
     },
   });
@@ -17,5 +17,5 @@ function stances(parent, args, context) {
 
 export default {
   name,
-  stances,
+  userStance,
 };

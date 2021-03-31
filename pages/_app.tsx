@@ -1,7 +1,7 @@
-import '../styles/globals.css';
-import initAuth from '../utils/initAuth' // the module you created above
+import '../styles/globals.scss';
+import initAuth from '../utils/initAuth'; // the module you created above
 
-initAuth()
+initAuth();
 
 function MyApp({ Component, pageProps }) {
   return <Component {...pageProps} />;

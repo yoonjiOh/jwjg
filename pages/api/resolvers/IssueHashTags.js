@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
-function hashTags(parent, args, context) {
-  const hashTag = context.prisma.hashTags.findUnique({
-    where: { id: parent.tag_id },
+import { hash } from "bcryptjs";
+
+async function hashTags(parent, args, context) {
+  const hashTag = await context.prisma.hashTags.findMany({
+    where: { id: parent.hashTagsId },
   });
   return hashTag;
 }

@@ -18,7 +18,6 @@
 }
 .issueTitle {
   font-size: 24px;
-  letter-spacing: -0.01em;
   color: #333333;
   font-weight: bold;
   margin: 0;
@@ -59,7 +58,6 @@
 .issueCardComment {
   background-color: #ffffff;
   margin-right: 16px;
-  letter-spacing: -0.01em;
   line-height: 1.6;
   font-size: 12px;
 }

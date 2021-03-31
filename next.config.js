@@ -2,6 +2,10 @@ module.exports = {
   async rewrites() {
     return [
       {
+        source: '/issues',
+        destination: '/',
+      },
+      {
         source: '/issues/:issue_id/opinions',
         destination: '/opinions',
       },
