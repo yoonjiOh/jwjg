@@ -4,6 +4,11 @@ import { gql, useQuery } from '@apollo/client';
 import Link from 'next/link';
 import _ from 'lodash';
 import Layout from '../components/Layout';
+import {
+  useAuthUser,
+  withAuthUser,
+  withAuthUserTokenSSR,
+} from 'next-firebase-auth'
 
 const GET_ISSUES_AND_OPINIONS = gql`
   query {
@@ -37,6 +42,8 @@ const Main = () => {
       return i;
     })
     .filter(i => i.id !== hot_issue.id);
+
+  const AuthUser = useAuthUser()
   return (
     <Layout title={'MAIN'}>
       <main className={s.main}>
