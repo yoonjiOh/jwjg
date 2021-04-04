@@ -6,6 +6,8 @@ import { gql, useMutation, useQuery } from '@apollo/client';
 import { withApollo } from '../../apollo/client';
 
 import Layout from '../../components/Layout';
+import FloatingNewOpinionBtn from '../../components/opinion/FloatingNewOpinionBtn';
+
 import Link from 'next/link';
 import _ from 'lodash';
 
@@ -259,6 +261,7 @@ const Issue = () => {
           </div>
         </div>
       </main>
+      <FloatingNewOpinionBtn />
     </Layout>
   );
 };
