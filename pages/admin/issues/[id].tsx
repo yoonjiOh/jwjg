@@ -156,7 +156,7 @@ const IssueDetail = () => {
   };
 
   return (
-    <Layout title={'MAIN'}>
+    <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }} >
       <main className={common_style.main}>
         <button
           className={style.btn_submit}

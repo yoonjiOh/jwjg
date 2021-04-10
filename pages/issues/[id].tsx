@@ -127,7 +127,7 @@ const Issue = () => {
     _.debounce(func, 250);
   };
   return (
-    <Layout title={'개별 이슈'}>
+    <Layout title={'개별 이슈'} headerInfo={{ headerType: 'common' }}>
       <main className={s.main}>
         <div className={s.image}>
           <img src={issue.imageUrl} />
@@ -261,7 +261,11 @@ const Issue = () => {
           </div>
         </div>
       </main>
-      <FloatingNewOpinionBtn />
+      <FloatingNewOpinionBtn
+        userId={1}
+        issueId={issue_id}
+        stancesId={1}
+      />
     </Layout>
   );
 };

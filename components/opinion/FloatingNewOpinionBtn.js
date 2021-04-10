@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 const link_style = {
   marginRight: 15,
@@ -16,15 +16,23 @@ const icon_style = {
   cursor: 'pointer',
 }
 
-const FloatingNewOpinionBtn = () => (
-  <div style={footer_style}>
-    <Link href="/opinions/new">
-      <img style={icon_style}
-        src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/addPostBtn.png"
-        alt="add post button"
+const FloatingNewOpinionBtn = ({ userId, issueId, stancesId }) => {
+  const router = useRouter();
+
+  return (
+    <div style={footer_style}>
+    <img style={icon_style}
+      src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/addPostBtn.png"
+      alt="add post button"
+        onClick={() => {
+          router.push({
+            pathname: '/opinions/new',
+            query: { userId, issueId, stancesId },
+          })
+        }}
       />
-    </Link>
   </div>
-);
+  )
+};
 
 export default FloatingNewOpinionBtn;

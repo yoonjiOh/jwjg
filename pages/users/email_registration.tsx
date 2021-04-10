@@ -31,7 +31,7 @@ function EmailRegistration() {
 
     }
 
-    return <Layout>
+    return <Layout headerInfo={{ headerType: 'editMode' }}>
         <form onSubmit={handleSubmit}>
             <label>
                 email

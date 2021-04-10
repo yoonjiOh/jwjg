@@ -32,7 +32,7 @@ class LoginForm extends React.Component {
 
   render() {
     return (
-      <Layout title={'MAIN'}>
+      <Layout title={'Registration'} headerInfo={{ headerType: 'editMode' }}>
         <main className={common_style.main}>
           <form onSubmit={this.handleSubmit}>
             <label className={style.label_default}>

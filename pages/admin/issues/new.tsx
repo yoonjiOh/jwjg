@@ -255,7 +255,7 @@ const NewIssue = () => {
   if (error) return `Error! ${error.message}`;
 
   return (
-    <Layout title={'MAIN'}>
+    <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }}>
       <main className={common_style.main}>
         <div className={style.button_wrapper}>
           <button className={style.btn_submit} onClick={handleSubmit}>

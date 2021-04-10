@@ -1,15 +1,11 @@
 import Head from 'next/head';
 import s from './Layout.module.css';
-import Link from 'next/link';
-import Header from './Header';
-import {
-  useAuthUser,
-  withAuthUser,
-  withAuthUserTokenSSR,
-} from 'next-firebase-auth'
+import CommonHeader from './CommonHeader';
+import EditModeHeader from './EditModeHeader';
 
-const Layout = ({ title, children }) => {
-  const AuthUser = useAuthUser()
+const Layout = ({ title, headerInfo, children }) => {
+  const isCommonHeader = headerInfo.headerType === 'common';
+  const isEditModeHeader = headerInfo.headerType === 'editMode';
 
   return (
     <>
@@ -17,28 +13,12 @@ const Layout = ({ title, children }) => {
         <title>{title}</title>
       </Head>
       <div className={s.container}>
-        <header className={s.header}>
-          <h1 className={s.logo}>
-            <Link href="/">JWJG</Link>
-          </h1>
-          <nav className={s.nav}>
-            <Header email={AuthUser.email} signOut={AuthUser.signOut}></Header>
-          </nav>
-          {/* <nav className={s.nav}>
-            <ol>
-              <li className={s.menuItem}>
-                <Link href="/users/profile">프로필</Link>
-              </li>
-              <li className={s.menuItem}>
-                <Link href="/issue">이슈 관리</Link>
-              </li>
-            </ol>
-          </nav> */}
-        </header>
+        {isCommonHeader && <CommonHeader />}
+        {isEditModeHeader && <EditModeHeader subTitle={headerInfo.subTitle} action={headerInfo.action} />}
         {children}
       </div>
     </>
   );
 };
 
-export default withAuthUser()(Layout)
+export default Layout;

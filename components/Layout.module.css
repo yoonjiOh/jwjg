@@ -21,3 +21,9 @@
   margin: 5px 10px 0 0;
   z-index: 100;
 }
+.subTitle {
+  font-weight: 800;
+}
+.headerGoBackBtn {
+  cursor: pointer;
+}

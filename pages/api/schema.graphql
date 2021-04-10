@@ -11,6 +11,15 @@ type Users {
   opinionComments: [OpinionComments]
 }
 
+type Opinion {
+  id: Int
+  content: String
+  createdAt: DateTime
+  usersId: Int
+  issuesId: Int
+  stancesId: Int
+}
+
 type UserStances {
   usersId: Int
   issuesId: Int
@@ -144,6 +153,7 @@ type Mutation {
   signup(email: String!, password: String!, name: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload
   singleUpload(file: Upload!): UploadedFileResponse!
+  createOpinion(content: String, usersId: Int!, issuesId: Int!, stancesId: Int!): Opinion
 }
 
 scalar DateTime
