@@ -58,7 +58,7 @@ const Opinions = () => {
   if (error) return `Error! ${error.message}`;
   const opinions = data.opinionsWithIssuesId;
   return (
-    <Layout title={'코멘트'}>
+    <Layout title={'코멘트'} headerInfo={{ headerType: 'common' }}>
       <main className={s.main}>
         {opinions.map(opinion => (
           <div key={opinion.id}>

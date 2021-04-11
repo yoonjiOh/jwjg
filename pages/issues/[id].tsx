@@ -6,6 +6,8 @@ import { gql, useMutation, useQuery } from '@apollo/client';
 import { withApollo } from '../../apollo/client';
 
 import Layout from '../../components/Layout';
+import FloatingNewOpinionBtn from '../../components/opinion/FloatingNewOpinionBtn';
+
 import Link from 'next/link';
 import _ from 'lodash';
 
@@ -125,7 +127,7 @@ const Issue = () => {
     _.debounce(func, 250);
   };
   return (
-    <Layout title={'개별 이슈'}>
+    <Layout title={'개별 이슈'} headerInfo={{ headerType: 'common' }}>
       <main className={s.main}>
         <div className={s.image}>
           <img src={issue.imageUrl} />
@@ -259,6 +261,11 @@ const Issue = () => {
           </div>
         </div>
       </main>
+      <FloatingNewOpinionBtn
+        userId={1}
+        issueId={issue_id}
+        stancesId={1}
+      />
     </Layout>
   );
 };

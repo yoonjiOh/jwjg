@@ -138,3 +138,31 @@
 .opinionNext {
   @include nextButton;
 }
+.stanceNoti {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 20px;
+  padding: 10px 20px;
+  border-bottom: 1px solid #E5E5E5;
+}
+.opinionInput {
+  width: 100%;
+  border: none;
+  padding: 10px;
+  font-size: 13px;
+  height: 700px;
+}
+.opinionInput:focus {
+  outline: none;
+}
+.registerOpinionBtn {
+  background: none;
+  border: none;
+  color: #4494FF;
+
+  &.disabled {
+    color:#C8C8C8;
+    pointer-events: none;
+  }
+}
+

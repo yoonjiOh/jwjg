@@ -22,7 +22,7 @@ const IssueList = () => {
   if (error) return `Error! ${error.message}`;
 
   return (
-    <Layout title={'MAIN'}>
+    <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }}>
       <main className={common_style.main}>
         <button className={style.btn_add_issue}>
           <Link href={`/admin/issues/new`}>새 이슈 만들기</Link>

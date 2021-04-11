@@ -45,7 +45,7 @@ const Main = () => {
 
   const AuthUser = useAuthUser()
   return (
-    <Layout title={'MAIN'}>
+    <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }}>
       <main className={s.main}>
         <div className={s.issueWrap}>
           <h2 className={s.issue}>🔥 지금 핫한 이슈</h2>

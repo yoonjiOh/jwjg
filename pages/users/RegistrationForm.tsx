@@ -30,7 +30,7 @@ class LoginForm extends React.Component {
 
     render() {
         return (
-            <Layout title={'MAIN'}>
+            <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }}>
                 <main className={common_style.main}>
                     <div>
                         <FirebaseAuth />

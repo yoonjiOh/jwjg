@@ -6,7 +6,7 @@ const config_dev = {
 };
 
 if (process.env.NODE_ENV === 'production') {
-  mudule.exports = config;
+  module.exports = config;
 } else {
   module.exports = config_dev;
 }
