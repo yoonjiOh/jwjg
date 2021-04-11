@@ -5,13 +5,12 @@ module.exports = {
     node: true,
   },
   extends: [
-    'plugin:@typescript-eslint/eslint-recommended',
+    'eslint:recommended',
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
     'plugin:prettier/recommended',
     'prettier',
   ],
-  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
@@ -19,7 +18,7 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: 'module',
   },
-  plugins: ['react', '@typescript-eslint', 'react-hooks', 'prettier'],
+  plugins: ['react', 'react-hooks', 'prettier'],
   rules: {
     'prettier/prettier': ['error', { singleQuote: true, parser: 'flow' }],
     'react/react-in-jsx-scope': 0,
@@ -35,4 +34,18 @@ module.exports = {
       version: 'detect',
     },
   },
+  overrides: [
+    {
+      files: ['*.ts', '*.tsx'],
+      extends: [
+        'plugin:@typescript-eslint/eslint-recommended',
+        'plugin:react/recommended',
+        'plugin:react-hooks/recommended',
+        'plugin:prettier/recommended',
+        'prettier',
+      ],
+      plugins: ['@typescript-eslint', 'react', 'react-hooks', 'prettier'],
+      parser: '@typescript-eslint/parser',
+    },
+  ],
 };
