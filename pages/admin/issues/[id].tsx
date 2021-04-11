@@ -1,7 +1,6 @@
 import { useRouter } from 'next/router';
 import React, { useReducer, useEffect } from 'react';
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { withApollo } from '../../../apollo/client';
 import _ from 'lodash';
 import Layout from '../../../components/Layout';
 import common_style from '../../index.module.css';
@@ -156,7 +155,7 @@ const IssueDetail = () => {
   };
 
   return (
-    <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }} >
+    <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }}>
       <main className={common_style.main}>
         <button
           className={style.btn_submit}
@@ -214,4 +213,4 @@ const IssueDetail = () => {
   );
 };
 
-export default withApollo(IssueDetail, { ssr: true });
+export default IssueDetail;

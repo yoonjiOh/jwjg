@@ -1,14 +1,11 @@
+import React from 'react';
 import s from './index.module.css';
-import { withApollo } from '../apollo/client';
+import { initializeApollo } from '../apollo/apolloClient';
 import { gql, useQuery } from '@apollo/client';
 import Link from 'next/link';
 import _ from 'lodash';
 import Layout from '../components/Layout';
-import {
-  useAuthUser,
-  withAuthUser,
-  withAuthUserTokenSSR,
-} from 'next-firebase-auth'
+import { useAuthUser, withAuthUser, withAuthUserTokenSSR } from 'next-firebase-auth';
 
 const GET_ISSUES_AND_OPINIONS = gql`
   query {
@@ -29,21 +26,32 @@ const GET_ISSUES_AND_OPINIONS = gql`
   }
 `;
 
-const Main = () => {
-  const { loading, error, data } = useQuery(GET_ISSUES_AND_OPINIONS);
-  if (loading) return 'Loading...';
-  if (error) return `Error! ${error.message}`;
-  const { issues } = data;
+export const getServerSideProps = async _context => {
+  const apolloClient = initializeApollo(null);
+  const { data } = await apolloClient.query({
+    query: GET_ISSUES_AND_OPINIONS,
+  });
+
+  return {
+    props: {
+      data: data,
+    },
+  };
+};
+
+const Main = props => {
+  const { issues } = props.data;
   const hot_issue = _.maxBy(issues, i => i.opinions.length);
   const other_issues = issues
     .map(i => {
-      i.imageUrl = 'https://image.news1.kr/system/photos/2020/1/7/3998644/article.jpg';
-      i.opinions = i.opinions.slice(0, 2);
-      return i;
+      const new_item = { ...i };
+      new_item.imageUrl = 'https://image.news1.kr/system/photos/2020/1/7/3998644/article.jpg';
+      new_item.opinions = i.opinions.slice(0, 2);
+      return new_item;
     })
     .filter(i => i.id !== hot_issue.id);
 
-  const AuthUser = useAuthUser()
+  const AuthUser = useAuthUser();
   return (
     <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }}>
       <main className={s.main}>
@@ -130,4 +138,4 @@ const Main = () => {
   );
 };
 
-export default withApollo(Main);
+export default Main;

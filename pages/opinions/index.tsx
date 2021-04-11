@@ -1,5 +1,5 @@
 import React from 'react';
-import { withApollo } from '../../apollo/client';
+import { initializeApollo } from '../../apollo/apolloClient';
 import { gql, useQuery } from '@apollo/client';
 import Layout from '../../components/Layout';
 import { useRouter } from 'next/router';
@@ -48,6 +48,20 @@ const GET_OPINION = gql`
   }
 `;
 
+export const getServerSideProps = async context => {
+  const apolloClient = initializeApollo(null);
+  const issue_id = context.query.issue_id;
+  const { data } = await apolloClient.query({
+    query: GET_OPINION,
+    variables: { id: parseInt(issue_id) },
+  });
+  return {
+    props: {
+      data: data,
+    },
+  };
+};
+
 const Opinions = () => {
   const router = useRouter();
   const issue_id = Number(router.query.issue_id);
@@ -76,4 +90,4 @@ const Opinions = () => {
     </Layout>
   );
 };
-export default withApollo(Opinions);
+export default Opinions;
