@@ -3,7 +3,7 @@ import s from './[id].module.scss';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { withApollo } from '../../apollo/client';
+import { initializeApollo } from '../../apollo/apolloClient';
 
 import Layout from '../../components/Layout';
 import FloatingNewOpinionBtn from '../../components/opinion/FloatingNewOpinionBtn';
@@ -66,6 +66,20 @@ const GET_ISSUE = gql`
   }
 `;
 
+export const getServerSideProps = async context => {
+  const apolloClient = initializeApollo(null);
+  const { id } = context.query;
+  const { data } = await apolloClient.query({
+    query: GET_ISSUE,
+    variables: { id: parseInt(id) },
+  });
+  return {
+    props: {
+      data: data,
+    },
+  };
+};
+
 const CREATE_USER_STANCE = gql`
   mutation createUserStance($usersId: Int, $issuesId: Int, $stancesId: Int) {
     createUserStance(usersId: $usersId, issuesId: $issuesId, stancesId: $stancesId) {
@@ -76,7 +90,8 @@ const CREATE_USER_STANCE = gql`
   }
 `;
 
-const Issue = () => {
+const Issue = props => {
+  console.log('props ', props);
   const router = useRouter();
   const issue_id = Number(router.query.id);
   const { loading, error, data } = useQuery(GET_ISSUE, {
@@ -261,13 +276,9 @@ const Issue = () => {
           </div>
         </div>
       </main>
-      <FloatingNewOpinionBtn
-        userId={1}
-        issueId={issue_id}
-        stancesId={1}
-      />
+      <FloatingNewOpinionBtn userId={1} issueId={issue_id} stancesId={1} />
     </Layout>
   );
 };
 
-export default withApollo(Issue);
+export default Issue;

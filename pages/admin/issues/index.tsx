@@ -1,5 +1,4 @@
 import React from 'react';
-import { withApollo } from '../../../apollo/client';
 import { gql, useQuery } from '@apollo/client';
 import Link from 'next/link';
 import Layout from '../../../components/Layout';
@@ -42,4 +41,4 @@ const IssueList = () => {
   );
 };
 
-export default withApollo(IssueList);
+export default IssueList;
