@@ -1,4 +1,4 @@
-type Users {
+type User {
   id: ID!
   firebaseUID: String
   name: String
@@ -7,8 +7,14 @@ type Users {
   isAdmin: Int
   createdAt: DateTime
   updatedAt: DateTime
-  userStance(issuesId: Int): UserStances
-  opinionComments: [OpinionComments]
+  userStance(issuesId: Int): UserStance
+  opinionComments: [OpinionComment]
+}
+
+type UserStance {
+  usersId: Int
+  issuesId: Int
+  stancesId: Int
 }
 
 type Opinion {
@@ -18,50 +24,35 @@ type Opinion {
   usersId: Int
   issuesId: Int
   stancesId: Int
+  user: User
+  stance: Stance
+  opinionComments: [OpinionComment]
+  opinionReacts: [OpinionReact]
 }
 
-type UserStances {
-  usersId: Int
-  issuesId: Int
-  stancesId: Int
-}
-
-type Opinions {
-  id: Int
-  content: String
-  createdAt: DateTime
-  usersId: Int
-  issuesId: Int
-  stancesId: Int
-  user: Users
-  stance: Stances
-  opinionComments: [OpinionComments]
-  opinionReacts: [OpinionReacts]
-}
-
-type OpinionComments {
+type OpinionComment {
   id: Int
   content: String
   createdAt: DateTime
   usersId: Int
   opinionsId: Int
   stancesId: Int
-  opinionCommentReacts: [OpinionCommentReacts]
-  user: Users
+  opinionCommentReacts: [OpinionCommentReact]
+  user: User
 }
 
-type OpinionCommentReacts {
+type OpinionCommentReact {
   like: Int
   usersId: Int
-  user: Users
+  user: User
 }
 
-type OpinionReacts {
+type OpinionReact {
   like: Int
   usersId: Int
 }
 
-type Issues {
+type Issue {
   id: Int
   title: String!
   content: String!
@@ -70,34 +61,34 @@ type Issues {
   createdAt: DateTime
   updatedAt: DateTime
   # TODO(jurampark): adds user field
-  opinions: [Opinions]
-  issueHashTags: [IssueHashTags]
-  stances: [Stances]
-  userStances: [UserStances]
+  opinions: [Opinion]
+  issueHashTags: [IssueHashTag]
+  stances: [Stance]
+  userStances: [UserStance]
 }
 
-type Stances {
+type Stance {
   id: Int
   title: String
   orderNum: Int
   issuesId: Int
-  userStances: [UserStances]
+  userStances: [UserStance]
 }
 
-type IssueHashTags {
+type IssueHashTag {
   issuesId: Int
   hashTagsId: Int
-  hashTags: [HashTags]
+  hashTags: [HashTag]
 }
 
-type HashTags {
+type HashTag {
   id: Int
   content: String
 }
 
 type AuthPayload {
   token: String
-  user: Users
+  user: User
 }
 
 # bulk insert 쿼리의 return 이 count 임
@@ -130,26 +121,32 @@ type UploadedFileResponse {
 }
 
 type Query {
-  users: [Users]
-  user(id: Int!): Users
-  issue(id: Int!): Issues
-  issues(id: Int): [Issues]
-  opinions(id: Int): [Opinions]
-  opinionsWithIssuesId(issuesId: Int): [Opinions]
-  stances(id: Int): [Stances]
-  stancesByIssueId(issuesId: Int): [Stances]
-  opinionComments(id: Int): [OpinionComments]
-  opinionComment(id: Int!): OpinionComments
-  issueHashTags(id: Int): [IssueHashTags]
-  hashTags(id: Int): [HashTags]
+  users: [User]
+  user(id: Int!): User
+  issue(id: Int!): Issue
+  issues(id: Int): [Issue]
+  opinions(id: Int): [Opinion]
+  opinionsWithIssuesId(issuesId: Int): [Opinion]
+  stances(id: Int): [Stance]
+  stancesByIssueId(issuesId: Int): [Stance]
+  opinionComments(id: Int): [OpinionComment]
+  opinionComment(id: Int!): OpinionComment
+  issueHashTags(id: Int): [IssueHashTag]
+  hashTags(id: Int): [HashTag]
 }
 
 type Mutation {
-  createIssue(title: String, content: String, imageUrl: String, option_list_json: String): Issues!
-  updateIssue(id: Int!, title: String, content: String, imageUrl: String, option_list_json: String): Issues!
+  createIssue(title: String, content: String, imageUrl: String, option_list_json: String): Issue!
+  updateIssue(
+    id: Int!
+    title: String
+    content: String
+    imageUrl: String
+    option_list_json: String
+  ): Issue!
   createTagsByIssue(data: [IssueHashTagInput]): bulkInsertCount
   createStancesByIssue(data: [IssueStancesInput]): bulkInsertCount
-  createUserStance(usersId: Int, issuesId: Int, stancesId: Int): UserStances
+  createUserStance(usersId: Int, issuesId: Int, stancesId: Int): UserStance
   signup(email: String!, password: String!, name: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload
   singleUpload(file: Upload!): UploadedFileResponse!
