@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import { withApollo } from '../../apollo/client';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import Layout from '../../components/Layout';
+import { useAuth } from '../users/lib/users';
 import { useRouter } from 'next/router';
 import config from '../../config';
-
-
 import s from './index.module.scss';
 
 
@@ -36,6 +35,9 @@ const New = () => {
 
   const { data } = useQuery(GET_STANCE, { variables: { id: Number(stancesId) } });
   const stanceTitle = data && data.stances[0].title;
+
+  const auth = useAuth();
+  console.log('New Opinion', auth.user)
 
   const handleChange = (e) => {
     setOpinionBody(e.target.value)
