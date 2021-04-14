@@ -34,7 +34,8 @@ const Main = () => {
   if (loading) return 'Loading...';
   if (error) return `Error! ${error.message}`;
   const { issues } = data;
-  const hot_issue = _.maxBy(issues, i => i.opinions.length);
+  console.log('issues', issues)
+  const hot_issue = _.maxBy(issues, i => i.opinions.length) || {};
   const other_issues = issues
     .map(i => {
       i.imageUrl = 'https://image.news1.kr/system/photos/2020/1/7/3998644/article.jpg';
