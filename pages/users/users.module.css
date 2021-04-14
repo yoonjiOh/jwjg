@@ -2,32 +2,72 @@
     display: inline-block;
     margin: 10px;
 }
-.btn_active {
+.btnActive {
     display: block;
-    margin: 0 auto;
     height: 40px;
-    background: #1890ff;
-    border: none;
-    color: #fff;
-    border-radius: 40px;
+    background: #fff;
+    border: 1px solid #4494FF;
+    color: #4494FF;
+    border-radius: 6px;
     font-size: 16px;
     padding: 6px 20px;
     cursor: pointer;
-    width: 200px;
-    margin: 10px;
+    width: 320px;
+    margin-top: 20px;
 }
 
-.btn_default {
+.btnLink {
     display: block;
-    margin: 0 auto;
     height: 40px;
-    background: #445463;
+    background: #fff;
     border: none;
-    color: #fff;
-    border-radius: 40px;
+    color: #4494FF;
+    font-size: 13px;
+    padding: 6px 20px;
+    cursor: pointer;
+    width: 320px;
+}
+.btnDefault {
+    display: block;
+    height: 40px;
+    background: #fff;
+    border: 1px solid #E5E5E5;
+    color: #333333;
+    border-radius: 6px;
     font-size: 16px;
     padding: 6px 20px;
     cursor: pointer;
-    width: 200px;
-    margin: 10px;
+    width: 320px;
+    margin-top: 20px;
+}
+.btnFacebook {
+    display: block;
+    height: 40px;
+    background: #2174EE;
+    border: 1px solid #E5E5E5;
+    color: #FFF;
+    border-radius: 6px;
+    font-size: 16px;
+    padding: 6px 20px;
+    cursor: pointer;
+    width: 320px;
+    margin-top: 20px;
+}
+.greetingWrapper {
+    height: 150px;
+    padding: 10px;
+    text-align: center;
+}
+.formWrapper {
+    padding: 20px;
+}
+.inputForm {
+    display: block;
+    border: 0;
+    border-bottom: 1px solid #C4C4C4;
+    height: 30px;
+    width: 320px;
+}
+.inputForm:focus {
+    outline: none;
 }
