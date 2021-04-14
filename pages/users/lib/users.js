@@ -1,5 +1,85 @@
+import React, { useState, useEffect, useContext, createContext } from "react";
 import { prisma } from ".prisma/client";
 import firebase from "firebase/app";
+
+const authContext = createContext();
+
+export function ProvideAuth({ children }) {
+    const auth = useProvideAuth();
+    return <authContext.Provider value={auth}>{children}</authContext.Provider>;
+}
+
+export const useAuth = () => {
+    return useContext(authContext);
+};
+
+function useProvideAuth() {
+    const [user, setUser] = useState(null);
+
+    const doEmailSignup = (email, password) => {
+        return firebase
+            .auth()
+            .createUserWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+                var user = userCredential.user;
+                registerFirebaseUser(user);
+                setUser(user);
+                return user;
+            })
+            .catch((error) => {
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                console.log(errorCode);
+                console.log(errorMessage);
+    
+                if (errorCode == 'auth/email-already-in-use') {
+                    doEmailLogin(email, password);
+                }
+            });
+    }
+
+    const doEmailLogin = (email, password) => {
+        return firebase
+            .auth()
+            .signInWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+                var user = userCredential.user;
+                registerFirebaseUser(user);
+                setUser(user);
+                return user;
+            })
+            .catch((error) => {
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                console.log(errorCode);
+                console.log(errorMessage);
+    
+                if (errorCode == 'auth/wrong-password') {
+                    alert('wrong password!');
+                }
+            });
+    }
+
+
+    useEffect(() => {
+        const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                console.log('hey ho', user);
+                setUser(user);
+            } else {
+                setUser(false);
+            }
+        })
+
+        return () => unsubscribe();
+    }, [])
+
+    return {
+        user,
+        doEmailSignup,
+        doEmailLogin,
+    }
+}
 
 function registerFirebaseUser(firebaseUser) {
     // Checks if user already exists.
@@ -17,46 +97,6 @@ function registerFirebaseUser(firebaseUser) {
     // }
 }
 
-export function doEmailSignup(email, password) {
-    firebase.auth().createUserWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            // Signed in 
-            var user = userCredential.user;
-            registerFirebaseUser(user);
-            console.log(user);
-            // ...
-        })
-        .catch((error) => {
-            var errorCode = error.code;
-            var errorMessage = error.message;
-            console.log(errorCode);
-            console.log(errorMessage);
-
-            if (errorCode == 'auth/email-already-in-use') {
-                doEmailLogin(email, password);
-            }
-        });
-}
-export function doEmailLogin(email, password) {
-    firebase.auth().signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            // Signed in
-            var user = userCredential.user;
-            console.log(user);
-            registerFirebaseUser(user);
-        })
-        .catch((error) => {
-            var errorCode = error.code;
-            var errorMessage = error.message;
-            console.log(errorCode);
-            console.log(errorMessage);
-
-            if (errorCode == 'auth/wrong-password') {
-                alert('wrong password!');
-            }
-
-        });
-}
 
 export function startFacebookSigninFlow() {
     var provider = new firebase.auth.FacebookAuthProvider();

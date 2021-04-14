@@ -1,5 +1,4 @@
 import React, { useReducer, useEffect } from 'react';
-import { withApollo } from '../../../apollo/client';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import Select from 'react-select';
@@ -322,4 +321,4 @@ const NewIssue = () => {
   );
 };
 
-export default withApollo(NewIssue, { ssr: true });
+export default NewIssue;
