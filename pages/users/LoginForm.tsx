@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Layout from '../../components/Layout';
 import common_style from '../index.module.css';
-import style from './users.module.css';
+import s from './users.module.css';
 import Link from 'next/link';
 import RegistrationWidget from './RegistrationWidget'
 import { useAuth } from './lib/users';
@@ -29,25 +29,33 @@ const LoginForm = () => {
   }
 
   return (
-    <Layout title={'Registration'} headerInfo={{ headerType: 'editMode' }}>
+    <Layout title={'Registration'} headerInfo={{ headerType: 'common' }}>
       <main className={common_style.main}>
-        <form onSubmit={handleSubmit}>
-          <label className={style.label_default}>
-            이메일
-          <input type="text" value={email} onChange={handleEmailChange} />
-          </label>
-          <label className={style.label_default}>
-            비밀번호
-          <input type="password" value={password} onChange={handlePasswordChange} />
-          </label>
-          <input type="submit" value="로그인" className={style.btn_active} />
+        <div className={s.greetingWrapper}>
+          <h3>좌우지간</h3>
+          <p>우리 이제 화해해요😫</p>
+          <p>싸우기 싫은 사회 SNS, 좌우지간</p>
+        </div>
+        <form onSubmit={handleSubmit} className={s.formWrapper}>
+          <input type="text" 
+            value={email}
+            onChange={handleEmailChange}
+            placeholder="이메일"
+            className={s.inputForm}
+          />
+          <input type="password"
+            value={password}
+            onChange={handlePasswordChange}
+            placeholder="비밀번호"
+            className={s.inputForm}
+          />
+          <input type="submit" value="로그인" className={s.btnActive} />
+          <button className={s.btnLink}>
+            <Link href={`/`}>비밀번호 찾기</Link>
+          </button>
         </form>
 
-        <button className={style.btn_default}>
-          <Link href={`/`}>비밀번호 찾기</Link>
-        </button>
-
-        <div>
+        <div className={s.formWrapper}>
           <RegistrationWidget />
         </div>
 
