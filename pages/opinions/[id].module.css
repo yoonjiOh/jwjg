@@ -1,5 +1,6 @@
 .main {
   background-color: #fff;
+  height: 100vh;
 }
 .image {
   height: 140px;
@@ -64,4 +65,29 @@
 .responseSum,
 .commentSum {
   margin: 0 0 8px 0;
+}
+.opinionWrapper {
+  padding: 20px;
+  height: 320px;
+}
+.commentInputWrapper {
+  position: fixed;
+  bottom: 0;
+  width: 360px;
+  background: #F3F3F3;
+  padding: 13px;
+}
+.commentInputWrapper textarea {
+  width: 280px;
+  border: none;
+  background: #F3F3F3;
+  color: #C4C4C4;
+}
+.commentInputWrapper textarea:focus {
+  outline: none;
+}
+.commentInputWrapper button {
+  color: #4494FF;
+  border: none;
+  background: none;
 }

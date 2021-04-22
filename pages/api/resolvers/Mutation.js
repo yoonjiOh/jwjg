@@ -142,6 +142,19 @@ async function createOpinion(parent, args, context) {
   return newOpinion;
 }
 
+async function createOpinionComment(parent, args, context) {
+  const newOpinionComment = await context.prisma.opinionComments.create({
+    data: {
+      content: args.content,
+      usersId: args.usersId,
+      opinionsId: args.opinionsId,
+      stancesId: args.stancesId,
+    },
+  });
+
+  return newOpinionComment;
+}
+
 export default {
   createIssue,
   updateIssue,
@@ -152,4 +165,5 @@ export default {
   login,
   singleUpload: s3Uploader.singleFileUploadResolver.bind(s3Uploader),
   createOpinion,
+  createOpinionComment,
 };

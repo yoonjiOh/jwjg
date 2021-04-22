@@ -21,18 +21,19 @@ const FloatingNewOpinionBtn = ({ userId, issueId, stancesId }) => {
 
   return (
     <div style={footer_style}>
-    <img style={icon_style}
-      src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/addPostBtn.png"
-      alt="add post button"
+      <img
+        style={icon_style}
+        src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/add_post_btn.svg"
+        alt="add post button"
         onClick={() => {
           router.push({
             pathname: '/opinions/new',
             query: { userId, issueId, stancesId },
-          })
+          });
         }}
       />
-  </div>
-  )
+    </div>
+  );
 };
 
 export default FloatingNewOpinionBtn;
