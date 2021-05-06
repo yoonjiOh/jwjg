@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { initializeApollo } from '../../apollo/apolloClient';
 import Layout from '../../components/Layout';
+import CommentBox from '../../components/CommentBox';
 
 import { useAuth } from '../users/lib/users';
 import { useRouter } from 'next/router';
 
 import common_style from './index.module.scss';
 import s from './[id].module.css';
+import util_s from '../../components/Utils.module.scss'
 import _ from 'lodash';
 
 const GET_DATA = gql`
@@ -15,6 +17,7 @@ const GET_DATA = gql`
     opinions(id: $id) {
       id
       content
+      stancesId
       opinionComments {
         id
         content
@@ -100,26 +103,35 @@ const Opinion = props => {
     <Layout title={'개별 오피니언 페이지'} headerInfo={{ headerType: 'common' }}>
       <main className={common_style.main}>
         <div className={s.opinionWrapper}>
+          <div className={util_s[`stanceMark-${opinion.stancesId}`]} />
+
           {/* <ProfileWidget /> 앞으로 이 컴포넌트를 통해 댓글, 오피니언 등의 작성자를 보여줄 때 재사용한다. */}
-          <div className={s.stancesWrapper}>🍇 윤석열 비판적 지지</div>
-          <div>{opinion.content}</div>
+          <div style={{ width: "100%", paddingLeft: '10px' }}>
+            <div className={s.stancesWrapper}>🍇 윤석열 비판적 지지</div>
+            <div>{opinion.content}</div>
+            <div className={s.likeWrapper}>
+              <img
+                src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
+                alt="좋아요 버튼"
+              />
+            </div>
+          </div>
         </div>
-        <div className={s.commentsWrapper}>
-          {
-            opinion.opinionComments.map((comment) => (
-              <div className={s.commentBox}>
-                {comment.content}
-              </div>
-            ))
-          }
-        </div>
-        <div className={s.commentInputWrapper}>
-          <textarea
-            onChange={handleChangeCommentInput}
-            value={opinionComment}
-            placeholder="댓글을 입력하세요.."
-          />
-          <button onClick={handleRegisterOpinionComment}>등록</button>
+        
+        <div className={s.commentWrapper}>
+          <div className={s.commentsWrapper}>
+            {opinion.opinionComments.map(comment => (
+              <CommentBox comment={comment} />
+            ))}
+          </div>
+          <div className={s.commentInputWrapper}>
+            <textarea
+              onChange={handleChangeCommentInput}
+              value={opinionComment}
+              placeholder="댓글을 입력하세요.."
+            />
+            <button onClick={handleRegisterOpinionComment}>등록</button>
+          </div>
         </div>
       </main>
     </Layout>
