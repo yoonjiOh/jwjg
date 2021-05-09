@@ -243,7 +243,14 @@ const Issue = props => {
           <div>
             <div>
               {issue.opinions.map(opinion => (
-                <div>
+                <div
+                  onClick={() => {
+                    router.push({
+                      pathname: '/opinions/[id]',
+                      query: { id: opinion.id },
+                    });
+                  }}
+                >
                   <section>
                     <h4>{opinion.stance.title}</h4>
                     <div>

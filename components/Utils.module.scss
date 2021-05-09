@@ -1,0 +1,81 @@
+
+@use "../styles/_variables" as *;
+$stance1: $apple;
+$stance2: $lemon;
+$stance3: $grape;
+$stance4: $melon;
+$stance5: $orange;
+
+
+.commentBox {
+  display: flex;
+  width: 360px;
+}
+.stanceMark-1 {
+  width: 4px;
+  left: 0px;
+  top: 0px;
+  background: $stance1;
+}
+.stanceMark-2 {
+  width: 4px;
+  left: 0px;
+  top: 0px;
+  background: $stance2;
+}
+.stanceMark-3 {
+  width: 4px;
+  left: 0px;
+  top: 0px;
+  background: $stance3;
+}
+.stanceMark-4 {
+  width: 4px;
+  left: 0px;
+  top: 0px;
+  background: $stance4;
+}
+.stanceMark-5 {
+  width: 4px;
+  left: 0px;
+  top: 0px;
+  background: $stance5;
+}
+.commentWrapper {
+  width: 100%;
+}
+.profileWrapper {
+  height: 15px;
+  display: flex;
+  padding: 10px;
+}
+.profilePlaceholder {
+  background: #F3F3F3;
+  width: 20px;
+  height: 20px;
+  border-radius: 50px;
+  margin-right: 10px;
+}
+.profileName {
+  font-weight: bold;
+  font-size: 12px;
+  line-height: 160%;
+  color: #777777;
+}
+.commentContentWrapper {
+  padding: 15px 20px 5px;
+  font-size: 12px;
+}
+.commentInputWrapper {
+  background: #F3F3F3;
+  padding: 13px;
+}
+.commentStance {
+  font-size: 14px;
+}
+.likeWrapper {
+  padding: 0 20px;
+  display: flex;
+  font-size: 12px;
+  color: #777777;
+}

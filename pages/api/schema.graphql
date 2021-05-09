@@ -151,6 +151,7 @@ type Mutation {
   login(email: String!, password: String!): AuthPayload
   singleUpload(file: Upload!): UploadedFileResponse!
   createOpinion(content: String, usersId: Int!, issuesId: Int!, stancesId: Int!): Opinion
+  createOpinionComment(content: String, usersId: Int!, opinionsId: Int!, stancesId: Int!): OpinionComment
 }
 
 scalar DateTime

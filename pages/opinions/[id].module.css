@@ -1,5 +1,6 @@
 .main {
   background-color: #fff;
+  height: 100vh;
 }
 .image {
   height: 140px;
@@ -64,4 +65,38 @@
 .responseSum,
 .commentSum {
   margin: 0 0 8px 0;
+}
+.opinionWrapper {
+  padding: 20px 20px 20px 0;
+  width: 360px;
+  height: 320px;
+  display: flex;
+}
+.commentInputWrapper {
+  background: #F3F3F3;
+  padding: 13px;
+}
+.commentWrapper {
+  position: fixed;
+  bottom: 0;
+  width: 360px;
+}
+.commentInputWrapper textarea {
+  width: 280px;
+  border: none;
+  background: #F3F3F3;
+}
+.commentWrapper textarea:focus {
+  outline: none;
+}
+.commentWrapper button {
+  color: #4494FF;
+  border: none;
+  background: none;
+}
+.likeWrapper {
+  padding: 0 20px;
+  display: flex;
+  font-size: 12px;
+  color: #777777;
 }
