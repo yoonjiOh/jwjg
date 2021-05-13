@@ -67,10 +67,17 @@
   margin: 0 0 8px 0;
 }
 .opinionWrapper {
-  padding: 20px 20px 20px 0;
+  padding-bottom: 20px;
   width: 360px;
   height: 320px;
   display: flex;
+}
+.opinionContent {
+  border: 1px solid #E5E5E5;
+  border-left: none;
+  border-right: none;
+  width: 100%;
+  padding: 0 10px;
 }
 .commentInputWrapper {
   background: #F3F3F3;
@@ -93,10 +100,27 @@
   color: #4494FF;
   border: none;
   background: none;
+  cursor: pointer;
 }
 .likeWrapper {
   padding: 0 20px;
   display: flex;
   font-size: 12px;
   color: #777777;
+}
+.actionsWrapper {
+  display: flex;
+  height: 40px;
+  font-size: 12px;
+  color: #777777;
+}
+.action {
+  width: 33%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.action span {
+  padding-left: 5px;
 }

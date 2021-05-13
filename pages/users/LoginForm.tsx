@@ -37,13 +37,15 @@ const LoginForm = () => {
           <p>싸우기 싫은 사회 SNS, 좌우지간</p>
         </div>
         <form onSubmit={handleSubmit} className={s.formWrapper}>
-          <input type="text" 
+          <input
+            type="text"
             value={email}
             onChange={handleEmailChange}
             placeholder="이메일"
             className={s.inputForm}
           />
-          <input type="password"
+          <input
+            type="password"
             value={password}
             onChange={handlePasswordChange}
             placeholder="비밀번호"
@@ -58,13 +60,6 @@ const LoginForm = () => {
         <div className={s.formWrapper}>
           <RegistrationWidget />
         </div>
-
-        {/* <button className={style.btn_default}>
-          <Link href={`/users/registration`}>이메일로 시작하기</Link>
-        </button>
-        <button className={style.btn_default}>
-          <Link href={`/`}>Facebook으로 시작하기</Link>
-        </button> */}
       </main>
     </Layout>
   );

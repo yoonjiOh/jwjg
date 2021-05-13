@@ -37,6 +37,7 @@ type OpinionComment {
   usersId: Int
   opinionsId: Int
   stancesId: Int
+  stance: Stance
   opinionCommentReacts: [OpinionCommentReact]
   user: User
 }
@@ -50,6 +51,7 @@ type OpinionCommentReact {
 type OpinionReact {
   like: Int
   usersId: Int
+  opinionsId: Int
 }
 
 type Issue {
@@ -136,7 +138,12 @@ type Query {
 }
 
 type Mutation {
-  createIssue(title: String, content: String, imageUrl: String, option_list_json: String): Issue!
+  createIssue(
+    title: String,
+    content: String,
+    imageUrl: String,
+    option_list_json: String
+  ): Issue!
   updateIssue(
     id: Int!
     title: String
@@ -152,6 +159,11 @@ type Mutation {
   singleUpload(file: Upload!): UploadedFileResponse!
   createOpinion(content: String, usersId: Int!, issuesId: Int!, stancesId: Int!): Opinion
   createOpinionComment(content: String, usersId: Int!, opinionsId: Int!, stancesId: Int!): OpinionComment
+  doLikeActionToOpinion(
+    usersId: Int!,
+    opinionsId: Int!,
+    like: Boolean!
+  ): OpinionReact
 }
 
 scalar DateTime
