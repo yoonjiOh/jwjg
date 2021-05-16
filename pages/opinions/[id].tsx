@@ -11,6 +11,8 @@ import common_style from './index.module.scss';
 import s from './[id].module.css';
 import util_s from '../../components/Utils.module.scss'
 import _ from 'lodash';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+
 
 const GET_DATA = gql`
   query opinions($id: Int!) {
@@ -24,12 +26,20 @@ const GET_DATA = gql`
         createdAt
         usersId
         stancesId
+        stance {
+          id
+          title
+        }
         user {
           id
           name
           intro
           profileImageUrl
         }
+      }
+      opinionReacts {
+        like
+        usersId
       }
     }
   }
@@ -69,16 +79,37 @@ const CREATE_OPINION_COMMENT = gql`
   }
 `;
 
+const DO_LIKE_ACTION_TO_OPINION = gql`
+  mutation doLikeActionToOpinion(
+    $usersId: Int!
+    $opinionsId: Int!
+    $like: Boolean!
+  ) {
+    doLikeActionToOpinion(
+      usersId: $usersId
+      opinionsId: $opinionsId
+      like: $like
+    ) {
+      usersId
+      opinionsId
+      like
+    }
+  }
+`;
+
 const Opinion = props => {
   console.log('Opinion props', props);
   const [opinionComment, setOpinionComment] = useState('');
   const [createOpinionComment] = useMutation(CREATE_OPINION_COMMENT);
+  const [doLikeActionToOpinion] = useMutation(DO_LIKE_ACTION_TO_OPINION);
 
   const opinion = _.head(props.data.opinions);
+  const myReact = opinion.opinionReacts.filter(react => react.usersId === 7);
+  const isLikedByMe = !_.isEmpty(myReact) && _.head(myReact).like;
 
   const router = useRouter();
+
   const { id: opinionId } = router.query;
-  console.log('router opinionId', opinionId);
 
   const handleChangeCommentInput = e => {
     setOpinionComment(e.target.value);
@@ -89,7 +120,7 @@ const Opinion = props => {
       await createOpinionComment({
         variables: {
           content: opinionComment,
-          usersId: 3, // 나중에
+          usersId: 7, // 나중에
           opinionsId: Number(opinionId),
           stancesId: 1, // 나중에
         },
@@ -97,8 +128,21 @@ const Opinion = props => {
     } catch (e) {
       console.error(e);
     }
-  };
+  }
 
+  const handleClickLike = async () => {
+    try {
+      await doLikeActionToOpinion({
+        variables: {
+          usersId: 7, //나중에
+          opinionsId: Number(opinionId),
+          like: isLikedByMe ? false : true
+        }
+      })
+    } catch (e) {
+      console.error(e);
+    }
+  }
   return (
     <Layout title={'개별 오피니언 페이지'} headerInfo={{ headerType: 'common' }}>
       <main className={common_style.main}>
@@ -106,7 +150,7 @@ const Opinion = props => {
           <div className={util_s[`stanceMark-${opinion.stancesId}`]} />
 
           {/* <ProfileWidget /> 앞으로 이 컴포넌트를 통해 댓글, 오피니언 등의 작성자를 보여줄 때 재사용한다. */}
-          <div style={{ width: "100%", paddingLeft: '10px' }}>
+          <div className={s.opinionContent}>
             <div className={s.stancesWrapper}>🍇 윤석열 비판적 지지</div>
             <div>{opinion.content}</div>
             <div className={s.likeWrapper}>
@@ -116,6 +160,33 @@ const Opinion = props => {
               />
             </div>
           </div>
+        </div>
+
+        <div className={s.actionsWrapper}>
+          <div className={s.action} onClick={handleClickLike}>
+            {isLikedByMe ? '벌써 눌렀음'
+                : <img
+                src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
+                alt="좋아요 버튼"
+              />
+              }
+          </div>
+          <div className={s.action}>
+            <img
+              src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/bubble.svg"
+              alt="댓글 달기 버튼"
+            />
+            <span>댓글 달기</span>
+          </div>
+          <CopyToClipboard text={`www.jwjg.co.kr/opinions/${opinionId}`}>
+            <div className={s.action}>
+              <img
+                src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/share.svg"
+                alt="공유하기 버튼"
+              />
+              <span>공유하기</span>
+            </div>
+          </CopyToClipboard>
         </div>
         
         <div className={s.commentWrapper}>

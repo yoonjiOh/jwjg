@@ -12,4 +12,10 @@ async function opinionCommentReacts(parent, args, context) {
   });
 }
 
-export default { user, opinionCommentReacts };
+async function stance(parent, _args, context) {
+  return await context.prisma.stances.findUnique({
+    where: { id: parent.stancesId },
+  });
+}
+
+export default { user, opinionCommentReacts, stance };

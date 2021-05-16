@@ -155,6 +155,25 @@ async function createOpinionComment(parent, args, context) {
   return newOpinionComment;
 }
 
+async function doLikeActionToOpinion(parent, args, context) {
+  const result = await context.prisma.opinionReacts.upsert({
+    select: {
+      usersId: args.usersId,
+      opinionsId: args.opinionsId,
+    },
+    update: {
+      like: args.like,
+    },
+    create: {
+      usersId: args.usersId,
+      opinionsId: args.opinionsId,
+      like: args.like,
+    },
+  });
+
+  return result;
+}
+
 export default {
   createIssue,
   updateIssue,
@@ -166,4 +185,5 @@ export default {
   singleUpload: s3Uploader.singleFileUploadResolver.bind(s3Uploader),
   createOpinion,
   createOpinionComment,
+  doLikeActionToOpinion,
 };

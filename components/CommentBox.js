@@ -1,7 +1,11 @@
 import s from './Utils.module.scss';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 
 const CommentBox = ({ comment }) => {
-  console.log('comment', comment);
+  const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
+
   return (
     <div className={s.commentBox} key={comment.id}>
       <div className={s[`stanceMark-${comment.stancesId}`]} />
@@ -9,9 +13,12 @@ const CommentBox = ({ comment }) => {
         <div className={s.profileWrapper}>
           <div className={s.profilePlaceholder} />
           <div className={s.profileName}>{comment.user.name}</div>
+          <div className={s.ago}>{dayjs(comment.createdAt).fromNow()}</div>
         </div>
         <div className={s.commentContentWrapper}>
-          <span className={s.commentStance}>🍋 추미애 비판적 지지</span>
+          <span className={s.commentStance}>
+            {fruitsForStanceTitle[comment.stancesId] + comment.stance.title}
+          </span>
           {' ' + comment.content}
         </div>
         <div className={s.likeWrapper}>
