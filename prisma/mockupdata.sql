@@ -4,8 +4,13 @@ INSERT INTO jwjg.Issues (id, title, content, imageUrl, isPublished, createdAt, u
 INSERT INTO jwjg.Issues (id, title, content, imageUrl, isPublished, createdAt, updatedAt) VALUES (3, '테스트 타이틀이 길면? 테스트 타이틀이 길면? 테스트 타이틀이 길면? 테스트 타이틀이 길면? ', '테스트 콘텐츠가 길면? 테스트 콘텐츠가 길면? 테스트 콘텐츠가 길면? 테스트 콘텐츠가 길면? 테스트 콘텐츠가 길면? 테스트 콘텐츠가 길면? 테스트 콘텐츠가 길면? 테스트 콘텐츠가 길면? 테스트 콘텐츠가 길면? 테스트 콘텐츠가 길면? 테스트 콘텐츠가 길면? 테스트 콘텐츠가 길면? 테스트 콘텐츠가 길면? ', 'https://post-phinf.pstatic.net/MjAyMTA1MTRfMjE0/MDAxNjIwOTc0NDI5MzUw.-JoFkznv5kovWIa_97d4Fl8qHNhKQAIUPOQX6LWMA6sg.hMy9ui0alSGaOoO50Q4LdUclkcLD0mC8a0mV67FQjDog.JPEG/IMG_2382.JPG?type=w1200', 0, '2021-05-15 06:46:17.212', '2021-05-15 06:46:17.212');
 
 --Users
-INSERT INTO jwjg.Users (id, firebaseUID, name, intro, profileImageUrl, createdAt, updatedAt, isAdmin, email) VALUES (7, 'SOYAjo3XZge9lTg4gC82qwRgior1', 'tester', 'tester intro', '''ㅇㅇ''', '2021-05-12 11:46:06.655', '2021-05-12 11:46:06.655', 0, 'test@test.com');
-INSERT INTO jwjg.Users (id, firebaseUID, name, intro, profileImageUrl, createdAt, updatedAt, isAdmin, email) VALUES (8, 'FWtqWrLaFmZnUuXYT2zy9RaY7Z72', 'tesyj', 'dd', 'dd', '2021-05-13 13:53:18.862', '2021-05-13 13:53:18.862', 0, 'testyj@gmail.com');
+INSERT INTO jwjg.Users (id, firebaseUID, name, intro, profileImageUrl, createdAt, updatedAt, isAdmin) VALUES (7, 'SOYAjo3XZge9lTg4gC82qwRgior1', 'tester', 'tester intro', '''ㅇㅇ''', '2021-05-12 11:46:06.655', '2021-05-12 11:46:06.655', 0);
+INSERT INTO jwjg.Users (id, firebaseUID, name, intro, profileImageUrl, createdAt, updatedAt, isAdmin) VALUES (8, 'FWtqWrLaFmZnUuXYT2zy9RaY7Z72', 'tesyj', 'dd', 'dd', '2021-05-13 13:53:18.862', '2021-05-13 13:53:18.862', 0);
+
+--Stances
+INSERT INTO jwjg.Stances (id, title, orderNum, issuesId) VALUES (1, '반대', 1, 1);
+INSERT INTO jwjg.Stances (id, title, orderNum, issuesId) VALUES (2, '중립', 2, 1);
+INSERT INTO jwjg.Stances (id, title, orderNum, issuesId) VALUES (3, '찬성', 3, 1);
 
 --Opinions
 INSERT INTO jwjg.Opinions (id, content, createdAt, usersId, issuesId, stancesId) VALUES (1, '이것은 opinion 의견 예시이다. 배구 스타 학폭 관련에 단 opinion 의견이다.', '2021-05-13 13:28:44.946', 7, 1, 1);
@@ -14,11 +19,6 @@ INSERT INTO jwjg.Opinions (id, content, createdAt, usersId, issuesId, stancesId)
 --OpinionReacts
 INSERT INTO jwjg.OpinionReacts (`like`, usersId, opinionsId) VALUES (1, 7, 1);
 INSERT INTO jwjg.OpinionReacts (`like`, usersId, opinionsId) VALUES (0, 8, 1);
-
---Stances
-INSERT INTO jwjg.Stances (id, title, orderNum, issuesId) VALUES (1, '반대', 1, 1);
-INSERT INTO jwjg.Stances (id, title, orderNum, issuesId) VALUES (2, '중립', 2, 1);
-INSERT INTO jwjg.Stances (id, title, orderNum, issuesId) VALUES (3, '찬성', 3, 1);
 
 --UserStances
 INSERT INTO jwjg.UserStances (usersId, issuesId, stancesId) VALUES (7, 1, 1);
