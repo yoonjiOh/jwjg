@@ -1,34 +1,18 @@
-import React, { useState } from 'react'
-import { withAuthUser, AuthAction } from 'next-firebase-auth'
+import React, { useState } from 'react';
+import { withAuthUser, AuthAction } from 'next-firebase-auth';
 import Layout from '../../components/Layout';
-import firebase from "firebase/app";
-import { useAuth } from './lib/users';
-
-const styles = {
-    content: {
-        padding: `8px 32px`,
-    },
-    textContainer: {
-        display: 'flex',
-        justifyContent: 'center',
-        margin: 16,
-    },
-}
+import { doEmailSignup } from './lib/users';
 
 function EmailRegistration() {
   const [email, setEmail] = useState('');
   const [pwd, setPwd] = useState('');
-
-  const auth = useAuth();
 
   const handleEmailChange = event => setEmail(event.target.value);
   const handlePasswordChange = event => setPwd(event.target.value);
 
   const handleSubmit = e => {
     e.preventDefault();
-    // alert('test');
-    // alert('A email/password was submitted: ' + email + '/' + pwd);
-    auth.doEmailSignup(email, pwd);
+    doEmailSignup(email, pwd);
   };
 
   return (
@@ -61,4 +45,8 @@ function EmailRegistration() {
   );
 }
 
-export default EmailRegistration;
+export default withAuthUser({
+  whenAuthed: AuthAction.REDIRECT_TO_APP,
+  whenUnauthedBeforeInit: AuthAction.RETURN_NULL,
+  whenUnauthedAfterInit: AuthAction.RENDER,
+})(EmailRegistration);
