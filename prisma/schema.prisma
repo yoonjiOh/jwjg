@@ -30,8 +30,8 @@ model Users {
 model Issues {
   id          Int      @id @default(autoincrement())
   title       String
-  content     String?
-  imageUrl    String?
+  content     String   @db.Text
+  imageUrl    String
   isPublished Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
@@ -89,7 +89,7 @@ model Opinions {
   user      Users    @relation(fields: [usersId], references: [id])
   issue     Issues   @relation(fields: [issuesId], references: [id])
   stance    Stances  @relation(fields: [stancesId], references: [id])
-  content   String
+  content   String   @db.Text
   createdAt DateTime @default(now())
 
   usersId   Int
@@ -105,7 +105,7 @@ model OpinionComments {
   user      Users    @relation(fields: [usersId], references: [id])
   opinion   Opinions @relation(fields: [opinionsId], references: [id])
   stance    Stances  @relation(fields: [stancesId], references: [id])
-  content   String
+  content   String   @db.Text
   createdAt DateTime @default(now())
 
   usersId    Int
