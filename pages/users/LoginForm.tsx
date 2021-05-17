@@ -4,29 +4,28 @@ import common_style from '../index.module.css';
 import s from './users.module.css';
 import Link from 'next/link';
 import RegistrationWidget from './RegistrationWidget'
-import { useAuth } from './lib/users';
+import { doEmailLogin } from './lib/users';
 
 const LoginForm = () => {
-  const auth = useAuth();
   const [state, setState] = useState({ email: '', password: '' });
   const { email, password } = state;
 
-  const handleEmailChange = (event) => {
+  const handleEmailChange = event => {
     setState(prevState => {
-      return { ...prevState, email: event.target.value }
+      return { ...prevState, email: event.target.value };
     });
-  }
+  };
 
-  const handlePasswordChange = (event) => {
+  const handlePasswordChange = event => {
     setState(prevState => {
-      return { ...prevState, password: event.target.value }
+      return { ...prevState, password: event.target.value };
     });
-  }
+  };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = event => {
     event.preventDefault();
-    auth.doEmailLogin(email, password);
-  }
+    doEmailLogin(email, password);
+  };
 
   return (
     <Layout title={'Registration'} headerInfo={{ headerType: 'common' }}>
@@ -63,6 +62,6 @@ const LoginForm = () => {
       </main>
     </Layout>
   );
-}
+};
 
 export default LoginForm;

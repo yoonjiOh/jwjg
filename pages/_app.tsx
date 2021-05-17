@@ -5,15 +5,15 @@ import { useApollo } from '../apollo/apolloClient';
 import type { AppProps } from 'next/app';
 
 initAuth();
-import { ProvideAuth } from './users/lib/users';
+// import { ProvideAuth } from './users/lib/users';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const apolloClient = useApollo(pageProps.initialApolloState);
   return (
     <ApolloProvider client={apolloClient}>
-      <ProvideAuth>
+      {/* <ProvideAuth> */}
         <Component {...pageProps} />
-      </ProvideAuth>
+      {/* </ProvideAuth> */}
     </ApolloProvider>
   );
 }
