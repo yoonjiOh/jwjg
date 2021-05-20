@@ -10,7 +10,7 @@ $stance5: $orange;
 .commentBox {
   display: flex;
   width: 360px;
-  border-top: 1px solid #E5E5E5;
+  border-bottom: 1px solid #E5E5E5;
 }
 .stanceMark-1 {
   width: 4px;
@@ -74,6 +74,9 @@ $stance5: $orange;
 }
 .commentStance {
   font-size: 14px;
+  font-weight: 700;
+  line-height: 19.5px;
+  margin-left: 10px;
 }
 .likeWrapper {
   padding: 0 20px;

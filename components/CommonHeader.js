@@ -9,19 +9,25 @@ const CommonHeader = () => {
     <header className={s.header}>
       <h1 className={s.logo}>
         <Link href="/">
-          <img src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/imgLogo.png"
+          <img
+            src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/img_logo.svg"
             alt="좌우지간 로고"
           />
         </Link>
       </h1>
-      { !AuthUser.email ?
-      ( <Link href="/users">
-        <span className={s.actionBtn}>로그인</span>
-      </Link> ) :
-      <button onClick={() => { AuthUser.signOut(); }}>
-        <span className={s.actionBtn}>로그아웃</span>
-      </button>
-      }
+      {!AuthUser.email ? (
+        <Link href="/users">
+          <span className={s.actionBtn}>로그인</span>
+        </Link>
+      ) : (
+        <button
+          onClick={() => {
+            AuthUser.signOut();
+          }}
+        >
+          <span className={s.actionBtn}>로그아웃</span>
+        </button>
+      )}
     </header>
   );
 };

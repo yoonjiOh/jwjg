@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { withAuthUser, AuthAction } from 'next-firebase-auth';
 import Layout from '../../components/Layout';
-import { doEmailSignup } from './lib/users';
+
+import { withAuthUser, AuthAction } from 'next-firebase-auth';
+import { doEmailSignup } from './lib/users.ts';
 
 function EmailRegistration() {
   const [email, setEmail] = useState('');
@@ -11,12 +12,26 @@ function EmailRegistration() {
   const handlePasswordChange = event => setPwd(event.target.value);
 
   const handleSubmit = e => {
+    console.log('handleSubmit', email, pwd);
     e.preventDefault();
     doEmailSignup(email, pwd);
   };
 
+  const headerInfo = {
+    headerType: 'editMode',
+    subTitle: '회원가입',
+    action: (
+      <button
+      // className={`${s.registerOpinionBtn} ${!opinionBody.length && s.disabled}`}
+      // onClick={handleRegisterOpinion}
+      >
+        다음
+      </button>
+    ),
+  };
+
   return (
-    <Layout headerInfo={{ headerType: 'editMode' }}>
+    <Layout title={'registration'} headerInfo={headerInfo}>
       <form onSubmit={handleSubmit}>
         <label>
           email

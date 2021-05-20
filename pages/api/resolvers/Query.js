@@ -8,7 +8,9 @@ async function user(parent, args, context) {
 }
 
 async function users(parent, args, context) {
-  return await context.prisma.user.findMany();
+  console.log('here~~');
+  console.log(context.prisma);
+  return await context.prisma.users.findMany();
 }
 
 async function stances(parent, args, context) {
@@ -77,6 +79,13 @@ async function opinionComments(parent, args, context) {
   return opinionComments;
 }
 
+async function opinionCommentReacts(parent, args, context) {
+  return await context.prisma.opinionCommentReacts.findMany({
+    where: { opinionCommentsId: args.id },
+  });
+}
+
+
 export default {
   user,
   users,
@@ -88,4 +97,5 @@ export default {
   opinionComments,
   issueHashTags,
   opinionsWithIssuesId,
+  opinionCommentReacts,
 };

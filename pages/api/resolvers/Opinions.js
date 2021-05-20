@@ -18,6 +18,7 @@ async function stance(parent, _args, context) {
 }
 
 async function opinionComments(parent, _args, context) {
+  // console.log('opinion comment query');
   return await context.prisma.opinionComments.findMany({
     where: { opinionsId: parent.id },
   });
@@ -27,5 +28,5 @@ export default {
   user,
   opinionReacts,
   opinionComments,
-  stance
+  stance,
 };

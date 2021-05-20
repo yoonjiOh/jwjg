@@ -131,6 +131,7 @@
   background-color: $orange;
 }
 .opinionTitleContainer {
+  cursor: pointer;
   @include borderBottom;
   .title, .opinionSum, .opinionNext {
     display: inline-block;

@@ -37,10 +37,7 @@ const New = () => {
   const hasStance = !!stancesId;
 
   const { data } = useQuery(GET_STANCE, { variables: { id: Number(stancesId) } });
-  const stanceTitle = data && data.stances[0].title;
-
-  const auth = useAuth();
-  console.log('New Opinion', auth.user);
+  const stance = data && data.stances[0];
 
   const handleChange = e => {
     setOpinionBody(e.target.value);
@@ -58,7 +55,7 @@ const New = () => {
       }).then(result => {
         if (result.data.createOpinion.id) {
           if (window.confirm('의견이 등록되었습니다. 이전 이슈로 돌아가시겠습니까?')) {
-            window.location.href = `${config.host}/${issueId}`;
+            window.location.href = `${config.host}/issues/${issueId}`;
           } else {
             window.location.href = `${config.host}`;
           }
@@ -82,6 +79,8 @@ const New = () => {
     ),
   };
 
+  const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
+
   return (
     <>
       <Layout title={'New Opinion'} headerInfo={headerInfo}>
@@ -93,7 +92,9 @@ const New = () => {
             </div>
           ) : (
             <div>
-              <div className={s.stanceNoti}>{stanceTitle} 입장을 표하셨어요.</div>
+              <div className={s.stanceNoti}>
+                {fruitsForStanceTitle[stance.id]} {stance.title} 입장을 표하셨어요.
+              </div>
               <div className="stancesWrapper">
                 <textarea
                   className={s.opinionInput}

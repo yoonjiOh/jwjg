@@ -10,7 +10,19 @@ import FloatingNewOpinionBtn from '../../components/opinion/FloatingNewOpinionBt
 
 import Link from 'next/link';
 import _ from 'lodash';
+import { useAuthUser, withAuthUser } from 'next-firebase-auth';
 
+const GET_USERS = gql`
+  query {
+    users {
+      id
+      firebaseUID
+      name
+      intro
+      profileImageUrl
+    }
+  }
+`;
 const GET_ISSUE = gql`
   query issues($id: Int!) {
     issues(id: $id) {
@@ -73,9 +85,14 @@ export const getServerSideProps = async context => {
     query: GET_ISSUE,
     variables: { id: parseInt(id) },
   });
+  const users = await apolloClient.query({
+    query: GET_USERS,
+  });
+
   return {
     props: {
       data: data,
+      users: users.data.users,
     },
   };
 };
@@ -91,12 +108,18 @@ const CREATE_USER_STANCE = gql`
 `;
 
 const Issue = props => {
-  console.log('props ', props);
+  console.log('Issue props', props);;
   const router = useRouter();
   const issue_id = Number(router.query.id);
+
+  const AuthUser = useAuthUser();
+  console.log('AuthUser id', AuthUser.id);
+  const me = _.head(props.users.filter(user => user.firebaseUID === AuthUser.id));
+
   const { loading, error, data } = useQuery(GET_ISSUE, {
     variables: { id: issue_id },
   });
+
   const [createUserStance] = useMutation(CREATE_USER_STANCE);
   if (loading) return 'Loading...';
   if (error) return `Error! ${error.message}`;
@@ -235,7 +258,14 @@ const Issue = props => {
               ))}
             </ul>
           </div>
-          <div className={s.opinionTitleContainer}>
+          <div className={s.opinionTitleContainer}
+            onClick={() => {
+              router.push({
+                pathname: '/opinions',
+                query: { userId: me.id },
+              });
+            }}
+          >
             <h3 className={s.title}>의견</h3>
             <p className={s.opinionSum}>{issue.opinions.length}</p>
             <div className={s.opinionNext}></div>
@@ -247,7 +277,7 @@ const Issue = props => {
                   onClick={() => {
                     router.push({
                       pathname: '/opinions/[id]',
-                      query: { id: opinion.id },
+                      query: { id: opinion.id, userId: me.id },
                     });
                   }}
                 >
@@ -283,9 +313,9 @@ const Issue = props => {
           </div>
         </div>
       </main>
-      <FloatingNewOpinionBtn userId={1} issueId={issue_id} stancesId={1} />
+      <FloatingNewOpinionBtn userId={me && me.id} issueId={issue_id} stancesId={1} />
     </Layout>
   );
-};
+};;
 
-export default Issue;
+export default withAuthUser()(Issue);

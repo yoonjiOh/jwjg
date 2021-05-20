@@ -160,13 +160,11 @@
   background: none;
   border: none;
   color: #4494FF;
+  cursor: pointer;
 
   &.disabled {
     color:#C8C8C8;
     pointer-events: none;
   }
-}
-.profileWrapper {
-
 }
 

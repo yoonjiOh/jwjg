@@ -13,6 +13,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     // Checks if user already exists.
     const data = JSON.parse(req.body);
+    console.log('data', data);
+    console.log('prisma.users', prisma.users);
     const userWhere: Prisma.UsersWhereUniqueInput = {
       firebaseUID: data.firebaseUID,
     };
@@ -28,6 +30,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const user: Prisma.UsersCreateInput = {
       email: data.email,
       firebaseUID: data.firebaseUID,
+      name: 'yoonji_test',
     };
     const savedUser = await prisma.users.create({ data: user });
     res.status(201).json(savedUser);
