@@ -47,7 +47,6 @@ export const getServerSideProps = async context => {
 };
 
 const EditProfile = props => {
-  console.log('EditProfile', props);
   const initState = {
     name: props.data.user.name,
     intro: props.data.user.intro,
@@ -56,7 +55,6 @@ const EditProfile = props => {
   const [state, setState] = useState(initState);
   const [mutate, { loading, error }] = useMutation(SINGLE_UPLOAD_IMG);
   // Todo: 이미지 업로드 버그 수정
-  console.log('state', state);
 
   const { name, intro, profileImageUrl } = state;
 

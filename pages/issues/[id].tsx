@@ -108,12 +108,10 @@ const CREATE_USER_STANCE = gql`
 `;
 
 const Issue = props => {
-  console.log('Issue props', props);;
   const router = useRouter();
   const issue_id = Number(router.query.id);
 
   const AuthUser = useAuthUser();
-  console.log('AuthUser id', AuthUser.id);
   const me = _.head(props.users.filter(user => user.firebaseUID === AuthUser.id));
 
   const { loading, error, data } = useQuery(GET_ISSUE, {
@@ -258,7 +256,8 @@ const Issue = props => {
               ))}
             </ul>
           </div>
-          <div className={s.opinionTitleContainer}
+          <div
+            className={s.opinionTitleContainer}
             onClick={() => {
               router.push({
                 pathname: '/opinions',

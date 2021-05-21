@@ -32,6 +32,26 @@ const GET_MYPAGE_DATA = gql`
   }
 `;
 
+const GET_ISSUES = gql`
+  query {
+    issues {
+      id
+      title
+      imageUrl
+    }
+  }
+`;
+
+const GET_STANCES = gql`
+  query {
+    stances {
+      id
+      orderNum
+      title
+    }
+  }
+`;
+
 export const getServerSideProps = async context => {
   const apolloClient = initializeApollo(null);
   const { userId } = context.query;
@@ -41,17 +61,28 @@ export const getServerSideProps = async context => {
     variables: { id: parseInt(userId) },
   });
 
+  const issues = await apolloClient.query({
+    query: GET_ISSUES,
+  });
+
+  const stances = await apolloClient.query({
+    query: GET_STANCES,
+  });
+
   return {
     props: {
       data: data,
+      issues_data: issues.data,
+      stances_data: stances.data,
     },
   };
 };
 
 const MyPage = props => {
-  console.log('Mypage props', props.data);
   const { user } = props.data;
   const router = useRouter();
+
+  const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
 
   return (
     <Layout title={'마이페이지'} headerInfo={{ headerType: 'common' }}>
@@ -116,7 +147,31 @@ const MyPage = props => {
             <div className={s.goNext} />
           </div>
 
-          <div></div>
+          {user &&
+            user.opinions &&
+            user.opinions.map(opinion => {
+              const matchIssue = _.find(props.issues_data.issues, issue => {
+                return issue.id === opinion.issuesId;
+              });
+              const matchStance = _.find(props.stances_data.stances, stance => {
+                return stance.id === opinion.stancesId;
+              });
+
+              return (
+                <div className={s.opinionSummaryBox}>
+                  <div className={s.issueImgBox}>
+                    <img src={matchIssue.imageUrl} />
+                  </div>
+                  <div className={s.contextBox}>
+                    <p>{matchIssue.title}</p>
+                    <span>
+                      {fruitsForStanceTitle[matchStance.orderNum]} {matchStance.title}
+                    </span>
+                    <span>{opinion.content}</span>
+                  </div>
+                </div>
+              );
+            })}
         </div>
       </main>
     </Layout>

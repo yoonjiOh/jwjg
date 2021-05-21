@@ -28,6 +28,7 @@ const GET_DATA = gql`
         stancesId
         stance {
           id
+          orderNum
           title
         }
         user {
@@ -98,7 +99,6 @@ const DO_LIKE_ACTION_TO_OPINION = gql`
 `;
 
 const Opinion = props => {
-  // console.log('Opinion props', props);
   const [opinionComment, setOpinionComment] = useState('');
   const [createOpinionComment] = useMutation(CREATE_OPINION_COMMENT);
   const [doLikeActionToOpinion] = useMutation(DO_LIKE_ACTION_TO_OPINION);
@@ -107,7 +107,6 @@ const Opinion = props => {
   
   const opinion = _.head(props.data.opinions);
 
-  // console.log('opinion', opinion)
   const myReact = opinion.opinionReacts.filter(react => react.usersId === userId);
   const isLikedByMe = !_.isEmpty(myReact) && _.head(myReact).like;
 

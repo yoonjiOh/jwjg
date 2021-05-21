@@ -13,8 +13,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     // Checks if user already exists.
     const data = JSON.parse(req.body);
-    console.log('data', data);
-    console.log('prisma.users', prisma.users);
     const userWhere: Prisma.UsersWhereUniqueInput = {
       firebaseUID: data.firebaseUID,
     };

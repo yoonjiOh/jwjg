@@ -7,7 +7,6 @@ async function name(parent, args, context) {
 }
 
 async function user(parent, args, context) {
-  console.log('user here');
   return await context.prisma.users.findUnique({
     where: {
       id: parent.id,

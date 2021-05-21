@@ -12,7 +12,6 @@ function EmailRegistration() {
   const handlePasswordChange = event => setPwd(event.target.value);
 
   const handleSubmit = e => {
-    console.log('handleSubmit', email, pwd);
     e.preventDefault();
     doEmailSignup(email, pwd);
   };

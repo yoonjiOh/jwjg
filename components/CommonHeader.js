@@ -20,9 +20,6 @@ const CommonHeader = () => {
   });
   const { pathname } = useRouter();
 
-  
-  console.log('commen header data', data);
-  
   return (
     <header className={s.header}>
       <h1 className={s.logo}>
@@ -50,8 +47,7 @@ const CommonHeader = () => {
         <Link href={`/users/mypage?userId=${data && data.userByFirebase.id}`}>
           <span className={s.actionBtn}>마이페이지</span>
         </Link>
-      )
-    }
+      )}
     </header>
   );
 };

@@ -25,7 +25,7 @@ const CommentBox = ({ comment }) => {
 
   return (
     <div className={s.commentBox} key={comment.id}>
-      <div className={s[`stanceMark-${comment.stancesId}`]} />
+      <div className={s[`stanceMark-${comment.stance.orderNum}`]} />
       <div className={s.commentWrapper}>
         <div className={s.profileWrapper}>
           <div className={s.profilePlaceholder} />
@@ -34,7 +34,7 @@ const CommentBox = ({ comment }) => {
         </div>
         <div className={s.commentContentWrapper}>
           <span className={s.commentStance}>
-            {fruitsForStanceTitle[comment.stancesId] + ' ' + comment.stance.title}
+            {fruitsForStanceTitle[comment.stance.orderNum] + ' ' + comment.stance.title}
           </span>
           <span style={{ marginLeft: '5px' }}>{comment.content}</span>
         </div>

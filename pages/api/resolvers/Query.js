@@ -2,22 +2,18 @@
 import { AuthenticationError } from 'apollo-server';
 
 async function user(parent, args, context) {
-  console.log('여기로 오는구나');
   return await context.prisma.users.findUnique({
     where: { id: args.id },
   });
 }
 
 async function userByFirebase(parent, args, context) {
-  console.log('userByFireBase here', args);
   return await context.prisma.users.findUnique({
     where: { firebaseUID: args.firebaseUID },
   });
 }
 
 async function users(parent, args, context) {
-  console.log('here~~');
-  // console.log(context.prisma);
   return await context.prisma.users.findMany();
 }
 
@@ -62,7 +58,6 @@ async function issueHashTags(parent, args, context) {
 }
 
 async function opinions(parent, args, context) {
-  console.log('pupupu');
   const where = args.id ? { id: args.id } : {};
   const opinions = await context.prisma.opinions.findMany({
     where,

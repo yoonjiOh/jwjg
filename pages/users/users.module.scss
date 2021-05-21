@@ -155,4 +155,20 @@
     .title, .hashTagSum, .goNext {
       display: inline-block;
     }
-  }
+}
+
+.opinionSummaryBox {
+    padding: 15px;
+    display: flex;
+}
+
+.issueImgBox {
+    width: 100px;
+    height: 70px;
+    border-radius: 10px;
+
+    img {
+        width: 100%;
+        object-fit: cover;
+    }
+}
