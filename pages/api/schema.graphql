@@ -8,6 +8,8 @@ type User {
   createdAt: DateTime
   updatedAt: DateTime
   userStance(issuesId: Int): UserStance
+  user: User
+  opinions: [Opinion]
   opinionComments: [OpinionComment]
 }
 
@@ -125,7 +127,7 @@ type UploadedFileResponse {
 
 type Query {
   users: [User]
-  userByFirebaseId(firebaseUID: Int!): User
+  userByFirebase(firebaseUID: String): User
   user(id: Int!): User
   issue(id: Int!): Issue
   issues(id: Int): [Issue]

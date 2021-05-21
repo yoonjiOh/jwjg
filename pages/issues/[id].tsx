@@ -262,7 +262,6 @@ const Issue = props => {
             onClick={() => {
               router.push({
                 pathname: '/opinions',
-                query: { userId: me.id },
               });
             }}
           >

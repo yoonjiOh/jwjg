@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Layout from '../../components/Layout';
 import common_style from '../index.module.css';
-import s from './users.module.css';
+import s from './users.module.scss';
 import Link from 'next/link';
 import RegistrationWidget from './RegistrationWidget'
 import { doEmailLogin } from './lib/users.ts';

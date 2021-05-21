@@ -1,3 +1,10 @@
+@use "../../styles/_variables" as *;
+
+.main {
+    background-color: #fff;
+    height: 100vh;
+  }
+
 .label_default {
     display: inline-block;
     margin: 10px;
@@ -75,3 +82,77 @@
 .inputForm:focus {
     outline: none;
 }
+.profileWrapper {
+    padding: 15px;
+
+    p {
+        color: #333333;
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 32px;
+    }
+
+    span {
+        font-size: 14px;
+        font-weight: 400;
+        margin-right: 15px;
+    };
+
+    .count {
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 22.4px;
+        margin-right: 10px;
+    }
+}
+.profileImgContainer {
+    width: 92px;
+    height: 92px;
+    border-radius: 50%;
+    background: #E0E0E0;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+.profileIntro {
+    padding: 15px;
+
+    div {
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 19.2px;
+        margin-bottom: 15px;
+    }
+
+    button {
+        background: #FFFFFF;
+        border: 1px solid #E5E5E5;
+        box-sizing: border-box;
+        border-radius: 6px;
+        width: 100%;
+        height: 32px;
+        font-size: 13px;
+        cursor: pointer;
+    }
+}
+
+.divider {
+    border-bottom: 1px solid #E5E5E5;
+}
+.goNext {
+    @include nextButton;
+}
+.hashTagsContainer {
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    padding-left: 15px;
+
+    @include borderBottom;
+    .title, .hashTagSum, .goNext {
+      display: inline-block;
+    }
+  }

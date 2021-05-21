@@ -202,6 +202,13 @@ const NewIssue = () => {
         }));
   };
 
+  const handleChange = (value, key) => {
+    dispatch({
+      type: 'CHANGE_ISSUE_INPUT',
+      payload: { key: key, value: value },
+    });
+  };
+
   const handleSubmit = async () => {
     let createdIssueId;
 
