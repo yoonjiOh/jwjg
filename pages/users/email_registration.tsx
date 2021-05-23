@@ -11,9 +11,14 @@ function EmailRegistration() {
   const handleEmailChange = event => setEmail(event.target.value);
   const handlePasswordChange = event => setPwd(event.target.value);
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    doEmailSignup(email, pwd);
+    const ret = await doEmailSignup(email, pwd);
+    if (ret == 0) {
+      console.log('succeeded!:' + ret);
+    } else {
+      console.log('failed!:' + ret);
+    }
   };
 
   const headerInfo = {

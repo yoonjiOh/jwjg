@@ -17,6 +17,7 @@ type UserStance {
   usersId: Int
   issuesId: Int
   stancesId: Int
+  stances: [Stance]
 }
 
 type Opinion {
@@ -31,6 +32,7 @@ type Opinion {
   opinionComments: [OpinionComment]
   opinionCommentReacts: [OpinionCommentReact]
   opinionReacts: [OpinionReact]
+  opinionReactsSum: Int
 }
 
 type OpinionComment {

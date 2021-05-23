@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext, createContext } from 'react';
-import { prisma } from '.prisma/client';
 import firebase from 'firebase/app';
 import { JsonWebTokenError } from 'jsonwebtoken';
 import { useRouter } from 'next/router';
@@ -83,7 +82,7 @@ import { useRouter } from 'next/router';
 // }
 
 export async function doEmailSignup(email, password) {
-  firebase
+  return firebase
     .auth()
     .createUserWithEmailAndPassword(email, password)
     .then(userCredential => {
@@ -91,7 +90,7 @@ export async function doEmailSignup(email, password) {
       const user = userCredential.user;
 
       // Creates user in our backend.
-      registerFirebaseUser(user);
+      return registerFirebaseUser(user);
     })
     .catch(error => {
       const errorCode = error.code;
@@ -102,8 +101,9 @@ export async function doEmailSignup(email, password) {
       console.log(errorMessage);
 
       if (errorCode == 'auth/email-already-in-use') {
-        doEmailLogin(email, password);
+        return doEmailLogin(email, password);
       }
+      return 1;
     });
 }
 
@@ -114,6 +114,7 @@ export async function doEmailLogin(email, password) {
     .then(userCredential => {
       // Signed in
       const user = userCredential.user;
+      
     })
     .catch(error => {
       const errorCode = error.code;

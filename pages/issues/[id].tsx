@@ -10,7 +10,8 @@ import FloatingNewOpinionBtn from '../../components/opinion/FloatingNewOpinionBt
 
 import Link from 'next/link';
 import _ from 'lodash';
-import { useAuthUser, withAuthUser } from 'next-firebase-auth';
+
+import CommentBox from '../../components/CommentBox';
 
 const GET_USERS = gql`
   query {
@@ -172,7 +173,9 @@ const Issue = props => {
           <div className={s.tags}>
             <ol>
               {tags.map((tag, idx) => (
-                <li id={tag + idx}>{tag}</li>
+                <li id={tag + idx} key={tag + idx}>
+                  {tag}
+                </li>
               ))}
             </ol>
           </div>
@@ -268,46 +271,17 @@ const Issue = props => {
             <p className={s.opinionSum}>{issue.opinions.length}</p>
             <div className={s.opinionNext}></div>
           </div>
-          <div>
-            <div>
+          <div className={s.opinionTitleContainer}>
+            <div className={s.opinionNextContainer} style={{ margin: '0 -20px' }}>
               {issue.opinions.map(opinion => (
-                <div
-                  onClick={() => {
-                    router.push({
-                      pathname: '/opinions/[id]',
-                      query: { id: opinion.id, userId: me.id },
-                    });
-                  }}
-                >
-                  <section>
-                    <h4>{opinion.stance.title}</h4>
-                    <div>
-                      <span>{opinion.user.name}</span>
-                    </div>
-                    <div>
-                      <div>{opinion.content}</div>
-                      {/* <span>더보기</span> */}
-                      {/* TODO: 일부 글자만 표시하고 페이지 넘어가도록 */}
-                    </div>
-                  </section>
-                  <div>
-                    <div>
-                      좋아요
-                      <span>
-                        {opinion.opinionReacts.like == null ? 0 : opinion.opinionReacts.like} 개
-                      </span>
-                    </div>
-                  </div>
-                  <div>
-                    <div>
-                      댓글
-                      <span>{opinion.opinionComments.length}</span>
-                    </div>
-                  </div>
+                <div key={opinion.id} className={s.opinionContainer}>
+                  <CommentBox comment={opinion} />
                 </div>
               ))}
             </div>
-            <Link href={`/issues/${issue_id}/opinions`}>모두 보기</Link>
+            <div className={s.opinionAll}>
+              <Link href={`/issues/${issue_id}/opinions`}>모두 보기</Link>
+            </div>
           </div>
         </div>
       </main>
@@ -316,4 +290,4 @@ const Issue = props => {
   );
 };;
 
-export default withAuthUser()(Issue);
+export default Issue;
