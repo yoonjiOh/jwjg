@@ -6,6 +6,14 @@ async function name(parent, args, context) {
   return user.name;
 }
 
+async function user(parent, args, context) {
+  return await context.prisma.users.findUnique({
+    where: {
+      id: parent.id,
+    },
+  });
+}
+
 async function userStance(parent, args, context) {
   return await context.prisma.userStances.findFirst({
     where: {
@@ -15,7 +23,26 @@ async function userStance(parent, args, context) {
   });
 }
 
+async function opinions(parent, _args, context) {
+  return await context.prisma.opinions.findMany({
+    where: {
+      usersId: parent.id,
+    },
+  });
+}
+
+async function opinionComments(parent, _args, context) {
+  return await context.prisma.opinionComments.findMany({
+    where: {
+      usersId: parent.id,
+    },
+  });
+}
+
 export default {
   name,
+  user,
   userStance,
+  opinions,
+  opinionComments,
 };

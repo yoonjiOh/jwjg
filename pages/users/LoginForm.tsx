@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import Layout from '../../components/Layout';
 import common_style from '../index.module.css';
-import s from './users.module.css';
+import s from './users.module.scss';
 import Link from 'next/link';
 import RegistrationWidget from './RegistrationWidget'
-import { doEmailLogin } from './lib/users';
+import { doEmailLogin } from './lib/users.ts';
 
 const LoginForm = () => {
   const [state, setState] = useState({ email: '', password: '' });
@@ -28,7 +28,7 @@ const LoginForm = () => {
   };
 
   return (
-    <Layout title={'Registration'} headerInfo={{ headerType: 'common' }}>
+    <Layout title={'login'} headerInfo={{ headerType: 'common' }}>
       <main className={common_style.main}>
         <div className={s.greetingWrapper}>
           <h3>좌우지간</h3>
@@ -55,6 +55,12 @@ const LoginForm = () => {
             <Link href={`/`}>비밀번호 찾기</Link>
           </button>
         </form>
+
+        <img
+          alt="로그인 대문이미지"
+          src={'https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/Capybara1.png'}
+          style={{ display: 'flex', margin: '0 auto' }}
+        />
 
         <div className={s.formWrapper}>
           <RegistrationWidget />

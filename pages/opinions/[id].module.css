@@ -68,7 +68,6 @@
   margin: 0 0 8px 0;
 }
 .opinionWrapper {
-  padding-bottom: 20px;
   width: 360px;
   height: 320px;
   display: flex;
@@ -83,6 +82,7 @@
 .commentInputWrapper {
   background: #F3F3F3;
   padding: 13px;
+  cursor: pointer;
 }
 .commentWrapper {
   position: fixed;
@@ -114,6 +114,7 @@
   height: 40px;
   font-size: 12px;
   color: #777777;
+  border-bottom: 1px solid #E5E5E5;
 }
 .action {
   width: 33%;

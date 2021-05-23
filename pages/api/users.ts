@@ -29,6 +29,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const user: Prisma.UsersCreateInput = {
       email: data.email,
       firebaseUID: data.firebaseUID,
+      name: 'yoonji_test',
     };
     const savedUser = await prisma.users.create({ data: user });
     res.status(201).json(savedUser);

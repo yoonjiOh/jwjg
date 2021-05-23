@@ -28,6 +28,7 @@ const GET_DATA = gql`
         stancesId
         stance {
           id
+          orderNum
           title
         }
         user {
@@ -98,18 +99,16 @@ const DO_LIKE_ACTION_TO_OPINION = gql`
 `;
 
 const Opinion = props => {
-  console.log('Opinion props', props);
   const [opinionComment, setOpinionComment] = useState('');
   const [createOpinionComment] = useMutation(CREATE_OPINION_COMMENT);
   const [doLikeActionToOpinion] = useMutation(DO_LIKE_ACTION_TO_OPINION);
-
-  const opinion = _.head(props.data.opinions);
-  const myReact = opinion.opinionReacts.filter(react => react.usersId === 7);
-  const isLikedByMe = !_.isEmpty(myReact) && _.head(myReact).like;
-
   const router = useRouter();
+  const { id: opinionId, userId } = router.query;
+  
+  const opinion = _.head(props.data.opinions);
 
-  const { id: opinionId } = router.query;
+  const myReact = opinion.opinionReacts.filter(react => react.usersId === userId);
+  const isLikedByMe = !_.isEmpty(myReact) && _.head(myReact).like;
 
   const handleChangeCommentInput = e => {
     setOpinionComment(e.target.value);
@@ -120,7 +119,7 @@ const Opinion = props => {
       await createOpinionComment({
         variables: {
           content: opinionComment,
-          usersId: 7, // 나중에
+          usersId: userId,
           opinionsId: Number(opinionId),
           stancesId: 1, // 나중에
         },
@@ -134,7 +133,7 @@ const Opinion = props => {
     try {
       await doLikeActionToOpinion({
         variables: {
-          usersId: 7, //나중에
+          usersId: userId,
           opinionsId: Number(opinionId),
           like: isLikedByMe ? false : true
         }
@@ -142,6 +141,10 @@ const Opinion = props => {
     } catch (e) {
       console.error(e);
     }
+  }
+
+  const handleClickCommentIcon = () => {
+    document.getElementById('input_comment').select()
   }
   return (
     <Layout title={'개별 오피니언 페이지'} headerInfo={{ headerType: 'common' }}>
@@ -164,14 +167,17 @@ const Opinion = props => {
 
         <div className={s.actionsWrapper}>
           <div className={s.action} onClick={handleClickLike}>
-            {isLikedByMe ? '벌써 눌렀음'
-                : <img
+            {isLikedByMe ? <label style={{ display: 'flex', color: '#4494FF', cursor: 'pointer' }}><img
+                src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/blue_like.svg"
+                alt="좋아요 버튼"
+              /> 좋아요</label>
+                : <label style={{ display: 'flex', cursor: 'pointer' }}><img
                 src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
                 alt="좋아요 버튼"
-              />
+              /> 좋아요</label>
               }
           </div>
-          <div className={s.action}>
+          <div className={s.action} onClick={handleClickCommentIcon}>
             <img
               src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/bubble.svg"
               alt="댓글 달기 버튼"
@@ -188,15 +194,17 @@ const Opinion = props => {
             </div>
           </CopyToClipboard>
         </div>
-        
-        <div className={s.commentWrapper}>
-          <div className={s.commentsWrapper}>
-            {opinion.opinionComments.map(comment => (
+
+        <div className={s.commentsWrapper}>
+            {opinion.opinionComments && opinion.opinionComments.map(comment => (
               <CommentBox comment={comment} />
             ))}
           </div>
+        
+        <div className={s.commentWrapper}>
           <div className={s.commentInputWrapper}>
             <textarea
+              id="input_comment"
               onChange={handleChangeCommentInput}
               value={opinionComment}
               placeholder="댓글을 입력하세요.."

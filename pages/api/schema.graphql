@@ -8,6 +8,8 @@ type User {
   createdAt: DateTime
   updatedAt: DateTime
   userStance(issuesId: Int): UserStance
+  user: User
+  opinions: [Opinion]
   opinionComments: [OpinionComment]
 }
 
@@ -28,6 +30,7 @@ type Opinion {
   user: User
   stance: Stance
   opinionComments: [OpinionComment]
+  opinionCommentReacts: [OpinionCommentReact]
   opinionReacts: [OpinionReact]
   opinionReactsSum: Int
 }
@@ -47,7 +50,7 @@ type OpinionComment {
 type OpinionCommentReact {
   like: Int
   usersId: Int
-  user: User
+  opinionCommentsId: Int
 }
 
 type OpinionReact {
@@ -126,6 +129,7 @@ type UploadedFileResponse {
 
 type Query {
   users: [User]
+  userByFirebase(firebaseUID: String): User
   user(id: Int!): User
   issue(id: Int!): Issue
   issues(id: Int): [Issue]
@@ -135,6 +139,7 @@ type Query {
   stancesByIssueId(issuesId: Int): [Stance]
   opinionComments(id: Int): [OpinionComment]
   opinionComment(id: Int!): OpinionComment
+  opinionCommentReacts(id: Int!): [OpinionCommentReact]
   issueHashTags(id: Int): [IssueHashTag]
   hashTags(id: Int): [HashTag]
 }
