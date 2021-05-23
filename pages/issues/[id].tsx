@@ -276,7 +276,7 @@ const Issue = props => {
             <div className={s.opinionNextContainer} style={{ margin: '0 -20px' }}>
               {issue.opinions.map(opinion => (
                 <div key={opinion.id} className={s.opinionContainer}>
-                  <CommentBox comment={opinion} />
+                  <CommentBox comment={opinion} me={me} />
                 </div>
               ))}
             </div>

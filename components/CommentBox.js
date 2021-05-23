@@ -3,6 +3,8 @@ import { gql, useQuery } from '@apollo/client';
 import s from './Utils.module.scss';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { useRouter } from 'next/router';
+
 dayjs.extend(relativeTime);
 
 const GET_OPINION_COMMENT_REACTS = gql`
@@ -15,9 +17,9 @@ const GET_OPINION_COMMENT_REACTS = gql`
   }
 `;
 
-const CommentBox = ({ comment }) => {
+const CommentBox = ({ comment, me }) => {
   const { data } = useQuery(GET_OPINION_COMMENT_REACTS, { variables: { id: comment.id } });
-
+  const router = useRouter();
   const likeCount =
     data &&
     data.opinionCommentReacts.length &&
@@ -28,14 +30,14 @@ const CommentBox = ({ comment }) => {
     <div
       className={s.commentBox}
       key={comment.id}
-      // onClick={() => {
-      //   if (me) {
-      //     router.push({
-      //       pathname: '/opinions/[id]',
-      //       query: { id: comment.id, userId: me.id },
-      //     });
-      //   }
-      // }}
+      onClick={() => {
+        if (me) {
+          router.push({
+            pathname: '/opinions/[id]',
+            query: { id: comment.id, userId: me.id },
+          });
+        }
+      }}
     >
       <div className={s[`stanceMark-${comment.stance.orderNum}`]} />
       <div className={s.commentWrapper}>
