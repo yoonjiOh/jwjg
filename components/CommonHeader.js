@@ -18,7 +18,7 @@ const CommonHeader = () => {
   const { data } = useQuery(GET_USER, {
     variables: { firebaseUID: AuthUser.id },
   });
-  const { pathname } = useRouter();
+  const router = useRouter();
 
   return (
     <header className={s.header}>
@@ -34,10 +34,13 @@ const CommonHeader = () => {
         <Link href="/users">
           <span className={s.actionBtn}>로그인</span>
         </Link>
-      ) : pathname.includes('mypage') ? (
+      ) : router.pathname.includes('mypage') ? (
         <button
           onClick={() => {
             AuthUser.signOut();
+            router.push({
+              pathname: '/',
+            });
           }}
           style={{ background: 'none', border: 'none' }}
         >

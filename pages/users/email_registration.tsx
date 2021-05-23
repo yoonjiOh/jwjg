@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { withAuthUser, AuthAction } from 'next-firebase-auth';
 import Layout from '../../components/Layout';
+
+import common_style from '../index.module.css';
+import s from './users.module.scss';
+
 import { doEmailSignup } from './lib/users.ts';
 
 function EmailRegistration() {
@@ -25,10 +29,7 @@ function EmailRegistration() {
     headerType: 'editMode',
     subTitle: '회원가입',
     action: (
-      <button
-      // className={`${s.registerOpinionBtn} ${!opinionBody.length && s.disabled}`}
-      // onClick={handleRegisterOpinion}
-      >
+      <button className={s.registerBtn} onClick={handleSubmit}>
         다음
       </button>
     ),
@@ -36,30 +37,34 @@ function EmailRegistration() {
 
   return (
     <Layout title={'registration'} headerInfo={headerInfo}>
-      <form onSubmit={handleSubmit}>
-        <label>
-          email
-          <input
-            name="email"
-            value={email}
-            onChange={handleEmailChange}
-            placeholder="이메일 주소"
-          />
-        </label>
-        <br />
-        <label>
-          passowrd
-          <input
-            name="email"
-            type="password"
-            value={pwd}
-            onChange={handlePasswordChange}
-            placeholder="비밀번호"
-          />
-        </label>
-        <br />
-        <input type="submit" value="Submit" />
-      </form>
+      <main className={common_style.main}>
+        <form onSubmit={handleSubmit} className={s.formWrapper}>
+          <label>
+            이메일
+            <input
+              name="email"
+              value={email}
+              onChange={handleEmailChange}
+              placeholder="이메일 주소"
+              className={s.inputForm}
+            />
+          </label>
+          <br />
+          <label>
+            비밀번호
+            <input
+              name="email"
+              type="password"
+              value={pwd}
+              onChange={handlePasswordChange}
+              placeholder="비밀번호"
+              className={s.inputForm}
+            />
+          </label>
+          <div className={s.passwordMessage}>숫자 포함, 영문 포함, 8자 이상</div>
+          <br />
+        </form>
+      </main>
     </Layout>
   );
 }

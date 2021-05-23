@@ -172,3 +172,18 @@
         object-fit: cover;
     }
 }
+
+.passwordMessage {
+    text-align: end;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 19.2px;
+    color: #828282;
+}
+
+.registerBtn {
+    background: none;
+    border: none;
+    color: #4494FF;
+    cursor: pointer;
+}
