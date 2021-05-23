@@ -19,12 +19,24 @@ const CommentBox = ({ comment }) => {
   const { data } = useQuery(GET_OPINION_COMMENT_REACTS, { variables: { id: comment.id } });
 
   const likeCount =
+    data &&
     data.opinionCommentReacts.length &&
     data.opinionCommentReacts.filter(react => !!react.like).length;
   const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
 
   return (
-    <div className={s.commentBox} key={comment.id}>
+    <div
+      className={s.commentBox}
+      key={comment.id}
+      // onClick={() => {
+      //   if (me) {
+      //     router.push({
+      //       pathname: '/opinions/[id]',
+      //       query: { id: comment.id, userId: me.id },
+      //     });
+      //   }
+      // }}
+    >
       <div className={s[`stanceMark-${comment.stance.orderNum}`]} />
       <div className={s.commentWrapper}>
         <div className={s.profileWrapper}>

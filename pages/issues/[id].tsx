@@ -11,6 +11,7 @@ import FloatingNewOpinionBtn from '../../components/opinion/FloatingNewOpinionBt
 import Link from 'next/link';
 import _ from 'lodash';
 
+import { useAuthUser, withAuthUser } from 'next-firebase-auth';
 import CommentBox from '../../components/CommentBox';
 
 const GET_USERS = gql`
@@ -290,4 +291,4 @@ const Issue = props => {
   );
 };;
 
-export default Issue;
+export default withAuthUser()(Issue);

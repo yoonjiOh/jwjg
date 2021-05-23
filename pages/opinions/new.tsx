@@ -94,7 +94,8 @@ const New = () => {
           ) : (
             <div>
               <div className={s.stanceNoti}>
-                {fruitsForStanceTitle[stance.orderNum]} {stance.title} 입장을 표하셨어요.
+                {fruitsForStanceTitle[stance && stance.orderNum]} {stance && stance.title} 입장을
+                표하셨어요.
               </div>
               <div className="stancesWrapper">
                 <textarea
