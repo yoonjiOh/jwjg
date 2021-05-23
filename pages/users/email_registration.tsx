@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import Layout from '../../components/Layout';
-
+import { useRouter } from 'next/router';
 import { withAuthUser, AuthAction } from 'next-firebase-auth';
+import Layout from '../../components/Layout';
 import { doEmailSignup } from './lib/users.ts';
 
 function EmailRegistration() {
   const [email, setEmail] = useState('');
   const [pwd, setPwd] = useState('');
+  const router = useRouter();
 
   const handleEmailChange = event => setEmail(event.target.value);
   const handlePasswordChange = event => setPwd(event.target.value);
@@ -14,10 +15,9 @@ function EmailRegistration() {
   const handleSubmit = async e => {
     e.preventDefault();
     const ret = await doEmailSignup(email, pwd);
-    if (ret == 0) {
-      console.log('succeeded!:' + ret);
-    } else {
-      console.log('failed!:' + ret);
+    console.log('succeeded!:' + ret);
+    if (ret == true) {
+      router.push('/users/additional_information');
     }
   };
 
@@ -65,7 +65,7 @@ function EmailRegistration() {
 }
 
 export default withAuthUser({
-  whenAuthed: AuthAction.REDIRECT_TO_APP,
+  whenAuthed: AuthAction.RENDER,
   whenUnauthedBeforeInit: AuthAction.RETURN_NULL,
   whenUnauthedAfterInit: AuthAction.RENDER,
 })(EmailRegistration);
