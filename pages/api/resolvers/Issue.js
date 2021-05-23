@@ -27,5 +27,5 @@ export default {
   opinions,
   stances,
   issueHashTags,
-  userStances
+  userStances,
 };
