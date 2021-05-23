@@ -102,9 +102,9 @@ export async function doEmailSignup(email, password) {
 
       if (errorCode == 'auth/email-already-in-use') {
         await doEmailLogin(email, password);
-        return 0;
+        return true;
       }
-      return 1;
+      return false;
     });
 }
 

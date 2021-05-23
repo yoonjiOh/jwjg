@@ -16,7 +16,7 @@ function EmailRegistration() {
     e.preventDefault();
     const ret = await doEmailSignup(email, pwd);
     console.log('succeeded!:' + ret);
-    if (ret == 0) {
+    if (ret == true) {
       router.push('/users/additional_information');
     }
   };
