@@ -13,7 +13,7 @@ model Users {
   id              Int      @id @default(autoincrement())
   firebaseUID     String   @unique // TODO(jurampark): update design doc for user authentication with flow chats.
   email           String?   @unique
-  name            String
+  name            String?
   intro           String?
   profileImageUrl String? // TODO(jurampark): update dd about uploading images.
   isAdmin         Int @default(0)
