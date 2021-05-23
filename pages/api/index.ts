@@ -6,6 +6,7 @@ import Opinion from './resolvers/Opinions';
 import Issue from './resolvers/Issue';
 import IssueHashTag from './resolvers/IssueHashTag';
 import OpinionComment from './resolvers/OpinionComment';
+import UserStance from './resolvers/UserStance';
 import fs from 'fs';
 import path from 'path';
 import { getUserId } from './utils';
@@ -19,6 +20,7 @@ const resolvers = {
   OpinionComment,
   IssueHashTag,
   Issue,
+  UserStance,
 };
 
 const apolloServer = new ApolloServer({
