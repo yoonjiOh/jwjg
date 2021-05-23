@@ -92,7 +92,7 @@ export async function doEmailSignup(email, password) {
       // Creates user in our backend.
       return registerFirebaseUser(user);
     })
-    .catch(error => {
+    .catch(async error => {
       const errorCode = error.code;
       const errorMessage = error.message;
 
@@ -101,9 +101,10 @@ export async function doEmailSignup(email, password) {
       console.log(errorMessage);
 
       if (errorCode == 'auth/email-already-in-use') {
-        return doEmailLogin(email, password);
+        await doEmailLogin(email, password);
+        return true;
       }
-      return 1;
+      return false;
     });
 }
 
@@ -111,11 +112,11 @@ export async function doEmailLogin(email, password) {
   firebase
     .auth()
     .signInWithEmailAndPassword(email, password)
-    .then(userCredential => {
-      // Signed in
-      const user = userCredential.user;
-      
-    })
+    // .then(userCredential => {
+    //   // Signed in
+    //   const user = userCredential.user;
+    //   return user;
+    // })
     .catch(error => {
       const errorCode = error.code;
       const errorMessage = error.message;
@@ -132,6 +133,7 @@ export async function doEmailLogin(email, password) {
  * @returns Returns true if user is newly created. Otherwise, it returns False.
  */
 async function registerFirebaseUser(firebaseUser): Promise<boolean> {
+  console.log('firebaseUser:' + firebaseUser.uid + '/' + firebaseUser.email);
   const response = await fetch('/api/users', {
     method: 'POST',
     body: JSON.stringify({
@@ -140,15 +142,13 @@ async function registerFirebaseUser(firebaseUser): Promise<boolean> {
     }),
   });
 
-  if (!response.ok) {
-  }
-
   // If user is newly created.
   if (response.status == 201) {
     return true;
   }
 
   if (!response.ok) {
+    console.log(response);
     return false;
     // throw new Error(response.statusText);
   }
