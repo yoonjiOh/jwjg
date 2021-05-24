@@ -30,6 +30,17 @@ const SINGLE_UPLOAD_IMG = gql`
   }
 `;
 
+const UPDATE_PROFILE = gql`
+  mutation updateUserProfile($id: Int!, $name: String, $intro: String, $profileImageUrl: String) {
+    updateUserProfile(id: $id, name: $name, intro: $intro, profileImageUrl: $profileImageUrl) {
+      id
+      name
+      intro
+      profileImageUrl
+    }
+  }
+`;
+
 export const getServerSideProps = async context => {
   const apolloClient = initializeApollo(null);
   const { id } = context.query;
@@ -54,22 +65,10 @@ const EditProfile = props => {
   };
   const [state, setState] = useState(initState);
   const [mutate, { loading, error }] = useMutation(SINGLE_UPLOAD_IMG);
-  // Todo: 이미지 업로드 버그 수정
+  const [updateUserProfile, { data }] = useMutation(UPDATE_PROFILE);
 
   const { name, intro, profileImageUrl } = state;
-
-  const headerInfo = {
-    headerType: 'editMode',
-    subTitle: '프로필 편집',
-    action: (
-      <button
-      // className={`${s.registerOpinionBtn} ${!opinionBody.length && s.disabled}`}
-      // onClick={handleRegisterOpinion}
-      >
-        완료
-      </button>
-    ),
-  };
+  const router = useRouter();
 
   const handleFileChange = async ({
     target: {
@@ -90,6 +89,51 @@ const EditProfile = props => {
             return { ...prevState, profileImageUrl: uploadedS3Url };
           });
         }));
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    await updateUserProfile({
+      variables: {
+        id: parseInt(props.data.user.id),
+        name: name,
+        intro: intro,
+        profileImageUrl: profileImageUrl
+      }
+    }).then(result => {
+      if (result.data) {
+        router.push(`/users/mypage?userId=${props.data.user.id}`)
+      } else {
+        console.error('프로필 편집에 문제가 생겼습니다.')
+      }
+    })
+  };
+
+  const handleChange = (e, key) => {
+    console.log('handleChange', e.target);
+    setState(prevState => ({
+      ...prevState,
+      [key]: e.target.value
+    }))
+  };
+
+  const headerInfo = {
+    headerType: 'editMode',
+    subTitle: '프로필 편집',
+    action: (
+      <button
+        style={{
+          background: 'none',
+          color: '#4494ff',
+          fontWeight: '700',
+          border: 'none',
+          cursor: 'pointer'
+        }}
+        onClick={handleSubmit}
+      >
+        완료
+      </button>
+    ),
   };
 
   return (
@@ -131,11 +175,37 @@ const EditProfile = props => {
           {/* <p style={{ marginTop: '10px', textAlign: 'center', color: '#4494FF' }}>
             
           </p> */}
-          <label>
+          <label style={{ color: '#4494ff', textAlign: 'center', display: 'block'  }}>
             <input type="file" required onChange={handleFileChange} />
             프로필 사진 바꾸기
           </label>
-          <div></div>
+
+          <form onSubmit={handleSubmit} className={s.profileFormWrapper}>
+            <span className={s.inputTitle}>이름</span>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => handleChange(e, 'name')}
+              placeholder="이름"
+              className={s.inputForm}
+            />
+            <span className={s.inputTitle}>사용자 이름</span>
+            <input
+              type="text"
+              // value={intro}
+              onChange={(e) => handleChange(e, 'nickname')}
+              placeholder="사용자 이름"
+              className={s.inputForm}
+            />
+            <span className={s.inputTitle}>소개</span>
+            <input
+              type="text"
+              value={intro}
+              onChange={(e) => handleChange(e, 'intro')}
+              placeholder="소개"
+              className={s.inputForm}
+            />
+          </form>
         </div>
       </main>
     </Layout>
