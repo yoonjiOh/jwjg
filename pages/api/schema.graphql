@@ -45,6 +45,7 @@ type OpinionComment {
   stancesId: Int
   stance: Stance
   opinionCommentReacts: [OpinionCommentReact]
+  opinionCommentReactsSum: Int
   user: User
 }
 

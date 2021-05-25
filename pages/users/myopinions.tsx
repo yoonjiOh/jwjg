@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import Layout from '../../components/Layout';
 import OpinionSummaryBox from '../../components/OpinionSummaryBox';
@@ -6,7 +6,7 @@ import Divider from '../../components/Divider';
 
 import s from './users.module.scss';
 
-import { gql, useMutation, useQuery } from '@apollo/client';
+import { gql } from '@apollo/client';
 import { initializeApollo } from '../../apollo/apolloClient';
 import _ from 'lodash';
 import dayjs from 'dayjs';

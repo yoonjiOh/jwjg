@@ -94,11 +94,15 @@ const MyPage = props => {
           <p>{user && user.name}</p>
           <div>
             <span className={s.count}>{user && user.opinions && user.opinions.length}</span>
-            <span>의견</span>
+            <span onClick={() => {
+              router.push(`/users/myopinions?userId=${user && user.id}`);
+            }}>의견</span>
             <span className={s.count}>
               {user && user.opinionComments && user.opinionComments.length}
             </span>
-            <span>댓글</span>
+            <span onClick={() => {
+              router.push(`/users/mycomments?userId=${user && user.id}`);
+            }}>댓글</span>
           </div>
         </div>
 
