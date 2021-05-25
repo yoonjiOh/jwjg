@@ -5,9 +5,9 @@ import { AuthenticationError } from "apollo-server";
 import { AWSS3Uploader } from '../s3';
 
 const s3Uploader = new AWSS3Uploader({
-  accessKeyId: process.env.AWS_ACCESS_KEY,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  destinationBucketName: 'jwjg-issues'
+  accessKeyId: 'AKIAVC6GVRQAPSA7O46J',
+  secretAccessKey: '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',
+  destinationBucketName: 'jwjg-issues',
 });
 
 async function createIssue(parent, args, context) {
@@ -174,6 +174,19 @@ async function doLikeActionToOpinion(parent, args, context) {
   return result;
 }
 
+async function updateUserProfile(parent, args, context) {
+  const result = await context.prisma.users.update({
+    where: {
+      id: args.id,
+    },
+    data: {
+      name: args.name,
+      intro: args.intro,
+      profileImageUrl: args.profileImageUrl,
+    },
+  });
+}
+
 export default {
   createIssue,
   updateIssue,
@@ -186,4 +199,5 @@ export default {
   createOpinion,
   createOpinionComment,
   doLikeActionToOpinion,
+  updateUserProfile,
 };

@@ -79,11 +79,7 @@ export class AWSS3Uploader implements IUploader {
     const { stream, filename, mimetype, encoding } = await file;
 
     // Create the destination file path
-    const filePath = this.createDestinationFilePath(
-      filename,
-      mimetype,
-      encoding
-    );
+    const filePath = this.createDestinationFilePath(filename, mimetype, encoding);
 
     // Create an upload stream that goes to S3
     const uploadStream = this.createUploadStream(filePath);

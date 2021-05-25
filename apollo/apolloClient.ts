@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
 import { ApolloClient, HttpLink, InMemoryCache, NormalizedCacheObject } from '@apollo/client';
+import { createUploadLink } from 'apollo-upload-client';
+
 import merge from 'deepmerge';
 
 let apolloClient: ApolloClient<NormalizedCacheObject> = null;
@@ -8,7 +10,7 @@ const prod = process.env.NODE_ENV === 'production';
 function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === 'undefined',
-    link: new HttpLink({
+    link: createUploadLink({
       uri: prod ? '' : 'http://localhost:3000/api',
       // TODO: url 확정되면 수정 필요함. credentials도 확인.
       // credentials: 'same-origin',

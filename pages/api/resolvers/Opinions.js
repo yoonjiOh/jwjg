@@ -18,6 +18,13 @@ async function opinionReactsSum(parent, _args, context) {
   return result?.length;
 }
 
+async function opinionCommentsSum(parent, _args, context) {
+  const result = await context.prisma.opinionComments.findMany({
+    where: { opinionsId: parent.id },
+  });
+  return result?.length;
+}
+
 async function stance(parent, _args, context) {
   return await context.prisma.stances.findUnique({
     where: { id: parent.stancesId },
@@ -34,6 +41,7 @@ export default {
   user,
   opinionReacts,
   opinionReactsSum,
+  opinionCommentsSum,
   opinionComments,
   stance,
 };

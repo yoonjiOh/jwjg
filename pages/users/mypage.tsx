@@ -1,5 +1,7 @@
 import Layout from '../../components/Layout';
 import Divider from '../../components/Divider';
+import OpinionSummaryBox from '../../components/OpinionSummaryBox';
+
 import s from './users.module.scss';
 import { useRouter } from 'next/router';
 
@@ -82,8 +84,6 @@ const MyPage = props => {
   const { user } = props.data;
   const router = useRouter();
 
-  const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
-
   return (
     <Layout title={'마이페이지'} headerInfo={{ headerType: 'common' }}>
       <main className={s.main}>
@@ -137,9 +137,7 @@ const MyPage = props => {
           <div
             className={s.hashTagsContainer}
             onClick={() => {
-              router.push({
-                pathname: '/myopinions',
-              });
+              router.push(`/users/myopinions?userId=${user && user.id}`);
             }}
           >
             <h3 className={s.title}>작성한 의견</h3>
@@ -149,29 +147,19 @@ const MyPage = props => {
 
           {user &&
             user.opinions &&
-            user.opinions.map(opinion => {
-              const matchIssue = _.find(props.issues_data.issues, issue => {
-                return issue.id === opinion.issuesId;
-              });
-              const matchStance = _.find(props.stances_data.stances, stance => {
-                return stance.id === opinion.stancesId;
-              });
-
-              return (
-                <div className={s.opinionSummaryBox}>
-                  <div className={s.issueImgBox}>
-                    <img src={matchIssue.imageUrl} />
-                  </div>
-                  <div className={s.contextBox}>
-                    <p>{matchIssue.title}</p>
-                    <span>
-                      {fruitsForStanceTitle[matchStance.orderNum]} {matchStance.title}
-                    </span>
-                    <span>{opinion.content}</span>
-                  </div>
-                </div>
-              );
-            })}
+            user.opinions.length ? 
+              user.opinions.map(opinion => (
+                <OpinionSummaryBox opinion={opinion}
+                  issues={props.issues_data.issues}
+                  stances={props.stances_data.stances}
+                />
+              )) : (
+              <div className={s.noOpinions}>
+                <p>아직 작성한 의견이 없어요 🍊</p>
+                <img src={'https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/Capybara2.png'} />
+              </div>
+              )
+          }
         </div>
       </main>
     </Layout>

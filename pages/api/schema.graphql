@@ -33,6 +33,7 @@ type Opinion {
   opinionCommentReacts: [OpinionCommentReact]
   opinionReacts: [OpinionReact]
   opinionReactsSum: Int
+  opinionCommentsSum: Int
 }
 
 type OpinionComment {
@@ -171,6 +172,7 @@ type Mutation {
     opinionsId: Int!,
     like: Boolean!
   ): OpinionReact
+  updateUserProfile(id: Int!, name: String, intro: String, profileImageUrl: String): User
 }
 
 scalar DateTime
