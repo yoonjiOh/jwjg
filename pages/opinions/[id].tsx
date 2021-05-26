@@ -120,7 +120,8 @@ const Opinion = props => {
   
   const opinion = _.head(props.data.opinions);
 
-  const myReact = opinion.opinionReacts.filter(react => react.usersId === userId);
+  const myReact =
+    opinion && opinion.opinionReacts.filter(react => react.usersId === Number(userId));
   const isLikedByMe = !_.isEmpty(myReact) && _.head(myReact).like;
 
   const handleChangeCommentInput = e => {
@@ -146,11 +147,11 @@ const Opinion = props => {
     try {
       await doLikeActionToOpinion({
         variables: {
-          usersId: userId,
+          usersId: Number(userId),
           opinionsId: Number(opinionId),
-          like: isLikedByMe ? false : true
-        }
-      })
+          like: isLikedByMe ? false : true,
+        },
+      });
     } catch (e) {
       console.error(e);
     }

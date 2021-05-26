@@ -157,9 +157,8 @@ async function createOpinionComment(parent, args, context) {
 
 async function doLikeActionToOpinion(parent, args, context) {
   const result = await context.prisma.opinionReacts.upsert({
-    select: {
-      usersId: args.usersId,
-      opinionsId: args.opinionsId,
+    where: {
+      usersId_opinionsId: { usersId: args.usersId, opinionsId: args.opinionsId },
     },
     update: {
       like: args.like,

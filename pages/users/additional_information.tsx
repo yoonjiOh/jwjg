@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuthUser, withAuthUser, AuthAction } from 'next-firebase-auth';
 import Layout from '../../components/Layout';
+import common_style from '../index.module.css';
+
 import { doEmailSignup } from './lib/users';
 
 function AdditionalInformation() {
@@ -19,21 +21,35 @@ function AdditionalInformation() {
     router.push('/');
   };
 
-  return (
-    <Layout title={'유저 상세 정보 입력'} headerInfo={{ headerType: 'editMode' }}>
-      <form onSubmit={handleSubmit}>
-        <label>
-          intro
-          <input name="intro" value={intro} onChange={handleIntroChange} placeholder="내소개" />
-        </label>
-        <br />
-        <label>
-          name
-          <input name="name" value={name} onChange={handleNameChange} placeholder="내소개" />
-        </label>
-        <br />
+  const headerInfo = {
+    headerType: 'editMode',
+    subTitle: '회원가입',
+    action: (
+      <button
+        // className={`${s.registerOpinionBtn} ${!opinionBody.length && s.disabled}`}
+        onClick={handleSubmit}
+      >
+        완료
+      </button>
+    ),
+  };
 
-        {/* <label>
+  return (
+    <Layout title={'유저 상세 정보 입력'} headerInfo={headerInfo}>
+      <main className={common_style.main}>
+            <form onSubmit={handleSubmit}>
+              <label>
+                intro
+                <input name="intro" value={intro} onChange={handleIntroChange} placeholder="내소개" />
+              </label>
+              <br />
+              <label>
+                name
+                <input name="name" value={name} onChange={handleNameChange} placeholder="내소개" />
+              </label>
+              <br />
+
+              {/* <label>
           intro
           <input
             name="profile"
@@ -42,9 +58,9 @@ function AdditionalInformation() {
             placeholder="이메일 주소"
           />
         </label> */}
-        <br />
-        <input type="submit" value="Submit" />
-      </form>
+              <br />
+            </form>
+      </main>
     </Layout>
   );
 }
