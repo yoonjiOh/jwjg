@@ -4,15 +4,20 @@ import { initializeApollo } from '../../apollo/apolloClient';
 import Layout from '../../components/Layout';
 import CommentBox from '../../components/CommentBox';
 
-import { useAuth } from '../users/lib/users';
 import { useRouter } from 'next/router';
 
 import common_style from './index.module.scss';
 import s from './[id].module.css';
 import util_s from '../../components/Utils.module.scss'
+import user_s from '../users/users.module.scss'
+
 import _ from 'lodash';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
 
 const GET_DATA = gql`
   query opinions($id: Int!) {
@@ -20,6 +25,13 @@ const GET_DATA = gql`
       id
       content
       stancesId
+      createdAt
+      user {
+        id
+        name
+        intro
+        profileImageUrl
+      }
       opinionComments {
         id
         content
@@ -42,11 +54,11 @@ const GET_DATA = gql`
         like
         usersId
       }
+      opinionReactsSum
     }
   }
 `;
 
-// opinion, OpinionComments, like 다 한번에 가져와야 함
 export const getServerSideProps = async context => {
   const apolloClient = initializeApollo(null);
   const { id } = context.query;
@@ -102,6 +114,7 @@ const Opinion = props => {
   const [opinionComment, setOpinionComment] = useState('');
   const [createOpinionComment] = useMutation(CREATE_OPINION_COMMENT);
   const [doLikeActionToOpinion] = useMutation(DO_LIKE_ACTION_TO_OPINION);
+  
   const router = useRouter();
   const { id: opinionId, userId } = router.query;
   
@@ -121,7 +134,7 @@ const Opinion = props => {
           content: opinionComment,
           usersId: userId,
           opinionsId: Number(opinionId),
-          stancesId: 1, // 나중에
+          stancesId: 1,
         },
       });
     } catch (e) {
@@ -146,21 +159,41 @@ const Opinion = props => {
   const handleClickCommentIcon = () => {
     document.getElementById('input_comment').select()
   }
+
+  console.log('props', props)
+
   return (
     <Layout title={'개별 오피니언 페이지'} headerInfo={{ headerType: 'common' }}>
       <main className={common_style.main}>
         <div className={s.opinionWrapper}>
           <div className={util_s[`stanceMark-${opinion.stancesId}`]} />
+          <div className={s.opinionContent} style={{ position: 'relative' }}>
+            <div className={user_s.smallProfileWrapper} style={{ height: '75px', paddingLeft: '0' }}>
+              <div>
+                <img src={opinion.user.profileImageUrl} />
+              </div>
+              <div className={user_s.profileInfo} style={{ width: '100%' }}>
+                <p className={user_s.name}>{opinion.user.name}</p>
+                <p className={user_s.ago}>{dayjs(opinion.createdAt).fromNow()}</p>
+              </div>
+            </div>
 
-          {/* <ProfileWidget /> 앞으로 이 컴포넌트를 통해 댓글, 오피니언 등의 작성자를 보여줄 때 재사용한다. */}
-          <div className={s.opinionContent}>
             <div className={s.stancesWrapper}>🍇 윤석열 비판적 지지</div>
             <div>{opinion.content}</div>
-            <div className={s.likeWrapper}>
+            <div className={s.likeWrapper} style={{ position: 'absolute', bottom: '5px', paddingLeft: '0' }}>
               <img
                 src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
                 alt="좋아요 버튼"
+                style={{ marginRight: '5px' }}
               />
+              {opinion.opinionReactsSum}
+
+              <img
+                src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/bubble.svg"
+                alt="댓글 달기 버튼"
+                style={{ marginLeft: '15px', marginRight: '5px' }}
+              />
+              {opinion.opinionComments.length}
             </div>
           </div>
         </div>
@@ -171,10 +204,12 @@ const Opinion = props => {
                 src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/blue_like.svg"
                 alt="좋아요 버튼"
               /> 좋아요</label>
-                : <label style={{ display: 'flex', cursor: 'pointer' }}><img
-                src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
-                alt="좋아요 버튼"
-              /> 좋아요</label>
+                : <label style={{ display: 'flex', cursor: 'pointer' }}>
+                  <img
+                    src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
+                    alt="좋아요 버튼"
+                    style={{ marginRight: '5px' }}
+                  /> 좋아요</label>
               }
           </div>
           <div className={s.action} onClick={handleClickCommentIcon}>
@@ -197,7 +232,7 @@ const Opinion = props => {
 
         <div className={s.commentsWrapper}>
             {opinion.opinionComments && opinion.opinionComments.map(comment => (
-              <CommentBox comment={comment} />
+              <CommentBox comment={comment} me={null} />
             ))}
           </div>
         
