@@ -128,6 +128,7 @@ const MyPage = props => {
             onClick={() => {
               router.push({
                 pathname: '/myhashtags',
+                query: { id: user && user.id },
               });
             }}
           >
