@@ -92,7 +92,7 @@ type IssueHashTag {
 
 type HashTag {
   id: Int
-  content: String
+  name: String
 }
 
 type AuthPayload {
@@ -108,18 +108,18 @@ type bulkInsertCount {
 input IssuesInput {
   title: String!
   content: String!
-  option_list_json: String
+  imageUrl: String
 }
 
 input IssueHashTagInput {
-  issue_id: Int
-  tag_id: Int
+  issuesId: Int
+  hashTagsId: Int
 }
 
 input IssueStancesInput {
   title: String
   orderNum: Int
-  IssueId: Int
+  issuesId: Int
 }
 
 type UploadedFileResponse {

@@ -23,11 +23,11 @@ const IssueList = () => {
   return (
     <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }}>
       <main className={common_style.main}>
-        <button className={style.btn_add_issue}>
-          <Link href={`/admin/issues/new`}>새 이슈 만들기</Link>
-        </button>
-
         <div className={style.wrapper}>
+          <button className={style.btn_add_issue}>
+            <Link href={`/admin/issues/new`}>새 이슈 만들기</Link>
+          </button>
+          
           {data.issues.map(issue => (
             <p className={style.issue_title}>
               <Link key={issue.title} href={`/admin/issues/${issue.id}`}>

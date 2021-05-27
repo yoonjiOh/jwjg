@@ -71,7 +71,7 @@ model UserStances {
 
 model HashTags {
   id      Int    @id @default(autoincrement())
-  content String
+  name String
 
   IssueHashTags IssueHashTags[]
 }
