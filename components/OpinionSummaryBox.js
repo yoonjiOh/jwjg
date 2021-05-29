@@ -26,7 +26,7 @@ const OpinionSummaryBox = ({ opinion, issues, stances }) => {
   const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
 
   return (
-    <div className={s.opinionSummaryBox}>
+    <div key={opinion.id} className={s.opinionSummaryBox}>
       <div className={s.issueImgBox}>
         <img src={matchIssue.imageUrl} />
       </div>

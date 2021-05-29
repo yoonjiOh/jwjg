@@ -8,6 +8,7 @@ type User {
   createdAt: DateTime
   updatedAt: DateTime
   userStance(issuesId: Int): UserStance
+  userStances: [UserStance]
   user: User
   opinions: [Opinion]
   opinionComments: [OpinionComment]

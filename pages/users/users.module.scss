@@ -157,6 +157,8 @@
     }
 }
 
+.hashTagSum { margin-left: 5px; }
+
 .opinionSummaryBox {
     padding: 15px 0px;
     display: flex;
@@ -294,4 +296,9 @@
     .inputForm:focus {
         outline: none;
     }
+}
+
+.tags {
+    display: flex;
+    margin-bottom: 15px;
 }

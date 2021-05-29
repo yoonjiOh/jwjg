@@ -11,7 +11,7 @@ import FloatingNewOpinionBtn from '../../components/opinion/FloatingNewOpinionBt
 import Link from 'next/link';
 import _ from 'lodash';
 
-import { useAuthUser, withAuthUser } from 'next-firebase-auth';
+import { useAuthUser, withAuthUser, AuthAction } from 'next-firebase-auth';
 import CommentBox from '../../components/CommentBox';
 
 const GET_USERS = gql`
@@ -73,7 +73,7 @@ const GET_ISSUE = gql`
       }
       issueHashTags {
         hashTags {
-          content
+          name
         }
       }
     }
@@ -124,7 +124,7 @@ const Issue = props => {
   if (loading) return 'Loading...';
   if (error) return `Error! ${error.message}`;
   const issue = data.issues[0];
-  const tags = issue.issueHashTags.map(issueHashTag => issueHashTag.hashTags[0].content);
+  const tags = issue.issueHashTags.map(issueHashTag => issueHashTag.hashTags[0].name);
   const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
   const userStances = _.reduce(
     issue.userStances,
@@ -289,6 +289,7 @@ const Issue = props => {
       <FloatingNewOpinionBtn userId={me && me.id} issueId={issue_id} stancesId={1} />
     </Layout>
   );
-};;
+}
 
 export default withAuthUser()(Issue);
+
