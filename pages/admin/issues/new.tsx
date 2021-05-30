@@ -1,14 +1,21 @@
 import React, { useReducer, useEffect } from 'react';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
-import Select from 'react-select';
 import _ from 'lodash';
 import config from '../../../config';
 import Layout from '../../../components/Layout';
 
 import common_style from '../../index.module.css';
 import style from './new.module.css';
+import { initializeApollo } from '../../../apollo/apolloClient';
 
+import dynamic from 'next/dynamic';
+const Multiselect = dynamic(
+  () => import('multiselect-react-dropdown').then(module => module.Multiselect),
+  {
+      ssr: false
+  }
+)
 interface Stance {
   title: String;
   orderNum: Number;
@@ -19,7 +26,7 @@ const GET_TAGS = gql`
   query FetchTags {
     hashTags {
       id
-      content
+      name
     }
   }
 `;
@@ -81,12 +88,15 @@ const reducer = (state, action) => {
     case 'INPUT_NEW_STANCE_TITLE':
       return {
         ...state,
-        newStance: action.value,
+        newStance: {
+          ...state.newStance,
+          title: action.value,
+        },
       };
     case 'ADD_STANCE':
       return {
         ...state,
-        stances: state.stances.concat(action.value),
+        stances: state.stances.concat(action.payload),
         addStanceMode: false,
       };
     case 'FETCH_HASHTAGS':
@@ -112,9 +122,20 @@ const reducer = (state, action) => {
   }
 };
 
-const NewIssue = () => {
-  const { data } = useQuery(GET_TAGS);
+export const getServerSideProps = async context => {
+  const apolloClient = initializeApollo(null);
+  const { data } = await apolloClient.query({
+    query: GET_TAGS,
+  });
 
+  return {
+    props: {
+      data: data,
+    },
+  };
+};
+
+const NewIssue = props => {
   const router = useRouter();
   const initial_state = {
     issue: {
@@ -123,9 +144,9 @@ const NewIssue = () => {
       imageUrl: '',
     },
     stances: [],
-    newStance: { title: '', orderNum: null, issueId: null },
+    newStance: { title: '', orderNum: null, issuesId: null },
     addStanceMode: false,
-    tags: [],
+    tags: props.data.hashTags || [],
     selected_tags: [],
   };
 
@@ -138,25 +159,13 @@ const NewIssue = () => {
 
   const [mutate, { loading, error }] = useMutation(SINGLE_UPLOAD);
 
-  useEffect(() => {
-    dispatch({
-      type: 'FETCH_HASHTAGS',
-      data:
-        data &&
-        data.tags &&
-        data.tags.map(tag => {
-          return { value: tag.id, label: tag.name };
-        }),
-    });
-  });
-
   const handleSetStanceMode = () => {
     dispatch({
       type: 'SHOW_STANCE_INPUT',
     });
   };
 
-  const handleNewStanceInput = value => {
+  const handleNewStanceInput = value => {  
     dispatch({
       type: 'INPUT_NEW_STANCE_TITLE',
       value: value,
@@ -165,20 +174,30 @@ const NewIssue = () => {
 
   const handleAddStanceBtn = () => {
     const stanceIdx = _.isEmpty(stances) ? 1 : _.size(stances) + 1;
-    const payload: Stance = { ...newStance, orderNum: stanceIdx };
+    const payload: Stance = { 
+      ...newStance,
+      orderNum: stanceIdx,
+    };
 
     dispatch({
       type: 'ADD_STANCE',
-      value: payload,
+      payload: payload,
     });
   };
 
-  const handleTagSelect = selectedHashTags => {
+  const handleSelectTag = selectedHashTags => {
     dispatch({
       type: 'SET_HASHTAGS',
       data: selectedHashTags,
     });
   };
+
+  const handleRemoveTag = removedHashTag => {
+    dispatch({
+      type: 'SET_HASHTAGS',
+      data: selected_tags.filter(tag => tag.id !== removedHashTag.name),
+    });
+  }
 
   const handleFileChange = async ({
     target: {
@@ -223,22 +242,22 @@ const NewIssue = () => {
         .then(result => {
           createdIssueId = result.data.createIssue.id;
         })
-        .then(() => {
+        .then(async() => {
           const tagsPayload = selected_tags.map(tag => {
-            return { issueId: createdIssueId, hashTagsId: tag.value };
+            return { issuesId: createdIssueId, hashTagsId: tag.id };
           });
 
-          createTagsByIssue({
+          await createTagsByIssue({
             variables: {
               data: tagsPayload,
             },
           });
 
           const stancesPayload = stances.map(stance => {
-            return { title: stance.title, orderNum: stance.orderNum, issueId: createdIssueId };
+            return { title: stance.title, orderNum: stance.orderNum, issuesId: createdIssueId };
           });
 
-          createStancesByIssue({
+          await createStancesByIssue({
             variables: {
               data: stancesPayload,
             },
@@ -247,7 +266,7 @@ const NewIssue = () => {
           if (
             window.confirm('이슈가 성공적으로 발제되었습니다. 해당 이슈 페이지로 넘어가시겠습니까?')
           ) {
-            window.location.href = `${config.host}/${createdIssueId}`;
+            window.location.href = `${config.host}/issues/${createdIssueId}`;
           } else {
             window.location.href = `${config.host}`;
           }
@@ -315,12 +334,11 @@ const NewIssue = () => {
           <p className={style.title_sm} style={{ marginBottom: '15px' }}>
             태그 선택
           </p>
-          <Select
-            isMulti
-            name="tags"
+          <Multiselect
             options={tags}
-            className="tags-multi-select"
-            onChange={handleTagSelect}
+            onSelect={handleSelectTag}
+            onRemove={handleRemoveTag}
+            displayValue="name"
           />
         </div>
       </main>

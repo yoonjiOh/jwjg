@@ -11,17 +11,17 @@ const s3Uploader = new AWSS3Uploader({
 });
 
 async function createIssue(parent, args, context) {
-  const { userId } = context;
-  if (!userId) {
-    throw new AuthenticationError('you must be logged in');
-  }
+  // 일단 이 코드 주석
+  // const { userId } = context;
+  // if (!userId) {
+  //   throw new AuthenticationError('you must be logged in');
+  // }
 
-  const new_issue = await context.prisma.issue.create({
+  const new_issue = await context.prisma.issues.create({
     data: {
       title: args.title,
       content: args.content,
-      img_url: args.img_url,
-      option_list_json: args.option_list_json,
+      imageUrl: args.imageUrl,
     },
   });
 
@@ -29,7 +29,7 @@ async function createIssue(parent, args, context) {
 }
 
 async function updateIssue(parent, args, context) {
-  const updated_issue = await context.prisma.issue.update({
+  const updated_issue = await context.prisma.issues.update({
     where: { id: args.id },
     data: {
       title: args.title,
@@ -44,7 +44,7 @@ async function updateIssue(parent, args, context) {
 
 async function createTagsByIssue(parent, args, context) {
   try {
-    const result = await context.prisma.issuesHashTags.createMany({
+    const result = await context.prisma.issueHashTags.createMany({
       data: args.data,
       skipDuplicates: true,
     });
@@ -157,9 +157,8 @@ async function createOpinionComment(parent, args, context) {
 
 async function doLikeActionToOpinion(parent, args, context) {
   const result = await context.prisma.opinionReacts.upsert({
-    select: {
-      usersId: args.usersId,
-      opinionsId: args.opinionsId,
+    where: {
+      usersId_opinionsId: { usersId: args.usersId, opinionsId: args.opinionsId },
     },
     update: {
       like: args.like,

@@ -1,11 +1,12 @@
 import Layout from '../../components/Layout';
 import Divider from '../../components/Divider';
 import OpinionSummaryBox from '../../components/OpinionSummaryBox';
+import HashTag from '../../components/HashTag';
 
 import s from './users.module.scss';
 import { useRouter } from 'next/router';
 
-import { gql, useMutation, useQuery } from '@apollo/client';
+import { gql } from '@apollo/client';
 import { initializeApollo } from '../../apollo/apolloClient';
 import _ from 'lodash';
 
@@ -30,6 +31,9 @@ const GET_MYPAGE_DATA = gql`
         opinionsId
         stancesId
       }
+      userStances {
+        issuesId
+      }
     }
   }
 `;
@@ -40,6 +44,11 @@ const GET_ISSUES = gql`
       id
       title
       imageUrl
+      issueHashTags {
+        hashTags {
+          name
+        }
+      }
     }
   }
 `;
@@ -83,7 +92,28 @@ export const getServerSideProps = async context => {
 const MyPage = props => {
   const { user } = props.data;
   const router = useRouter();
+  const relatedIssueIds = _.uniq(
+    props.data.user.opinions.map(opinion => opinion.issuesId),
+    props.data.user.userStances.map(stance => stance.issuesId),
+  );
 
+  let tagsMap = {};
+
+  relatedIssueIds.map(issueId => {
+    const matchIssue = _.find(props.issues_data.issues, issue => issue.id === issueId);
+    if (matchIssue.issueHashTags.length) {
+      matchIssue.issueHashTags.forEach(issueHashTag => {
+        const targetTag = issueHashTag.hashTags[0].name;
+
+        if (tagsMap[targetTag]) {
+          tagsMap[targetTag]++;
+        } else {
+          tagsMap[targetTag] = 1;
+        }
+      });
+    }
+  });
+  
   return (
     <Layout title={'마이페이지'} headerInfo={{ headerType: 'common' }}>
       <main className={s.main}>
@@ -94,11 +124,23 @@ const MyPage = props => {
           <p>{user && user.name}</p>
           <div>
             <span className={s.count}>{user && user.opinions && user.opinions.length}</span>
-            <span>의견</span>
+            <span
+              onClick={() => {
+                router.push(`/users/myopinions?userId=${user && user.id}`);
+              }}
+            >
+              의견
+            </span>
             <span className={s.count}>
               {user && user.opinionComments && user.opinionComments.length}
             </span>
-            <span>댓글</span>
+            <span
+              onClick={() => {
+                router.push(`/users/mycomments?userId=${user && user.id}`);
+              }}
+            >
+              댓글
+            </span>
           </div>
         </div>
 
@@ -123,13 +165,21 @@ const MyPage = props => {
             className={s.hashTagsContainer}
             onClick={() => {
               router.push({
-                pathname: '/myhashtags',
+                pathname: '/users/myhashtags',
+                query: { userId: user && user.id },
               });
             }}
           >
             <h3 className={s.title}>해시태그</h3>
-            <p className={s.hashTagSum}></p>
+            <p className={s.hashTagSum}>{_.size(tagsMap)}</p>
             <div className={s.goNext} />
+            { !_.isEmpty(tagsMap) && 
+              <div className={s.tags}>
+                {_.map(tagsMap, (value, key) => {
+                  return <HashTag tag={key} count={value} />;
+                })}
+              </div>
+            }
           </div>
         </div>
 
@@ -145,21 +195,20 @@ const MyPage = props => {
             <div className={s.goNext} />
           </div>
 
-          {user &&
-            user.opinions &&
-            user.opinions.length ? 
-              user.opinions.map(opinion => (
-                <OpinionSummaryBox opinion={opinion}
-                  issues={props.issues_data.issues}
-                  stances={props.stances_data.stances}
-                />
-              )) : (
-              <div className={s.noOpinions}>
-                <p>아직 작성한 의견이 없어요 🍊</p>
-                <img src={'https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/Capybara2.png'} />
-              </div>
-              )
-          }
+          {user && user.opinions && user.opinions.length ? (
+            user.opinions.map(opinion => (
+              <OpinionSummaryBox
+                opinion={opinion}
+                issues={props.issues_data.issues}
+                stances={props.stances_data.stances}
+              />
+            ))
+          ) : (
+            <div className={s.noOpinions}>
+              <p>아직 작성한 의견이 없어요 🍊</p>
+              <img src={'https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/Capybara2.png'} />
+            </div>
+          )}
         </div>
       </main>
     </Layout>

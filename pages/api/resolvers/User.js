@@ -23,6 +23,14 @@ async function userStance(parent, args, context) {
   });
 }
 
+async function userStances(parent, _args, context) {
+  return await context.prisma.userStances.findMany({
+    where: {
+      usersId: parent.id,
+    },
+  });
+}
+
 async function opinions(parent, _args, context) {
   return await context.prisma.opinions.findMany({
     where: {
@@ -43,6 +51,7 @@ export default {
   name,
   user,
   userStance,
+  userStances,
   opinions,
   opinionComments,
 };

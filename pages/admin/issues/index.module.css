@@ -1,3 +1,7 @@
+.main {
+  background-color: #fff;
+  /* height: 100vh; */
+}
 .btn_add_issue {
   display: block;
   margin: 0 auto;
@@ -14,8 +18,7 @@
 
 .wrapper {
   padding: 10px;
-  margin: 30px;
-  height: 900px;
+  margin: 0 30px 30px 30px;
 }
 
 .issue_title {

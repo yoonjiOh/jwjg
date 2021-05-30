@@ -73,7 +73,7 @@ $stance5: $orange;
   padding: 13px;
 }
 .commentStance {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
   line-height: 19.5px;
   margin-left: 10px;
@@ -89,4 +89,13 @@ $stance5: $orange;
   color: #777777;
   position: absolute;
   right: 10px;
+}
+.tag {
+  background: #F3F3F3;
+  width: 92px;
+  height: 39px;
+  padding: 9px 16px 11px;
+  display: flex;
+  border-radius: 30px;
+  margin-right: 10px;
 }

@@ -58,7 +58,7 @@ const CommentBox = ({ comment, me }) => {
             src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
             alt="좋아요 버튼"
           />
-          <span style={{ marginLeft: '10px' }}>{likeCount}</span>
+          <span style={{ marginLeft: '5px' }}>{likeCount}</span>
         </div>
       </div>
     </div>
