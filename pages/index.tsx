@@ -1,5 +1,5 @@
 import React from 'react';
-import s from './index.module.css';
+import s from './index.module.scss';
 import { initializeApollo } from '../apollo/apolloClient';
 import { gql } from '@apollo/client';
 import Link from 'next/link';
@@ -16,6 +16,7 @@ const GET_ISSUES_AND_OPINIONS = gql`
       stances {
         id
         title
+        fruit
       }
       opinions {
         id
@@ -40,7 +41,7 @@ export const getServerSideProps = async _context => {
     query: GET_ISSUES_AND_OPINIONS,
   });
   const issues = data.issues.map(issue => {
-    const { opinions } = issue;
+    const { opinions, stances, userStances } = issue;
     let sortedOpinions;
     if (opinions.length <= 2) {
       sortedOpinions = opinions;
@@ -49,10 +50,24 @@ export const getServerSideProps = async _context => {
       .sortBy(o => o.opinionReactsSum)
       .slice(0, 2)
       .value();
+    const newStances = stances.reduce((acc, stance) => {
+      const { id, title, fruit } = stance;
+      const result = { title: '', sum: 0 };
+      for (const userStance of userStances) {
+        if (id === userStance.stancesId) {
+          result.title = fruit + ' ' + title;
+          result.sum += 1;
+        }
+      }
+      acc.push(result);
+      return acc;
+    }, []);
     return {
       ...issue,
       opinions: sortedOpinions,
-      userStancesSum: issue.userStances?.length,
+      opinionsSum: opinions?.length || 0,
+      userStancesSum: userStances?.length || 0,
+      newStances,
     };
   });
 
@@ -89,12 +104,26 @@ const Main = props => {
                   </div>
                   <div>
                     <div className={s.issueCardTop}>
-                      <p className={s.responseSum}>🔥 {''}명 참여</p>
-                      <p className={s.barchart}></p>
+                      <p className={s.responseSum}>🔥 {hot_issue.userStancesSum}명 참여</p>
+                      <p className={s.barchart}>
+                        {_.map(hot_issue.newStances, userStance => {
+                          return (
+                            <span
+                              style={{
+                                display: 'inline-block',
+                                border: '1px solid #eee',
+                                width: (userStance.sum / hot_issue.userStancesSum) * 100 + '%',
+                              }}
+                            >
+                              {userStance.title}
+                            </span>
+                          );
+                        })}
+                      </p>
                     </div>
                     <div className={s.line}></div>
                     <div className={s.issueCardCommentWrap}>
-                      <p className={s.commentSum}>💬 글 {''}개</p>
+                      <p className={s.commentSum}>💬 글 {hot_issue.opinionsSum}개</p>
                       <div className={s.issueCardComments}>
                         <div className={s.issueCardComment}>
                           <p>{hot_issue.opinions[0]?.usersId}</p>

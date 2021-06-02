@@ -89,7 +89,6 @@ async function opinionCommentReacts(parent, args, context) {
   });
 }
 
-
 export default {
   user,
   userByFirebase,

@@ -10,6 +10,7 @@ import FloatingNewOpinionBtn from '../../components/opinion/FloatingNewOpinionBt
 
 import Link from 'next/link';
 import _ from 'lodash';
+import CurrentStances from '../../components/issue/CurrentStances';
 
 import { useAuthUser, withAuthUser, AuthAction } from 'next-firebase-auth';
 import CommentBox from '../../components/CommentBox';
@@ -35,6 +36,7 @@ const GET_ISSUE = gql`
       stances {
         id
         title
+        fruit
       }
       userStances {
         usersId
@@ -125,7 +127,6 @@ const Issue = props => {
   if (error) return `Error! ${error.message}`;
   const issue = data.issues[0];
   const tags = issue.issueHashTags.map(issueHashTag => issueHashTag.hashTags[0].name);
-  const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
   const userStances = _.reduce(
     issue.userStances,
     (acc, userStance) => {
@@ -138,21 +139,12 @@ const Issue = props => {
     },
     {},
   );
-  const stances = issue.stances.map((stance, index) => ({
+  const stances = issue.stances.map(stance => ({
     ...stance,
-    fruit: fruitsForStanceTitle[index],
-    title: fruitsForStanceTitle[index] + ' ' + stance.title,
-    userStanceCount: userStances[stance.id] ? userStances[stance.id] : 0,
+    title: stance.fruit + ' ' + stance.title,
+    count: userStances[stance.id] ? userStances[stance.id] : 0,
   }));
-  const isStanceEmpty = issue.userStances.length === 0;
-  const sortedUserStances = _.sortBy(stances, stance => stance.userStanceCount);
-  const getIsStanceTied = () => {
-    return (
-      sortedUserStances[sortedUserStances.length - 1].userStanceCount ===
-      sortedUserStances[sortedUserStances.length - 2].userStanceCount
-    );
-  };
-  const isStanceTied = getIsStanceTied();
+
   const onStanceClick = async stancesId => {
     const func = await createUserStance({
       variables: {
@@ -193,58 +185,7 @@ const Issue = props => {
               {/* TODO: issue 작성자 추가 */}
             </div>
           )}
-          <div>
-            <h3 className={s.title}>지금 여론</h3>
-            {isStanceEmpty ? (
-              <div>
-                <p>아직 참여한 사람이 없어요 😣 이 이슈에 제일 먼저 참여해 보세요!</p>
-                <div>내 입장 남기기</div>
-              </div>
-            ) : isStanceTied ? (
-              <p>
-                <span>{sortedUserStances[sortedUserStances.length - 1].title}</span> 입장과{' '}
-                <span>{sortedUserStances[sortedUserStances.length - 2].title}</span> 입장이 각각{' '}
-                <span>
-                  {(sortedUserStances[sortedUserStances.length - 1].userStanceCount * 100) /
-                    issue.userStances.length}
-                  %
-                </span>
-                로 동률이에요!
-              </p>
-            ) : (
-              <p>
-                <span>{sortedUserStances[sortedUserStances.length - 1].title}</span> 입장이 전체의{' '}
-                <span>
-                  {(sortedUserStances[sortedUserStances.length - 1].userCount * 100) /
-                    issue.userStances.length}
-                  %
-                </span>
-                로 가장 많아요
-              </p>
-            )}
-            <ul className={s.stanceItems}>
-              {stances.map(stance => (
-                <li className={s.stanceItem} key={stance.id}>
-                  <div
-                    className={`${s.stanceItemBarChart} ${s[stance.fruit]}`}
-                    style={{
-                      width: `${(stance.userStanceCount * 100) / issue.userStances.length}%`,
-                    }}
-                  >
-                    {}
-                  </div>
-                  <div className={s.stanceItemTitle}>{stance.title}</div>
-                  <div className={s.stanceItemPercentage}>
-                    {userStances[stance.id] > 0
-                      ? (userStances[stance.id] * 100) / issue.userStances.length
-                      : 0}
-                    %
-                  </div>
-                </li>
-              ))}
-            </ul>
-            <div className={s.stanceCount}>{issue.userStances.length}명이 참여했어요</div>
-          </div>
+          <CurrentStances issue={issue} stances={stances} />
           <div>
             <h3 className={s.title}>내 입장</h3>
             <ul className={s.stancePickItems}>
@@ -289,7 +230,6 @@ const Issue = props => {
       <FloatingNewOpinionBtn userId={me && me.id} issueId={issue_id} stancesId={1} />
     </Layout>
   );
-}
+};
 
 export default withAuthUser()(Issue);
-

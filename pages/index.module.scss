@@ -1,3 +1,5 @@
+@use "../styles/_variables" as *;
+
 .main {
   background-color: #fff;
   height: 100vh;
@@ -81,4 +83,19 @@
 .responseSum,
 .commentSum {
   margin: 0 0 8px 0;
+}
+.🍎 {
+  background-color: $apple;
+}
+.🍋 {
+  background-color: $lemon;
+}
+.🍇{
+  background-color: $grape;
+}
+.🍈{
+  background-color: $melon;
+}
+.🍊{
+  background-color: $orange;
 }
