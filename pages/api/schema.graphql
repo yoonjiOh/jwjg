@@ -83,6 +83,7 @@ type Stance {
   orderNum: Int
   issuesId: Int
   userStances: [UserStance]
+  fruit: String
 }
 
 type IssueHashTag {

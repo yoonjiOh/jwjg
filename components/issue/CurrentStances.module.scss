@@ -1,0 +1,52 @@
+@use "../../styles/_variables" as *;
+
+.stanceItem {
+  background: #f3f3f3;
+  border-radius: 10px;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.stanceItemBarChart{
+  position: absolute;
+  border-radius: 10px;
+  height: 100%;
+  background: red;
+  top: 0;
+  left: 0;
+}
+.stanceItemTitle{
+  font-size: $font-sm;
+  color: #333;
+  padding: 8px 0 9px 16px;
+  z-index: 1;
+  background: transparent;
+}
+.stanceItemPercentage{
+  padding: 8px 6px 9px 0;
+  font-size: $font-sm;
+}
+.title {
+  font-size: $font-lg;
+}
+.stanceCount{
+  text-align: right;
+  font-size: $font-sm;
+  color: $gray_900;
+}
+.🍎 {
+  background-color: $apple;
+}
+.🍋 {
+  background-color: $lemon;
+}
+.🍇{
+  background-color: $grape;
+}
+.🍈{
+  background-color: $melon;
+}
+.🍊{
+  background-color: $orange;
+}
