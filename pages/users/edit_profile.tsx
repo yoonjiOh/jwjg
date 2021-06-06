@@ -30,7 +30,7 @@ const SINGLE_UPLOAD_IMG = gql`
   }
 `;
 
-const UPDATE_PROFILE = gql`
+export const UPDATE_PROFILE = gql`
   mutation updateUserProfile($id: Int!, $name: String, $intro: String, $profileImageUrl: String) {
     updateUserProfile(id: $id, name: $name, intro: $intro, profileImageUrl: $profileImageUrl) {
       id

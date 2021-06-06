@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext, createContext } from 'react';
 import firebase from 'firebase/app';
 import { JsonWebTokenError } from 'jsonwebtoken';
 import { useRouter } from 'next/router';
+import { EmailAlreadyExistError, WeakPasswordError } from './../../errors';
 
 // const authContext = createContext();
 
@@ -101,10 +102,11 @@ export async function doEmailSignup(email, password) {
       console.log(errorMessage);
 
       if (errorCode == 'auth/email-already-in-use') {
-        await doEmailLogin(email, password);
-        return true;
+        throw new EmailAlreadyExistError(errorMessage);
+      } else if (errorCode == 'auth/weak-password') {
+        throw new WeakPasswordError(errorMessage);
       }
-      return false;
+      throw Error(errorMessage);
     });
 }
 

@@ -7,22 +7,41 @@ import common_style from '../index.module.css';
 import s from './users.module.scss';
 
 import { doEmailSignup } from './lib/users.ts';
+import { EmailAlreadyExistError, WeakPasswordError } from '../errors';
 
 function EmailRegistration() {
   const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
   const [pwd, setPwd] = useState('');
+  const [pwdError, setPwdError] = useState('');
   const router = useRouter();
 
-  const handleEmailChange = event => setEmail(event.target.value);
-  const handlePasswordChange = event => setPwd(event.target.value);
+  const handleEmailChange = event => {
+    setEmailError('');
+    setEmail(event.target.value);
+  };
+  const handlePasswordChange = event => {
+    setPwdError('');
+    setPwd(event.target.value);
+  };
 
   const handleSubmit = async e => {
     e.preventDefault();
-    const ret = await doEmailSignup(email, pwd);
-    console.log('succeeded!:' + ret);
-    if (ret == true) {
+    try {
+      await doEmailSignup(email, pwd);
       router.push('/users/additional_information');
+    } catch (err) {
+      if (err instanceof EmailAlreadyExistError) {
+        setEmailError(err.message);
+      } else if (err instanceof WeakPasswordError) {
+        setPwdError(err.message);
+      } else {
+        throw err; // unknown error, rethrow it.
+      }
     }
+    // if (ret == true) {
+    // router.push('/users/additional_information');
+    // }
   };
 
   const headerInfo = {
@@ -48,6 +67,7 @@ function EmailRegistration() {
               placeholder="이메일 주소"
               className={s.inputForm}
             />
+            <span className="error">{emailError}</span>
           </label>
           <br />
           <label>
@@ -60,6 +80,7 @@ function EmailRegistration() {
               placeholder="비밀번호"
               className={s.inputForm}
             />
+            <span className="error">{pwdError}</span>
           </label>
           <div className={s.passwordMessage}>숫자 포함, 영문 포함, 8자 이상</div>
           <br />

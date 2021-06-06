@@ -5,20 +5,38 @@ import Layout from '../../components/Layout';
 import common_style from '../index.module.css';
 
 import { doEmailSignup } from './lib/users';
+import { UPDATE_PROFILE } from './edit_profile';
+import { useMutation, useQuery } from '@apollo/client';
+import { GET_USER } from '../../components/CommonHeader';
 
 function AdditionalInformation() {
   const router = useRouter();
   const AuthUser = useAuthUser();
   const [name, setName] = useState('');
-  const [intro, setIntro] = useState('');
+
+  const [updateUserProfile] = useMutation(UPDATE_PROFILE);
+
+  const { data: userData } = useQuery(GET_USER, {
+    variables: { firebaseUID: AuthUser.id },
+  });
 
   const handleNameChange = event => setName(event.target.value);
-  const handleIntroChange = event => setIntro(event.target.value);
 
   const handleSubmit = async e => {
     e.preventDefault();
     // handle user info update mutation using useMutation hook.
-    router.push('/');
+    await updateUserProfile({
+      variables: {
+        id: parseInt(userData.userByFirebase.id),
+        name: name,
+      },
+    })
+      .then(result => {
+        console.log(result);
+      })
+      .finally(() => {
+        router.push('/');
+      });
   };
 
   const headerInfo = {
@@ -37,29 +55,14 @@ function AdditionalInformation() {
   return (
     <Layout title={'유저 상세 정보 입력'} headerInfo={headerInfo}>
       <main className={common_style.main}>
-            <form onSubmit={handleSubmit}>
-              <label>
-                intro
-                <input name="intro" value={intro} onChange={handleIntroChange} placeholder="내소개" />
-              </label>
-              <br />
-              <label>
-                name
-                <input name="name" value={name} onChange={handleNameChange} placeholder="내소개" />
-              </label>
-              <br />
-
-              {/* <label>
-          intro
-          <input
-            name="profile"
-            value={email}
-            onChange={handleEmailChange}
-            placeholder="이메일 주소"
-          />
-        </label> */}
-              <br />
-            </form>
+        <span>사용자 이름을 정해 주세요</span>
+        <form onSubmit={handleSubmit}>
+          <label>
+            사용자 이름
+            <input name="name" value={name} onChange={handleNameChange} placeholder="@" />
+          </label>
+          <br />
+        </form>
       </main>
     </Layout>
   );
