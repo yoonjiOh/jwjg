@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { gql, useQuery } from '@apollo/client';
 import { useAuthUser, withAuthUser } from 'next-firebase-auth';
 
-const GET_USER = gql`
+export const GET_USER = gql`
   query userByFirebase($firebaseUID: String) {
     userByFirebase(firebaseUID: $firebaseUID) {
       id
@@ -47,7 +47,9 @@ const CommonHeader = () => {
           <span className={s.actionBtn}>로그아웃</span>
         </button>
       ) : (
-        <Link href={`/users/mypage?userId=${data && data.userByFirebase.id}`}>
+        <Link
+          href={`/users/mypage?userId=${data && data.userByFirebase && data.userByFirebase.id}`}
+        >
           <span className={s.actionBtn}>마이페이지</span>
         </Link>
       )}
