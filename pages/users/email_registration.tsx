@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { withAuthUser, AuthAction } from 'next-firebase-auth';
 import Layout from '../../components/Layout';
 
-import common_style from '../index.module.css';
+import common_style from '../index.module.scss';
 import s from './users.module.scss';
 
 import { doEmailSignup } from './lib/users.ts';

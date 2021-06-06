@@ -185,4 +185,29 @@
   font-size: 14px;
   cursor: pointer;
 }
+.filterSelector {
+  background: #fff;
+  padding: 20px;
+  border-radius: 20px 20px 0px 0px;
+  position: fixed;
+  bottom: 0;
+  height: 212px;
+  width: 360px;
+}
+.filterSelector .cancelBtn {
+  color: #4494FF;
+  margin-right: 100px;
+  cursor: pointer;
+}
+.filterSelector .header {
+  font-weight: 700;
+}
+.filterRow {
+  cursor: pointer;
+  padding: 10px 0;
+  border-bottom: 1px solid #E5E5E5;
+}
+.filterSelector img {
+  float: right;
+}
 

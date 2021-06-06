@@ -13,7 +13,7 @@ import _ from 'lodash';
 import CurrentStances from '../../components/issue/CurrentStances';
 
 import { useAuthUser, withAuthUser, AuthAction } from 'next-firebase-auth';
-import CommentBox from '../../components/CommentBox';
+import OpinionBox from '../../components/OpinionBox';
 
 const GET_USERS = gql`
   query {
@@ -208,6 +208,7 @@ const Issue = props => {
                 pathname: '/opinions',
                 query: {
                   issuesId: issue.id,
+                  usersId: me && me.id,
                 },
               });
             }}
@@ -220,7 +221,7 @@ const Issue = props => {
             <div className={s.opinionNextContainer} style={{ margin: '0 -20px' }}>
               {issue.opinions.map(opinion => (
                 <div key={opinion.id} className={s.opinionContainer}>
-                  <CommentBox comment={opinion} me={me} />
+                  <OpinionBox opinion={opinion} me={me} />
                 </div>
               ))}
             </div>
