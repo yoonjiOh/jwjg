@@ -232,10 +232,10 @@ const Opinion = props => {
         </div>
 
         <div className={s.commentsWrapper}>
-            {opinion.opinionComments && opinion.opinionComments.map(comment => (
-              <CommentBox comment={comment} me={null} />
-            ))}
-          </div>
+          {opinion.opinionComments && opinion.opinionComments.map(comment => (
+            <CommentBox comment={comment} me={null} />
+          ))}
+        </div>
         
         <div className={s.commentWrapper}>
           <div className={s.commentInputWrapper}>

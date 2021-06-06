@@ -47,7 +47,9 @@ const CommonHeader = () => {
           <span className={s.actionBtn}>로그아웃</span>
         </button>
       ) : (
-        <Link href={`/users/mypage?userId=${data && data.userByFirebase.id}`}>
+        <Link
+          href={`/users/mypage?userId=${data && data.userByFirebase && data.userByFirebase.id}`}
+        >
           <span className={s.actionBtn}>마이페이지</span>
         </Link>
       )}
