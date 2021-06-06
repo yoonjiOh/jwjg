@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuthUser, withAuthUser, AuthAction } from 'next-firebase-auth';
 import Layout from '../../components/Layout';
-import common_style from '../index.module.css';
+import common_style from '../index.module.scss';
 
 import { doEmailSignup } from './lib/users';
 import { UPDATE_PROFILE } from './edit_profile';
