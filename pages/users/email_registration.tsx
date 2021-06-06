@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { withAuthUser, AuthAction } from 'next-firebase-auth';
 import Layout from '../../components/Layout';
 
-import common_style from '../index.module.css';
+import common_style from '../index.module.scss';
 import s from './users.module.scss';
 
 import { doEmailSignup } from './lib/users.ts';
@@ -29,7 +29,7 @@ function EmailRegistration() {
     e.preventDefault();
     try {
       await doEmailSignup(email, pwd);
-      router.push('/users/additional_information');
+      router.push('/users/terms_of_service');
     } catch (err) {
       if (err instanceof EmailAlreadyExistError) {
         setEmailError(err.message);

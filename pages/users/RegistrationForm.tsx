@@ -1,6 +1,6 @@
 import React from "react";
 import Layout from '../../components/Layout';
-import common_style from '../index.module.css';
+import common_style from '../index.module.scss';
 import style from './users.module.scss';
 import Link from 'next/link';
 import FirebaseAuth from '../../components/FirebaseAuth';
