@@ -173,6 +173,27 @@ async function doLikeActionToOpinion(parent, args, context) {
   return result;
 }
 
+async function doLikeActionToOpinionComment(parent, args, context) {
+  const result = await context.prisma.opinionCommentReacts.upsert({
+    where: {
+      usersId_opinionCommentsId: {
+        usersId: args.usersId,
+        opinionCommentsId: args.opinionCommentsId,
+      },
+    },
+    update: {
+      like: args.like,
+    },
+    create: {
+      usersId: args.usersId,
+      opinionCommentsId: args.opinionCommentsId,
+      like: args.like,
+    },
+  });
+
+  return result;
+}
+
 async function updateUserProfile(parent, args, context) {
   const result = await context.prisma.users.update({
     where: {
@@ -198,5 +219,6 @@ export default {
   createOpinion,
   createOpinionComment,
   doLikeActionToOpinion,
+  doLikeActionToOpinionComment,
   updateUserProfile,
 };

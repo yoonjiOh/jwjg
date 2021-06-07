@@ -169,7 +169,10 @@ const Opinion = props => {
         <div className={s.opinionWrapper}>
           <div className={util_s[`stanceMark-${opinion.stancesId}`]} />
           <div className={s.opinionContent} style={{ position: 'relative' }}>
-            <div className={user_s.smallProfileWrapper} style={{ height: '75px', paddingLeft: '0' }}>
+            <div
+              className={user_s.smallProfileWrapper}
+              style={{ height: '75px', paddingLeft: '0' }}
+            >
               <div>
                 <img src={opinion.user.profileImageUrl} />
               </div>
@@ -181,7 +184,10 @@ const Opinion = props => {
 
             <div className={s.stancesWrapper}>🍇 윤석열 비판적 지지</div>
             <div>{opinion.content}</div>
-            <div className={s.likeWrapper} style={{ position: 'absolute', bottom: '5px', paddingLeft: '0' }}>
+            <div
+              className={s.likeWrapper}
+              style={{ position: 'absolute', bottom: '5px', paddingLeft: '0' }}
+            >
               <img
                 src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
                 alt="좋아요 버튼"
@@ -201,17 +207,24 @@ const Opinion = props => {
 
         <div className={s.actionsWrapper}>
           <div className={s.action} onClick={handleClickLike}>
-            {isLikedByMe ? <label style={{ display: 'flex', color: '#4494FF', cursor: 'pointer' }}><img
-                src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/blue_like.svg"
-                alt="좋아요 버튼"
-              /> 좋아요</label>
-                : <label style={{ display: 'flex', cursor: 'pointer' }}>
-                  <img
-                    src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
-                    alt="좋아요 버튼"
-                    style={{ marginRight: '5px' }}
-                  /> 좋아요</label>
-              }
+            {isLikedByMe ? (
+              <label style={{ display: 'flex', color: '#4494FF', cursor: 'pointer' }}>
+                <img
+                  src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/blue_like.svg"
+                  alt="좋아요 버튼"
+                />{' '}
+                좋아요
+              </label>
+            ) : (
+              <label style={{ display: 'flex', cursor: 'pointer' }}>
+                <img
+                  src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
+                  alt="좋아요 버튼"
+                  style={{ marginRight: '5px' }}
+                />{' '}
+                좋아요
+              </label>
+            )}
           </div>
           <div className={s.action} onClick={handleClickCommentIcon}>
             <img
@@ -232,11 +245,12 @@ const Opinion = props => {
         </div>
 
         <div className={s.commentsWrapper}>
-            {opinion.opinionComments && opinion.opinionComments.map(comment => (
-              <CommentBox comment={comment} me={null} />
+          {opinion.opinionComments &&
+            opinion.opinionComments.map(comment => (
+              <CommentBox comment={comment} me={{ id: userId }} />
             ))}
-          </div>
-        
+        </div>
+
         <div className={s.commentWrapper}>
           <div className={s.commentInputWrapper}>
             <textarea

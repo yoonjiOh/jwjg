@@ -175,6 +175,11 @@ type Mutation {
     opinionsId: Int!,
     like: Boolean!
   ): OpinionReact
+  doLikeActionToOpinionComment(
+    usersId: Int!,
+    opinionCommentsId: Int!,
+    like: Boolean!
+  ): OpinionCommentReact
   updateUserProfile(id: Int!, name: String, intro: String, profileImageUrl: String): User
 }
 

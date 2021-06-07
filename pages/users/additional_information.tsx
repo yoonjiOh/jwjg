@@ -4,7 +4,6 @@ import { useAuthUser, withAuthUser, AuthAction } from 'next-firebase-auth';
 import Layout from '../../components/Layout';
 import common_style from '../index.module.scss';
 
-import { doEmailSignup } from './lib/users';
 import { UPDATE_PROFILE } from './edit_profile';
 import { useMutation, useQuery } from '@apollo/client';
 import { GET_USER } from '../../components/CommonHeader';
