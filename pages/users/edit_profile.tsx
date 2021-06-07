@@ -13,6 +13,7 @@ const GET_USER = gql`
     user(id: $id) {
       id
       name
+      nickname
       intro
       profileImageUrl
     }
@@ -31,10 +32,11 @@ const SINGLE_UPLOAD_IMG = gql`
 `;
 
 export const UPDATE_PROFILE = gql`
-  mutation updateUserProfile($id: Int!, $name: String, $intro: String, $profileImageUrl: String) {
-    updateUserProfile(id: $id, name: $name, intro: $intro, profileImageUrl: $profileImageUrl) {
+  mutation updateUserProfile($id: Int!, $name: String, $nickname: String, $intro: String, $profileImageUrl: String) {
+    updateUserProfile(id: $id, name: $name, nickname: $nickname, intro: $intro, profileImageUrl: $profileImageUrl) {
       id
       name
+      nickname
       intro
       profileImageUrl
     }
@@ -60,6 +62,7 @@ export const getServerSideProps = async context => {
 const EditProfile = props => {
   const initState = {
     name: props.data.user.name,
+    nickname: props.data.user.nickname,
     intro: props.data.user.intro,
     profileImageUrl: props.data.user.profileImageUrl,
   };
@@ -67,7 +70,7 @@ const EditProfile = props => {
   const [mutate, { loading, error }] = useMutation(SINGLE_UPLOAD_IMG);
   const [updateUserProfile, { data }] = useMutation(UPDATE_PROFILE);
 
-  const { name, intro, profileImageUrl } = state;
+  const { name, nickname, intro, profileImageUrl } = state;
   const router = useRouter();
 
   const handleFileChange = async ({
@@ -97,6 +100,7 @@ const EditProfile = props => {
       variables: {
         id: parseInt(props.data.user.id),
         name: name,
+        nickname: nickname,
         intro: intro,
         profileImageUrl: profileImageUrl
       }
@@ -172,9 +176,7 @@ const EditProfile = props => {
               <img src={profileImageUrl} style={{ width: '50%', height: '50%' }} />
             </div>
           )}
-          {/* <p style={{ marginTop: '10px', textAlign: 'center', color: '#4494FF' }}>
-            
-          </p> */}
+        
           <label style={{ color: '#4494ff', textAlign: 'center', display: 'block'  }}>
             <input type="file" required onChange={handleFileChange} />
             프로필 사진 바꾸기
@@ -192,7 +194,7 @@ const EditProfile = props => {
             <span className={s.inputTitle}>사용자 이름</span>
             <input
               type="text"
-              // value={intro}
+              value={nickname}
               onChange={(e) => handleChange(e, 'nickname')}
               placeholder="사용자 이름"
               className={s.inputForm}

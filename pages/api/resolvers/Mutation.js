@@ -201,6 +201,7 @@ async function updateUserProfile(parent, args, context) {
     },
     data: {
       name: args.name,
+      nickname: args.nickname,
       intro: args.intro,
       profileImageUrl: args.profileImageUrl,
     },

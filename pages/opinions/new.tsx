@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { gql, useMutation, useQuery } from '@apollo/client';
+import { initializeApollo } from '../../apollo/apolloClient';
+
 import Layout from '../../components/Layout';
-import { useAuth } from '../users/lib/users';
 import { useRouter } from 'next/router';
 import config from '../../config';
 import s from './index.module.scss';
+import style from '../issues/[id].module.scss';
+import _ from 'lodash';
+import { route } from 'next/dist/next-server/server/router';
 
 const GET_STANCE = gql`
   query stances($id: Int!) {
@@ -15,6 +19,31 @@ const GET_STANCE = gql`
     }
   }
 `;
+
+const GET_STANCES_BY_ISSUE = gql`
+  query stancesByIssueId($issuesId: Int!) {
+    stancesByIssueId(issuesId: $issuesId) {
+      id
+      title
+      orderNum
+    }
+  }
+`;
+
+export const getServerSideProps = async context => {
+  const apolloClient = initializeApollo(null);
+  const { issueId } = context.query;
+  const { data } = await apolloClient.query({
+    query: GET_STANCES_BY_ISSUE,
+    variables: { issuesId: Number(issueId) },
+  });
+
+  return {
+    props: {
+      stances: data,
+    },
+  };
+};
 
 const CREATE_OPINION = gql`
   mutation createOpinion($content: String!, $usersId: Int!, $issuesId: Int!, $stancesId: Int!) {
@@ -29,15 +58,27 @@ const CREATE_OPINION = gql`
   }
 `;
 
-const New = () => {
+const CREATE_USER_STANCE = gql`
+  mutation createUserStance($usersId: Int, $issuesId: Int, $stancesId: Int) {
+    createUserStance(usersId: $usersId, issuesId: $issuesId, stancesId: $stancesId) {
+      usersId
+      issuesId
+      stancesId
+    }
+  }
+`;
+
+const New = props => {
   const [opinionBody, setOpinionBody] = useState('');
   const [createOpinion] = useMutation(CREATE_OPINION);
+  const [createUserStance] = useMutation(CREATE_USER_STANCE);
 
   const router = useRouter();
   const { userId, issueId, stancesId } = router.query;
   const hasStance = !!stancesId;
 
   const { data } = useQuery(GET_STANCE, { variables: { id: Number(stancesId) } });
+
   const stance = data && data.stances[0];
 
   const handleChange = e => {
@@ -81,15 +122,41 @@ const New = () => {
   };
 
   const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
+  const onStanceClick = async stancesId => {
+    await createUserStance({
+      variables: {
+        usersId: Number(userId),
+        issuesId: Number(issueId),
+        stancesId,
+      },
+    }).then(result =>
+      router.push({
+        pathname: '/opinions/new',
+        query: { userId, issueId, stancesId },
+      }),
+    );
+  };
 
   return (
     <>
       <Layout title={'New Opinion'} headerInfo={headerInfo}>
-        <main className={s.main}>
+        <main className={s.main} style={{ background: '#fff' }}>
           {!hasStance ? (
             <div>
               <div className={s.stanceNoti}>의견을 쓰기 전에, 이슈에 대한 입장을 선택해주세요!</div>
-              <div className="stancesWrapper"></div>
+              <div style={{ padding: '10px' }}>
+                <ul className={style.stancePickItems}>
+                  {props.stances.stancesByIssueId.map(stance => (
+                    <li
+                      className={style.stancePickItem}
+                      key={stance.id}
+                      onClick={() => onStanceClick(stance.id)}
+                    >
+                      {fruitsForStanceTitle[stance.orderNum]} {stance.title}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           ) : (
             <div>

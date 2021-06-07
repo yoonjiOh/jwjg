@@ -2,6 +2,7 @@ type User {
   id: ID!
   firebaseUID: String
   name: String
+  nickname: String
   intro: String
   profileImageUrl: String
   isAdmin: Int
@@ -180,7 +181,7 @@ type Mutation {
     opinionCommentsId: Int!,
     like: Boolean!
   ): OpinionCommentReact
-  updateUserProfile(id: Int!, name: String, intro: String, profileImageUrl: String): User
+  updateUserProfile(id: Int!, name: String, nickname: String, intro: String, profileImageUrl: String): User
 }
 
 scalar DateTime
