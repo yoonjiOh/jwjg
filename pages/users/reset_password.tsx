@@ -12,7 +12,7 @@ import Snackbar, { SnackbarOrigin } from '@material-ui/core/Snackbar';
 const headerTitle = '비밀번호 찾기';
 const auth = firebase.auth();
 
-function TermsOfService() {
+function ResetPassword() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [errorText, setErrorText] = useState('');
@@ -96,4 +96,4 @@ export default withAuthUser({
   whenAuthed: AuthAction.REDIRECT_TO_APP,
   whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
   whenUnauthedAfterInit: AuthAction.RENDER,
-})(TermsOfService);
+})(ResetPassword);
