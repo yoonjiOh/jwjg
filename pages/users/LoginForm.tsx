@@ -53,7 +53,7 @@ const LoginForm = () => {
           />
           <input type="submit" value="로그인" className={s.btnActive} />
           <button className={s.btnLink}>
-            <Link href={`/`}>비밀번호 찾기</Link>
+            <Link href={`/users/reset_password`}>비밀번호 찾기</Link>
           </button>
         </form>
 
