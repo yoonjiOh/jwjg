@@ -29,7 +29,7 @@ function EmailRegistration() {
     e.preventDefault();
     try {
       await doEmailSignup(email, pwd);
-      router.push('/users/additional_information');
+      router.push('/users/terms_of_service');
     } catch (err) {
       if (err instanceof EmailAlreadyExistError) {
         setEmailError(err.message);
