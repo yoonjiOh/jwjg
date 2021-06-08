@@ -12,20 +12,8 @@ import Link from 'next/link';
 import _ from 'lodash';
 import CurrentStances from '../../components/issue/CurrentStances';
 
-import { useAuthUser, withAuthUser, AuthAction } from 'next-firebase-auth';
 import OpinionBox from '../../components/OpinionBox';
 
-const GET_USERS = gql`
-  query {
-    users {
-      id
-      firebaseUID
-      name
-      intro
-      profileImageUrl
-    }
-  }
-`;
 const GET_ISSUE = gql`
   query issues($id: Int!) {
     issues(id: $id) {
@@ -90,14 +78,10 @@ export const getServerSideProps = async context => {
     query: GET_ISSUE,
     variables: { id: parseInt(id) },
   });
-  const users = await apolloClient.query({
-    query: GET_USERS,
-  });
 
   return {
     props: {
       data: data,
-      users: users.data.users,
     },
   };
 };
@@ -233,10 +217,10 @@ const Issue = props => {
         </div>
       </main>
       {!hasMyOpinion && (
-        <FloatingNewOpinionBtn userId={userId} issueId={issue_id} stancesId={undefined} />
+        <FloatingNewOpinionBtn userId={userId} issueId={issue_id} stancesId={undefined} /> //stancesId 나중에 수정
       )}
     </Layout>
   );
 };
 
-export default withAuthUser()(Issue);
+export default Issue;
