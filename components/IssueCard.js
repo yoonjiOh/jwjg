@@ -3,11 +3,10 @@ import s from './IssueCard.module.scss';
 import Link from 'next/link';
 
 function IssueCard(props) {
-  const { issue } = props;
   return (
     <section key={issue.id} className={s.issueCard}>
       <h3 className={s.issueTitle}>
-        <Link key={issue.title} href={`/issues/${issue.id}`}>
+        <Link key={issue.title} href={`/issues/${issue.id}?userId=${userId}`}>
           {issue.title}
         </Link>
       </h3>

@@ -25,6 +25,11 @@ const GET_DATA = gql`
       id
       content
       stancesId
+      stance {
+        id
+        orderNum
+        title
+      }
       createdAt
       user {
         id
@@ -133,9 +138,9 @@ const Opinion = props => {
       await createOpinionComment({
         variables: {
           content: opinionComment,
-          usersId: userId,
+          usersId: Number(userId),
           opinionsId: Number(opinionId),
-          stancesId: 1,
+          stancesId: 1, // 댓글을 달 때도, Opinion 에 대한 나의 Stance 가 있어야 하는데, 이 부분 UI 에서 어떻게 풀 지 논의 필요
         },
       });
     } catch (e) {
@@ -151,7 +156,7 @@ const Opinion = props => {
           opinionsId: Number(opinionId),
           like: isLikedByMe ? false : true,
         },
-      });
+      }).then(() => router.reload());
     } catch (e) {
       console.error(e);
     }
@@ -161,11 +166,12 @@ const Opinion = props => {
     document.getElementById('input_comment').select()
   }
 
+  const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
   console.log('props', props)
 
   return (
     <Layout title={'개별 오피니언 페이지'} headerInfo={{ headerType: 'common' }}>
-      <main className={common_style.main}>
+      <main className={common_style.main} style={{ background: '#fff' }}>
         <div className={s.opinionWrapper}>
           <div className={util_s[`stanceMark-${opinion.stancesId}`]} />
           <div className={s.opinionContent} style={{ position: 'relative' }}>
@@ -182,7 +188,9 @@ const Opinion = props => {
               </div>
             </div>
 
-            <div className={s.stancesWrapper}>🍇 윤석열 비판적 지지</div>
+            <div className={s.stancesWrapper}>
+              {fruitsForStanceTitle[opinion.stance.orderNum]} {opinion.stance.title}
+            </div>
             <div>{opinion.content}</div>
             <div
               className={s.likeWrapper}

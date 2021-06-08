@@ -6,6 +6,7 @@ import Link from 'next/link';
 import _ from 'lodash';
 import Layout from '../components/Layout';
 import IssueCard from '../components/IssueCard';
+import { useAuthUser, withAuthUser, AuthAction } from 'next-firebase-auth';
 
 const GET_ISSUES_AND_OPINIONS = gql`
   query {
@@ -35,11 +36,28 @@ const GET_ISSUES_AND_OPINIONS = gql`
   }
 `;
 
+const GET_USERS = gql`
+  query {
+    users {
+      id
+      firebaseUID
+      name
+      intro
+      profileImageUrl
+    }
+  }
+`;
+
 export const getServerSideProps = async _context => {
   const apolloClient = initializeApollo(null);
   const { data } = await apolloClient.query({
     query: GET_ISSUES_AND_OPINIONS,
   });
+
+  const users = await apolloClient.query({
+    query: GET_USERS,
+  });
+
   const issues = data.issues.map(issue => {
     const { opinions, stances, userStances } = issue;
     let sortedOpinions;
@@ -76,6 +94,7 @@ export const getServerSideProps = async _context => {
       data: {
         issues,
       },
+      users: users.data.users,
     },
   };
 };
@@ -85,6 +104,10 @@ const Main = props => {
   console.log('issues ', issues);
   const hot_issue = _.maxBy(issues, i => i.opinions.length);
   const other_issues = issues.filter(i => i.id !== hot_issue.id);
+  
+  const AuthUser = useAuthUser();
+  const me = _.head(props.users.filter(user => user.firebaseUID === AuthUser.id));
+  
   return (
     <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }}>
       <main className={s.main}>
@@ -95,7 +118,10 @@ const Main = props => {
               {
                 <div key={hot_issue.id}>
                   <h3 className={s.issueTitle}>
-                    <Link key={hot_issue.title} href={`/issues/${hot_issue.id}`}>
+                    <Link
+                      key={hot_issue.title}
+                      href={`/issues/${hot_issue.id}?userId=${me && me.id}`}
+                    >
                       {hot_issue.title}
                     </Link>
                   </h3>
@@ -106,7 +132,7 @@ const Main = props => {
                     <div className={s.issueCardTop}>
                       <p className={s.responseSum}>🔥 {hot_issue.userStancesSum}명 참여</p>
                       <p className={s.barchart}>
-                        {_.map(hot_issue.newStances, userStance => {
+                        {_.map(hot_issue.newStances, (userStance, idx) => {
                           return (
                             <span
                               style={{
@@ -114,6 +140,7 @@ const Main = props => {
                                 border: '1px solid #eee',
                                 width: (userStance.sum / hot_issue.userStancesSum) * 100 + '%',
                               }}
+                              key={userStance.title + idx}
                             >
                               {userStance.title}
                             </span>
@@ -145,7 +172,7 @@ const Main = props => {
           <h2 className={s.issue}>📫 가장 최근 이슈</h2>
           <article className={s.issueCardWrap}>
             {other_issues.map(issue => (
-              <IssueCard issue={issue} key={issue.id} />
+              <IssueCard issue={issue} key={issue.id} userId={me && me.id} />
             ))}
           </article>
         </div>
@@ -154,4 +181,4 @@ const Main = props => {
   );
 };
 
-export default Main;
+export default withAuthUser()(Main);

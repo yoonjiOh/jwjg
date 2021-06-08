@@ -32,9 +32,8 @@ const DO_LIKE_ACTION_TO_OPINION_COMMENT = gql`
   }
 `;
 
-const OpinionBox = ({ opinion, me }) => {
-  const { data } = useQuery(GET_OPINION_COMMENT_REACTS, { variables: { id: comment.id } });
-
+const OpinionBox = ({ opinion, userId }) => {
+  const { data } = useQuery(GET_OPINION_COMMENT_REACTS, { variables: { id: opinion.id } });
   const router = useRouter();
   const likeCount =
     data &&
@@ -47,10 +46,10 @@ const OpinionBox = ({ opinion, me }) => {
       className={s.commentBox}
       key={opinion.id}
       onClick={() => {
-        if (me) {
+        if (userId) {
           router.push({
             pathname: '/opinions/[id]',
-            query: { id: opinion.id, userId: me.id },
+            query: { id: opinion.id, userId: userId },
           });
         }
       }}
@@ -58,7 +57,9 @@ const OpinionBox = ({ opinion, me }) => {
       <div className={s[`stanceMark-${opinion.stance.orderNum}`]} />
       <div className={s.commentWrapper}>
         <div className={s.profileWrapper}>
-          <div className={s.profilePlaceholder} />
+          <div className={s.profilePlaceholder}>
+            <img src={opinion.user.profileImageUrl} />
+          </div>
           <div className={s.profileName}>{opinion.user.name}</div>
           <div className={s.ago}>{dayjs(opinion.createdAt).fromNow()}</div>
         </div>

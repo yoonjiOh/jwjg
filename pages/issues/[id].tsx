@@ -12,20 +12,8 @@ import Link from 'next/link';
 import _ from 'lodash';
 import CurrentStances from '../../components/issue/CurrentStances';
 
-import { useAuthUser, withAuthUser, AuthAction } from 'next-firebase-auth';
 import OpinionBox from '../../components/OpinionBox';
 
-const GET_USERS = gql`
-  query {
-    users {
-      id
-      firebaseUID
-      name
-      intro
-      profileImageUrl
-    }
-  }
-`;
 const GET_ISSUE = gql`
   query issues($id: Int!) {
     issues(id: $id) {
@@ -50,6 +38,7 @@ const GET_ISSUE = gql`
         usersId
         stance {
           id
+          orderNum
           title
         }
         user {
@@ -89,14 +78,10 @@ export const getServerSideProps = async context => {
     query: GET_ISSUE,
     variables: { id: parseInt(id) },
   });
-  const users = await apolloClient.query({
-    query: GET_USERS,
-  });
 
   return {
     props: {
       data: data,
-      users: users.data.users,
     },
   };
 };
@@ -114,9 +99,7 @@ const CREATE_USER_STANCE = gql`
 const Issue = props => {
   const router = useRouter();
   const issue_id = Number(router.query.id);
-
-  const AuthUser = useAuthUser();
-  const me = _.head(props.users.filter(user => user.firebaseUID === AuthUser.id));
+  const userId = Number(router.query.userId);
 
   const { loading, error, data } = useQuery(GET_ISSUE, {
     variables: { id: issue_id },
@@ -148,14 +131,16 @@ const Issue = props => {
   const onStanceClick = async stancesId => {
     const func = await createUserStance({
       variables: {
-        // TODO: usersId 상태 가져오는 법 확인 필요
-        usersId: 0,
+        usersId: userId,
         issuesId: issue.id,
         stancesId,
       },
     });
     _.debounce(func, 250);
   };
+
+  const hasMyOpinion = !!issue.opinions.filter(opinion => opinion.usersId === userId).length;
+
   return (
     <Layout title={'개별 이슈'} headerInfo={{ headerType: 'common' }}>
       <main className={s.main}>
@@ -208,7 +193,7 @@ const Issue = props => {
                 pathname: '/opinions',
                 query: {
                   issuesId: issue.id,
-                  usersId: me && me.id,
+                  usersId: userId,
                 },
               });
             }}
@@ -221,7 +206,7 @@ const Issue = props => {
             <div className={s.opinionNextContainer} style={{ margin: '0 -20px' }}>
               {issue.opinions.map(opinion => (
                 <div key={opinion.id} className={s.opinionContainer}>
-                  <OpinionBox opinion={opinion} me={me} />
+                  <OpinionBox opinion={opinion} userId={userId} />
                 </div>
               ))}
             </div>
@@ -231,9 +216,11 @@ const Issue = props => {
           </div>
         </div>
       </main>
-      <FloatingNewOpinionBtn userId={me && me.id} issueId={issue_id} stancesId={1} />
+      {!hasMyOpinion && (
+        <FloatingNewOpinionBtn userId={userId} issueId={issue_id} stancesId={undefined} /> //stancesId 나중에 수정
+      )}
     </Layout>
   );
 };
 
-export default withAuthUser()(Issue);
+export default Issue;
