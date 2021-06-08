@@ -2,9 +2,8 @@ import s from './CurrentStances.module.scss';
 import _ from 'lodash';
 
 const CurrentStances = props => {
-  const { issue, stances } = props;
-  const { userStances } = issue;
-  const userStancesSum = userStances.length;
+  const { userStances, stances } = props;
+  const userStancesSum = userStances?.length || 0;
   const sortedUserStances = _.chain(stances)
     .sortBy(stance => stance.count)
     .reverse()

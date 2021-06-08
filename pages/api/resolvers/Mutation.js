@@ -70,11 +70,18 @@ async function createStancesByIssue(parent, args, context) {
 
 async function createUserStance(parent, args, context) {
   try {
-    const result = await context.prisma.userStances.create({
-      usersId: args.usersId,
-      stancesId: args.stancesId,
-      issuesId: args.issuesId,
-      skipDuplicates: true,
+    const result = await context.prisma.userStances.upsert({
+      where: {
+        usersId_issuesId: { usersId: args.usersId, issuesId: args.issuesId },
+      },
+      update: {
+        stancesId: args.stancesId,
+      },
+      create: {
+        usersId: args.usersId,
+        stancesId: args.stancesId,
+        issuesId: args.issuesId,
+      },
     });
     return result;
   } catch (e) {

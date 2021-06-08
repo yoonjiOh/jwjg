@@ -70,14 +70,16 @@ export const getServerSideProps = async _context => {
       .value();
     const newStances = stances.reduce((acc, stance) => {
       const { id, title, fruit } = stance;
-      const result = { title: '', sum: 0 };
+      const result = { title: '', sum: 0, fruit };
       for (const userStance of userStances) {
         if (id === userStance.stancesId) {
           result.title = fruit + ' ' + title;
           result.sum += 1;
         }
       }
-      acc.push(result);
+      if (result.sum !== 0) {
+        acc.push(result);
+      }
       return acc;
     }, []);
     return {
@@ -101,13 +103,12 @@ export const getServerSideProps = async _context => {
 
 const Main = props => {
   const { issues } = props.data;
-  console.log('issues ', issues);
   const hot_issue = _.maxBy(issues, i => i.opinions.length);
   const other_issues = issues.filter(i => i.id !== hot_issue.id);
-  
+
   const AuthUser = useAuthUser();
   const me = _.head(props.users.filter(user => user.firebaseUID === AuthUser.id));
-  
+
   return (
     <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }}>
       <main className={s.main}>
@@ -133,17 +134,18 @@ const Main = props => {
                       <p className={s.responseSum}>🔥 {hot_issue.userStancesSum}명 참여</p>
                       <p className={s.barchart}>
                         {_.map(hot_issue.newStances, (userStance, idx) => {
+                          const ratio = (userStance.sum / hot_issue.userStancesSum) * 100 + '%';
                           return (
-                            <span
+                            <div
+                              key={userStance.title}
+                              className={`${s.stanceItemBarChart} ${s[userStance.fruit]}`}
                               style={{
                                 display: 'inline-block',
-                                border: '1px solid #eee',
-                                width: (userStance.sum / hot_issue.userStancesSum) * 100 + '%',
+                                width: ratio,
                               }}
-                              key={userStance.title + idx}
                             >
-                              {userStance.title}
-                            </span>
+                              <span>{ratio}</span>
+                            </div>
                           );
                         })}
                       </p>
@@ -170,7 +172,7 @@ const Main = props => {
         </div>
         <div className={s.issueWrap}>
           <h2 className={s.issue}>📫 가장 최근 이슈</h2>
-          <article className={s.issueCardWrap}>
+          <article>
             {other_issues.map(issue => (
               <IssueCard issue={issue} key={issue.id} userId={me && me.id} />
             ))}

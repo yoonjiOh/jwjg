@@ -56,11 +56,7 @@
   line-height: 1.6;
 }
 .barchart {
-  margin-top: 8px;
-  width: 100%;
   height: 20px;
-  background: #ff8686;
-  border-radius: 10px 10px 10px 10px;
 }
 .line {
   width: 100%;
@@ -83,6 +79,15 @@
 .responseSum,
 .commentSum {
   margin: 0 0 8px 0;
+}
+.stanceItemBarChart{
+  border: 2px solid #fff;
+  font-size: $font-ss;
+  font-weight: bold;
+  border-radius: 50px;
+}
+.stanceItemBarChart span {
+  margin-left: 6px;
 }
 .🍎 {
   background-color: $apple;

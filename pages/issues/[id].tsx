@@ -40,6 +40,7 @@ const GET_ISSUE = gql`
           id
           orderNum
           title
+          orderNum
         }
         user {
           id
@@ -105,7 +106,9 @@ const Issue = props => {
     variables: { id: issue_id },
   });
 
-  const [createUserStance] = useMutation(CREATE_USER_STANCE);
+  const [createUserStance, { loading: mutationLoading, error: mutationError }] = useMutation(
+    CREATE_USER_STANCE,
+  );
   if (loading) return 'Loading...';
   if (error) return `Error! ${error.message}`;
   const issue = data.issues[0];
@@ -129,14 +132,14 @@ const Issue = props => {
   }));
 
   const onStanceClick = async stancesId => {
-    const func = await createUserStance({
+    const result = await createUserStance({
       variables: {
         usersId: userId,
         issuesId: issue.id,
         stancesId,
       },
     });
-    _.debounce(func, 250);
+    return result;
   };
 
   const hasMyOpinion = !!issue.opinions.filter(opinion => opinion.usersId === userId).length;
@@ -170,7 +173,9 @@ const Issue = props => {
               {/* TODO: issue 작성자 추가 */}
             </div>
           )}
-          <CurrentStances issue={issue} stances={stances} />
+          {/* TODO: mutation 후 변경된 데이터로 화면 새로 그리기 */}
+          {/* mutation 후에 refetch는 일어남. 그러면 화면은 어떻게 새로 그릴까? */}
+          <CurrentStances userStances={issue.userStances} stances={stances} />
           <div>
             <h3 className={s.title}>내 입장</h3>
             <ul className={s.stancePickItems}>
