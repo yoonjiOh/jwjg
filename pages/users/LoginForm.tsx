@@ -5,7 +5,7 @@ import s from './users.module.scss';
 import Link from 'next/link';
 import common_style from '../index.module.scss';
 import RegistrationWidget from './RegistrationWidget';
-import { doEmailLogin } from './lib/users';
+import { doEmailLogin } from '../../lib/users';
 
 const LoginForm = () => {
   const [state, setState] = useState({ email: '', password: '' });

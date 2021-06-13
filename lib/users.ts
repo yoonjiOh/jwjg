@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, createContext } from 'react';
 import firebase from 'firebase/app';
 import { JsonWebTokenError } from 'jsonwebtoken';
 import { useRouter } from 'next/router';
-import { EmailAlreadyExistError, WeakPasswordError } from './../../errors';
+import { EmailAlreadyExistError, WeakPasswordError } from './errors';
 
 // const authContext = createContext();
 

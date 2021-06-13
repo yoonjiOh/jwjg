@@ -7,8 +7,8 @@ import common_style from '../index.module.scss';
 import s from './users.module.scss';
 
 // @ts-ignore
-import { doEmailSignup } from './lib/users.ts';
-import { EmailAlreadyExistError, WeakPasswordError } from '../errors';
+import { doEmailSignup } from '../../lib/users.ts';
+import { EmailAlreadyExistError, WeakPasswordError } from '../../lib/errors';
 
 function EmailRegistration() {
   const [email, setEmail] = useState('');

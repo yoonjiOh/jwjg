@@ -1,7 +1,7 @@
 import React from "react";
 import Link from 'next/link';
 import s from './users.module.scss';
-import { startFacebookSigninFlow } from "./lib/users"
+import { startFacebookSigninFlow } from '../../lib/users';
 
 function RegistrationWidget() {
     return (
