@@ -10,7 +10,7 @@ import UserStance from './resolvers/UserStance';
 import fs from 'fs';
 import path from 'path';
 import { getUserId } from './utils';
-import prisma from './../db';
+import prisma from '../../lib/db';
 
 const resolvers = {
   Query,

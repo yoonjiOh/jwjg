@@ -10,9 +10,10 @@ import firebase from 'firebase/app';
 import Snackbar, { SnackbarOrigin } from '@material-ui/core/Snackbar';
 
 const headerTitle = '비밀번호 찾기';
-const auth = firebase.auth();
 
 function ResetPassword() {
+  const auth = firebase.auth();
+
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [errorText, setErrorText] = useState('');
