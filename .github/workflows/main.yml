@@ -25,6 +25,7 @@ jobs:
 
       - name: Build Code
         run: |
+          sudo npm cache clean --force
           npm install
           npm run build
 
