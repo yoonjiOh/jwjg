@@ -5,17 +5,25 @@ import _ from 'lodash';
 import config from '../../../config';
 import Layout from '../../../components/Layout';
 
-import common_style from '../../index.module.css';
+// import common_style from '../index.module.css';
 import style from './new.module.css';
 import { initializeApollo } from '../../../apollo/apolloClient';
 
 import dynamic from 'next/dynamic';
-const Multiselect = dynamic(
+
+
+interface MultiSelectProps {
+  options: any;
+  onSelect: (removedHashTag: any) => void;
+  onRemove: (removedHashTag: any) => void;
+}
+
+const Multiselect: React.ComponentType<MultiSelectProps> = dynamic(
   () => import('multiselect-react-dropdown').then(module => module.Multiselect),
   {
-      ssr: false
-  }
-)
+    ssr: false,
+  },
+);
 interface Stance {
   title: String;
   orderNum: Number;
@@ -281,7 +289,7 @@ const NewIssue = props => {
 
   return (
     <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }}>
-      <main className={common_style.main}>
+      <main className={style.main}>
         <div className={style.button_wrapper}>
           <button className={style.btn_submit} onClick={handleSubmit}>
             발제하기
@@ -334,12 +342,7 @@ const NewIssue = props => {
           <p className={style.title_sm} style={{ marginBottom: '15px' }}>
             태그 선택
           </p>
-          <Multiselect
-            options={tags}
-            onSelect={handleSelectTag}
-            onRemove={handleRemoveTag}
-            displayValue="name"
-          />
+          <Multiselect options={tags} onSelect={handleSelectTag} onRemove={handleRemoveTag} />
         </div>
       </main>
     </Layout>

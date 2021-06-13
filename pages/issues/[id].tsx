@@ -111,7 +111,7 @@ const CREATE_USER_STANCE = gql`
   }
 `;
 
-const Issue = props => {
+const Issue: any = props => {
   const router = useRouter();
   const issue_id = Number(router.query.id);
 

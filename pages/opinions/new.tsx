@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import Layout from '../../components/Layout';
-import { useAuth } from '../users/lib/users';
 import { useRouter } from 'next/router';
 import config from '../../config';
 import s from './index.module.scss';

@@ -1,7 +1,10 @@
 import { withAuthUser, AuthAction } from 'next-firebase-auth';
 import Layout from '../../components/Layout';
+// @ts-ignore
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+// @ts-ignore
 import Checkbox from '@material-ui/core/Checkbox';
+// @ts-ignore
 import Link from '@material-ui/core/Link';
 import { useState } from 'react';
 import common_style from '../index.module.scss';

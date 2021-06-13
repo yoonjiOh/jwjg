@@ -125,9 +125,9 @@ const EditProfile = props => {
         style={{
           background: 'none',
           color: '#4494ff',
-          fontWeight: '700',
+          fontWeight: 'bolder',
           border: 'none',
-          cursor: 'pointer'
+          cursor: 'pointer',
         }}
         onClick={handleSubmit}
       >

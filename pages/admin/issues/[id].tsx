@@ -3,7 +3,7 @@ import React, { useReducer, useEffect } from 'react';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import _ from 'lodash';
 import Layout from '../../../components/Layout';
-import common_style from '../../index.module.css';
+// import common_style from '../../index.module.css';
 import style from './[id].module.css';
 
 interface Stance {
@@ -156,7 +156,7 @@ const IssueDetail = () => {
 
   return (
     <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }}>
-      <main className={common_style.main}>
+      <main className={style.main}>
         <button
           className={style.btn_submit}
           onClick={() =>

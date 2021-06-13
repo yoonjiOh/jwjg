@@ -24,8 +24,9 @@ class LoginForm extends React.Component {
     }
 
     handleSubmit(event) {
-        alert('A email/password was submitted: ' + this.state.email + '/' + this.state.password);
-        event.preventDefault();
+      // @ts-ignore
+      alert('A email/password was submitted: ' + this.state.email + '/' + this.state.password);
+      event.preventDefault();
     }
 
     render() {
