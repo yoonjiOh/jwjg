@@ -7,6 +7,7 @@ import merge from 'deepmerge';
 let apolloClient: ApolloClient<NormalizedCacheObject> = null;
 const prod = process.env.NODE_ENV === 'production';
 
+
 function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === 'undefined',
