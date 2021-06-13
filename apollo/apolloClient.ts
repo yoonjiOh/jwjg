@@ -15,7 +15,7 @@ function createApolloClient() {
       // TODO: url 확정되면 수정 필요함. credentials도 확인.
       // credentials: 'same-origin',
     }),
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache(), 
   });
 }
 
