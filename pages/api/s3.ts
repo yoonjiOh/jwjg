@@ -1,6 +1,8 @@
 import AWS from 'aws-sdk';
 import stream from 'stream';
 
+declare const ReadStream;
+
 type S3UploadConfig = {
   accessKeyId: string;
   secretAccessKey: string;
@@ -17,8 +19,8 @@ export type File = {
   filename: string;
   mimetype: string;
   encoding: string;
-  stream?: ReadStream;
-}
+  stream?: typeof ReadStream;
+};
 
 export type UploadedFileResponse = {
   filename: string;

@@ -191,6 +191,7 @@ export function startFacebookSigninFlow() {
       var user = result.user;
 
       // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+      // @ts-ignore
       var accessToken = credential.accessToken;
 
       // ...

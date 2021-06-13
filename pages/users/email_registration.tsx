@@ -6,6 +6,7 @@ import Layout from '../../components/Layout';
 import common_style from '../index.module.scss';
 import s from './users.module.scss';
 
+// @ts-ignore
 import { doEmailSignup } from './lib/users.ts';
 import { EmailAlreadyExistError, WeakPasswordError } from '../errors';
 

@@ -163,7 +163,8 @@ const Opinion = props => {
   }
 
   const handleClickCommentIcon = () => {
-    document.getElementById('input_comment').select()
+    // @ts-ignore
+    document.getElementById('input_comment').select();
   }
 
   const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
