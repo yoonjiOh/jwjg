@@ -155,63 +155,85 @@ const Opinions = props => {
             const isLikedByMe = !_.isEmpty(myReact) && _.head(myReact).like;
             
             return (
-            <div className={s.opinionWrapper}>
-              <div className={util_s.commentBox} key={opinion.id}>
-                <div className={util_s[`stanceMark-${opinion.stance.orderNum}`]} />
+              <div className={s.opinionWrapper}>
+                <div className={util_s.commentBox} key={opinion.id}>
+                  <div className={util_s[`stanceMark-${opinion.stance.orderNum}`]} />
 
-                <div className={util_s.commentWrapper}>
-                  <div className={user_s.smallProfileWrapper}>
-                    <div>
-                      <img src={opinion.user.profileImageUrl} />
+                  <div className={util_s.commentWrapper}>
+                    <div className={user_s.smallProfileWrapper}>
+                      <div>
+                        <img src={opinion.user.profileImageUrl} />
+                      </div>
+                      <div className={user_s.profileInfo}>
+                        <p className={user_s.name}>{opinion.user.name}</p>
+                        <p className={user_s.ago}>{dayjs(opinion.createdAt).fromNow()}</p>
+                      </div>
                     </div>
-                    <div className={user_s.profileInfo}>
-                      <p className={user_s.name}>{opinion.user.name}</p>
-                      <p className={user_s.ago}>{dayjs(opinion.createdAt).fromNow()}</p>
+
+                    <div className={util_s.commentContentWrapper}>
+                      <span style={{ display: 'block' }}>
+                        {fruitsForStanceTitle[opinion.stance.orderNum] + ' ' + opinion.stance.title}
+                      </span>
+                      <span>{opinion.content}</span>
+                    </div>
+
+                    <div className={s.actionsWrapper}>
+                      <div
+                        className={s.action}
+                        onClick={() => handleClickLike(opinion.id, isLikedByMe)}
+                      >
+                        {isLikedByMe ? (
+                          <label style={{ display: 'flex', 
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            padding: '18px 0 18px 0',
+                            color: '#4494FF',
+                            cursor: 'pointer' }}>
+                            <img
+                              src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/blue_like.svg"
+                              alt="좋아요 버튼"
+                            />{' '}
+                            좋아요
+                          </label>
+                        ) : (
+                          <label style={{ display: 'flex', 
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            padding: '18px 0 18px 0',
+                            cursor: 'pointer' }}>
+                            <img
+                              src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
+                              alt="좋아요 버튼"
+                              style={{ marginRight: '5px' }}
+                            />{' '}
+                            좋아요
+                          </label>
+                        )}
+                        <span style={{ marginLeft: '5px' }}>{opinion.opinionReactsSum}</span>
+                      </div>
+                      <div className={util_s.likeWrapper} style={{
+                        display: 'flex', 
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                        <img
+                          src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/bubble.svg"
+                          alt="코멘트 버튼"
+                        />
+                        <span style={{ marginLeft: '5px' }}>{opinion.opinionCommentsSum}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className={util_s.commentContentWrapper}>
-                  <span style={{ display: 'block' }}>
-                    {fruitsForStanceTitle[opinion.stance.orderNum] + ' ' + opinion.stance.title}
-                  </span>
-                  <span>{opinion.content}</span>
+                <div>
+                  {opinion.opinionComments &&
+                    opinion.opinionComments.map(comment => (
+                      <CommentBox comment={comment} me={{ id: usersId }} />
+                    ))}
                 </div>
-
-                <div className={s.actionsWrapper}>
-                  <div className={s.action} onClick={() => handleClickLike(opinion.id, isLikedByMe)}>
-                    {
-                      isLikedByMe ? <label style={{ display: 'flex', color: '#4494FF', cursor: 'pointer' }}><img
-                      src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/blue_like.svg"
-                      alt="좋아요 버튼"
-                    /> 좋아요</label> :
-                    <label style={{ display: 'flex', cursor: 'pointer' }}>
-                      <img
-                        src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
-                        alt="좋아요 버튼"
-                        style={{ marginRight: '5px' }}
-                      /> 좋아요</label>
-                    }
-                    <span style={{ marginLeft: '5px' }}>{opinion.opinionReactsSum}</span>
-                  </div>
-                  <div className={util_s.likeWrapper}>
-                    <img
-                      src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/bubble.svg"
-                      alt="코멘트 버튼"
-                    />
-                    <span style={{ marginLeft: '5px' }}>{opinion.opinionCommentsSum}</span>
-                  </div>
-                </div>
-                
               </div>
-            </div>
-
-            <div>
-              {opinion.opinionComments && opinion.opinionComments.map(comment => (
-                <CommentBox comment={comment} me={{ id: usersId }} />
-              ))}
-            </div>
-          </div>
-          );
+            );
         })
       }
 

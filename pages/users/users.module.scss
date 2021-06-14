@@ -245,6 +245,7 @@
         color: #777777;
         position: relative;
         padding-left: 10px;
+        width: 100%;
 
         .name {
             font-weight: 700;
@@ -301,4 +302,8 @@
 .tags {
     display: flex;
     margin-bottom: 15px;
+}
+
+.myOpinionsWrapper {
+    background-color: #fff;
 }

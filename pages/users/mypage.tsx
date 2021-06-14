@@ -173,17 +173,17 @@ const MyPage = props => {
             <h3 className={s.title}>해시태그</h3>
             <p className={s.hashTagSum}>{_.size(tagsMap)}</p>
             <div className={s.goNext} />
-            { !_.isEmpty(tagsMap) && 
+            {!_.isEmpty(tagsMap) && (
               <div className={s.tags}>
                 {_.map(tagsMap, (value, key) => {
                   return <HashTag tag={key} count={value} />;
                 })}
               </div>
-            }
+            )}
           </div>
         </div>
 
-        <div>
+        <div className={s.myOpinionsWrapper}>
           <div
             className={s.hashTagsContainer}
             onClick={() => {
