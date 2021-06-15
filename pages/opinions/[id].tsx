@@ -183,7 +183,7 @@ const Opinion = props => {
               <div>
                 <img src={opinion.user.profileImageUrl} />
               </div>
-              <div className={user_s.profileInfo} style={{ width: '100%' }}>
+              <div className={user_s.profileInfo}>
                 <p className={user_s.name}>{opinion.user.name}</p>
                 <p className={user_s.ago}>{dayjs(opinion.createdAt).fromNow()}</p>
               </div>
@@ -217,7 +217,7 @@ const Opinion = props => {
         <div className={s.actionsWrapper}>
           <div className={s.action} onClick={handleClickLike}>
             {isLikedByMe ? (
-              <label style={{ display: 'flex', color: '#4494FF', cursor: 'pointer' }}>
+              <label style={{ color: '#4494FF', cursor: 'pointer' }}>
                 <img
                   src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/blue_like.svg"
                   alt="좋아요 버튼"
@@ -225,7 +225,7 @@ const Opinion = props => {
                 좋아요
               </label>
             ) : (
-              <label style={{ display: 'flex', cursor: 'pointer' }}>
+              <label style={{ cursor: 'pointer' }}>
                 <img
                   src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
                   alt="좋아요 버튼"
