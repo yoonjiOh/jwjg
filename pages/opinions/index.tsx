@@ -106,9 +106,17 @@ const Opinions = props => {
   const { usersId } = router.query;
 
   const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
-  const sortedData = _.cloneDeep(props.data.opinionsWithIssuesId).sort(
-    (a, b) => b[selectedFilter] - a[selectedFilter],
-  );
+  const sortedData =
+    selectedFilter === 'createdAt'
+      ? _.cloneDeep(props.data.opinionsWithIssuesId).sort(
+          // @ts-ignore
+          (a, b) => new Date(b[selectedFilter]) - new Date(a[selectedFilter]),
+        )
+      : _.cloneDeep(props.data.opinionsWithIssuesId).sort(
+          (a, b) => b[selectedFilter] - a[selectedFilter],
+        );
+
+  console.log('sortedData', selectedFilter, sortedData);
 
   const filterMap = {
     opinionReactsSum: '좋아요',
@@ -121,6 +129,7 @@ const Opinions = props => {
   };
 
   const handleChangeFilter = (filter) => {
+    console.log('handleChangeFilter', filter);
     setFilter(filter);
     setOpenFilter(false);
   };
@@ -155,8 +164,8 @@ const Opinions = props => {
             const isLikedByMe = !_.isEmpty(myReact) && _.head(myReact).like;
             
             return (
-              <div className={s.opinionWrapper}>
-                <div className={util_s.commentBox} key={opinion.id}>
+              <div className={s.opinionWrapper} key={opinion.id}>
+                <div className={util_s.commentBox}>
                   <div className={util_s[`stanceMark-${opinion.stance.orderNum}`]} />
 
                   <div className={util_s.commentWrapper}>
@@ -183,12 +192,16 @@ const Opinions = props => {
                         onClick={() => handleClickLike(opinion.id, isLikedByMe)}
                       >
                         {isLikedByMe ? (
-                          <label style={{ display: 'flex', 
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            padding: '18px 0 18px 0',
-                            color: '#4494FF',
-                            cursor: 'pointer' }}>
+                          <label
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              padding: '18px 0 18px 0',
+                              color: '#4494FF',
+                              cursor: 'pointer',
+                            }}
+                          >
                             <img
                               src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/blue_like.svg"
                               alt="좋아요 버튼"
@@ -196,11 +209,15 @@ const Opinions = props => {
                             좋아요
                           </label>
                         ) : (
-                          <label style={{ display: 'flex', 
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            padding: '18px 0 18px 0',
-                            cursor: 'pointer' }}>
+                          <label
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              padding: '18px 0 18px 0',
+                              cursor: 'pointer',
+                            }}
+                          >
                             <img
                               src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
                               alt="좋아요 버튼"
@@ -211,11 +228,14 @@ const Opinions = props => {
                         )}
                         <span style={{ marginLeft: '5px' }}>{opinion.opinionReactsSum}</span>
                       </div>
-                      <div className={util_s.likeWrapper} style={{
-                        display: 'flex', 
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}>
+                      <div
+                        className={util_s.likeWrapper}
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}
+                      >
                         <img
                           src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/bubble.svg"
                           alt="코멘트 버튼"
@@ -246,11 +266,13 @@ const Opinions = props => {
           {
             _.keys(filterMap).map((key) => {
               return (
-              <div className={s.filterRow} onClick={() => handleChangeFilter(key)}>
-                <span>{filterMap[key]} 순</span>
-                {selectedFilter === key && 
-                <img src='https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/check.svg' />}
-              </div>)
+                <div key={key} className={s.filterRow} onClick={() => handleChangeFilter(key)}>
+                  <span>{filterMap[key]} 순</span>
+                  {selectedFilter === key && (
+                    <img src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/check.svg" />
+                  )}
+                </div>
+              );
             })
           }
           
