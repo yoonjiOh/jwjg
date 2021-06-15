@@ -117,12 +117,13 @@ const DO_LIKE_ACTION_TO_OPINION = gql`
 
 const Opinion = props => {
   const [opinionComment, setOpinionComment] = useState('');
+
   const [createOpinionComment] = useMutation(CREATE_OPINION_COMMENT);
   const [doLikeActionToOpinion] = useMutation(DO_LIKE_ACTION_TO_OPINION);
-  
+
   const router = useRouter();
   const { id: opinionId, userId } = router.query;
-  
+
   const opinion = _.head(props.data.opinions);
 
   const myReact =
@@ -140,13 +141,13 @@ const Opinion = props => {
           content: opinionComment,
           usersId: Number(userId),
           opinionsId: Number(opinionId),
-          stancesId: 1, // 댓글을 달 때도, Opinion 에 대한 나의 Stance 가 있어야 하는데, 이 부분 UI 에서 어떻게 풀 지 논의 필요
+          stancesId: 1, // 댓글을 달 때도, issue 에 대한 나의 Stance 가 있어야 하는데, 이 부분 UI 에서 어떻게 풀 지 논의 필요
         },
-      });
+      }).then(() => router.reload());
     } catch (e) {
       console.error(e);
     }
-  }
+  };
 
   const handleClickLike = async () => {
     try {
@@ -160,15 +161,15 @@ const Opinion = props => {
     } catch (e) {
       console.error(e);
     }
-  }
+  };
 
   const handleClickCommentIcon = () => {
     // @ts-ignore
     document.getElementById('input_comment').select();
-  }
+  };
 
   const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
-  console.log('props', props)
+  console.log('props', props);
 
   return (
     <Layout title={'개별 오피니언 페이지'} headerInfo={{ headerType: 'common' }}>
@@ -242,7 +243,7 @@ const Opinion = props => {
             />
             <span>댓글 달기</span>
           </div>
-          <CopyToClipboard text={`www.jwjg.co.kr/opinions/${opinionId}`}>
+          <CopyToClipboard text={`https://repol.vercel.app/opinions/${opinionId}`}>
             <div className={s.action}>
               <img
                 src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/share.svg"
