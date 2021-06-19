@@ -6,7 +6,7 @@ import Link from 'next/link';
 import _ from 'lodash';
 import Layout from '../components/Layout';
 import IssueCard from '../components/IssueCard';
-import { useAuthUser, withAuthUser, AuthAction } from 'next-firebase-auth';
+import { withAuthUser, withAuthUserTokenSSR } from 'next-firebase-auth';
 
 const GET_ISSUES_AND_OPINIONS = gql`
   query {
@@ -37,8 +37,8 @@ const GET_ISSUES_AND_OPINIONS = gql`
 `;
 
 const GET_USERS = gql`
-  query {
-    users {
+  query($firebaseUID: String) {
+    userByFirebase(firebaseUID: $firebaseUID) {
       id
       firebaseUID
       name
@@ -48,17 +48,12 @@ const GET_USERS = gql`
   }
 `;
 
-export const getServerSideProps = async _context => {
+export const getServerSideProps = withAuthUserTokenSSR({})(async ({ AuthUser }) => {
   const apolloClient = initializeApollo(null);
-  const { data } = await apolloClient.query({
+  const issuesData = await apolloClient.query({
     query: GET_ISSUES_AND_OPINIONS,
   });
-
-  const users = await apolloClient.query({
-    query: GET_USERS,
-  });
-
-  const issues = data.issues.map(issue => {
+  const issues = issuesData.data.issues.map(issue => {
     const { opinions, stances, userStances } = issue;
     let sortedOpinions;
     if (opinions.length <= 2) {
@@ -91,23 +86,25 @@ export const getServerSideProps = async _context => {
     };
   });
 
+  const meData = await apolloClient.query({
+    query: GET_USERS,
+    variables: { firebaseUID: AuthUser.id },
+  });
+
   return {
     props: {
       data: {
         issues,
+        me: meData.data.userByFirebase || null,
       },
-      users: users.data.users,
     },
   };
-};
+});
 
 const Main = props => {
-  const { issues } = props.data;
+  const { issues, me } = props.data;
   const hot_issue = _.maxBy(issues, i => i.opinions.length);
   const other_issues = issues.filter(i => i.id !== hot_issue.id);
-
-  const AuthUser = useAuthUser();
-  const me = _.head(props.users.filter(user => user.firebaseUID === AuthUser.id));
 
   return (
     <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }}>
@@ -119,10 +116,7 @@ const Main = props => {
               {
                 <div key={hot_issue.id}>
                   <h3 className={s.issueTitle}>
-                    <Link
-                      key={hot_issue.title}
-                      href={`/issues/${hot_issue.id}?userId=${me && me.id}`}
-                    >
+                    <Link key={hot_issue.title} href={`/issues/${hot_issue.id}`}>
                       {hot_issue.title}
                     </Link>
                   </h3>
@@ -131,10 +125,11 @@ const Main = props => {
                   </div>
                   <div>
                     <div className={s.issueCardTop}>
-                      <p className={s.responseSum}>🔥 {hot_issue.userStancesSum}명 참여</p>
-                      <p className={s.barchart}>
+                      <div className={s.responseSum}>🔥 {hot_issue.userStancesSum}명 참여</div>
+                      <div className={s.barchart}>
                         {_.map(hot_issue.newStances, (userStance, idx) => {
-                          const ratio = (userStance.sum / hot_issue.userStancesSum) * 100 + '%';
+                          const ratio =
+                            ((userStance.sum / hot_issue.userStancesSum) * 100).toFixed(1) + '%';
                           return (
                             <div
                               key={userStance.title}
@@ -148,7 +143,7 @@ const Main = props => {
                             </div>
                           );
                         })}
-                      </p>
+                      </div>
                     </div>
                     <div className={s.line}></div>
                     <div className={s.issueCardCommentWrap}>

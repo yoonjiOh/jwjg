@@ -3,6 +3,8 @@ import s from './[id].module.scss';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { gql, useMutation, useQuery } from '@apollo/client';
+import { withAuthUserTokenSSR, withAuthUser, useAuthUser } from 'next-firebase-auth';
+
 import { initializeApollo } from '../../apollo/apolloClient';
 
 import Layout from '../../components/Layout';
@@ -15,8 +17,8 @@ import CurrentStances from '../../components/issue/CurrentStances';
 import OpinionBox from '../../components/OpinionBox';
 
 const GET_ISSUE = gql`
-  query issues($id: Int!) {
-    issues(id: $id) {
+  query issue($id: Int!) {
+    issue(id: $id) {
       id
       title
       content
@@ -29,6 +31,7 @@ const GET_ISSUE = gql`
       userStances {
         usersId
         stancesId
+        issuesId
       }
       opinions {
         id
@@ -72,20 +75,43 @@ const GET_ISSUE = gql`
   }
 `;
 
-export const getServerSideProps = async context => {
-  const apolloClient = initializeApollo(null);
-  const { id } = context.query;
-  const { data } = await apolloClient.query({
-    query: GET_ISSUE,
-    variables: { id: parseInt(id) },
-  });
+const GET_USER = gql`
+  query userByFirebaseWithIssuesId($firebaseUID: String, $issuesId: Int) {
+    userByFirebaseWithIssuesId(firebaseUID: $firebaseUID, issuesId: $issuesId) {
+      id
+      firebaseUID
+      name
+      intro
+      profileImageUrl
+      userStance {
+        issuesId
+        usersId
+        stancesId
+      }
+    }
+  }
+`;
 
-  return {
-    props: {
-      data: data,
-    },
-  };
-};
+// export const getServerSideProps = withAuthUserTokenSSR({})(async ({ AuthUser, query }) => {
+//   const apolloClient = initializeApollo(null);
+//   const issueId = Number(query.id);
+//   const { data } = await apolloClient.query({
+//     query: GET_ISSUE,
+//     variables: { id: issueId },
+//   });
+
+//   const meData = await apolloClient.query({
+//     query: GET_USER,
+//     variables: { firebaseUID: AuthUser.id, issuesId: issueId },
+//   });
+
+//   return {
+//     props: {
+//       data: data,
+//       me: meData.data.userByFirebaseWithIssuesId || null,
+//     },
+//   };
+// });
 
 const CREATE_USER_STANCE = gql`
   mutation createUserStance($usersId: Int, $issuesId: Int, $stancesId: Int) {
@@ -97,21 +123,25 @@ const CREATE_USER_STANCE = gql`
   }
 `;
 
-const Issue: any = props => {
+const Issue: any = () => {
   const router = useRouter();
-  const issue_id = Number(router.query.id);
-  const userId = Number(router.query.userId);
-
-  const { loading, error, data } = useQuery(GET_ISSUE, {
-    variables: { id: issue_id },
+  const issueId = Number(router.query.id);
+  const { loading, error, data: issueData, refetch: refetchIssue } = useQuery(GET_ISSUE, {
+    variables: { id: issueId },
   });
-
+  const AuthUser = useAuthUser();
+  const { loading: userLoading, error: userError, data: userData, refetch: refetchUser } = useQuery(
+    GET_USER,
+    {
+      variables: { firebaseUID: AuthUser.id, issuesId: issueId },
+    },
+  );
   const [createUserStance, { loading: mutationLoading, error: mutationError }] = useMutation(
     CREATE_USER_STANCE,
   );
-  if (loading) return 'Loading...';
-  if (error) return `Error! ${error.message}`;
-  const issue = data.issues[0];
+  if (loading || userLoading) return 'Loading...';
+  if (error || userError) return `Error! ${error.message}`;
+  const issue = issueData.issue;
   const tags = issue.issueHashTags.map(issueHashTag => issueHashTag.hashTags[0].name);
   const userStances = _.reduce(
     issue.userStances,
@@ -130,16 +160,19 @@ const Issue: any = props => {
     title: stance.fruit + ' ' + stance.title,
     count: userStances[stance.id] ? userStances[stance.id] : 0,
   }));
+  const userId = userData?.userByFirebaseWithIssuesId?.id;
+  const myStanceId = userData?.userByFirebaseWithIssuesId?.userStance?.stancesId;
 
   const onStanceClick = async stancesId => {
-    const result = await createUserStance({
+    await createUserStance({
       variables: {
         usersId: userId,
         issuesId: issue.id,
         stancesId,
       },
     });
-    return result;
+    refetchIssue({ id: issueId });
+    refetchUser({ issuesId: issueId, firebaseUID: AuthUser.id });
   };
 
   const hasMyOpinion = !!issue.opinions.filter(opinion => opinion.usersId === userId).length;
@@ -180,9 +213,12 @@ const Issue: any = props => {
             <h3 className={s.title}>내 입장</h3>
             <ul className={s.stancePickItems}>
               {stances.map(stance => (
-                // TODO: userStances에 저장된 값이 있다면, 선택된 것으로 표시되어야 함
                 <li
-                  className={s.stancePickItem}
+                  className={
+                    `${s.stancePickItem}` +
+                    ' ' +
+                    `${stance.id === myStanceId ? s[stance.fruit] : ''}`
+                  }
                   key={stance.id}
                   onClick={() => onStanceClick(stance.id)}
                 >
@@ -216,16 +252,16 @@ const Issue: any = props => {
               ))}
             </div>
             <div className={s.opinionAll}>
-              <Link href={`/issues/${issue_id}/opinions`}>모두 보기</Link>
+              <Link href={`/issues/${issueId}/opinions`}>모두 보기</Link>
             </div>
           </div>
         </div>
+        {!hasMyOpinion && (
+          <FloatingNewOpinionBtn userId={userId} issueId={issueId} stancesId={undefined} /> //stancesId 나중에 수정
+        )}
       </main>
-      {!hasMyOpinion && (
-        <FloatingNewOpinionBtn userId={userId} issueId={issue_id} stancesId={undefined} /> //stancesId 나중에 수정
-      )}
     </Layout>
   );
 };
 
-export default Issue;
+export default withAuthUser()(Issue);

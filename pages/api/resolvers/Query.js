@@ -8,6 +8,16 @@ async function user(parent, args, context) {
 }
 
 async function userByFirebase(parent, args, context) {
+  const firebaseUID = args.firebaseUID;
+  if (!firebaseUID) return null;
+  return await context.prisma.users.findUnique({
+    where: { firebaseUID: args.firebaseUID },
+  });
+}
+
+async function userByFirebaseWithIssuesId(parent, args, context) {
+  const firebaseUID = args.firebaseUID;
+  if (!firebaseUID) return null;
   return await context.prisma.users.findUnique({
     where: { firebaseUID: args.firebaseUID },
   });
@@ -37,6 +47,14 @@ async function issues(parent, args, context) {
     where,
   });
   return issues;
+}
+
+async function issue(parent, args, context) {
+  const where = args.id ? { id: args.id } : {};
+  const issue = await context.prisma.issues.findUnique({
+    where,
+  });
+  return issue;
 }
 
 async function hashTags(parent, args, context) {
@@ -93,6 +111,7 @@ export default {
   user,
   userByFirebase,
   users,
+  issue,
   issues,
   hashTags,
   opinions,
@@ -102,4 +121,5 @@ export default {
   issueHashTags,
   opinionsWithIssuesId,
   opinionCommentReacts,
+  userByFirebaseWithIssuesId,
 };
