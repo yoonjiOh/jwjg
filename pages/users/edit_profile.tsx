@@ -32,8 +32,20 @@ const SINGLE_UPLOAD_IMG = gql`
 `;
 
 export const UPDATE_PROFILE = gql`
-  mutation updateUserProfile($id: Int!, $name: String, $nickname: String, $intro: String, $profileImageUrl: String) {
-    updateUserProfile(id: $id, name: $name, nickname: $nickname, intro: $intro, profileImageUrl: $profileImageUrl) {
+  mutation updateUserProfile(
+    $id: Int!
+    $name: String
+    $nickname: String
+    $intro: String
+    $profileImageUrl: String
+  ) {
+    updateUserProfile(
+      id: $id
+      name: $name
+      nickname: $nickname
+      intro: $intro
+      profileImageUrl: $profileImageUrl
+    ) {
       id
       name
       nickname
@@ -94,7 +106,7 @@ const EditProfile = props => {
         }));
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async event => {
     event.preventDefault();
     await updateUserProfile({
       variables: {
@@ -102,23 +114,23 @@ const EditProfile = props => {
         name: name,
         nickname: nickname,
         intro: intro,
-        profileImageUrl: profileImageUrl
-      }
+        profileImageUrl: profileImageUrl,
+      },
     }).then(result => {
       if (result.data) {
-        router.push(`/users/mypage?userId=${props.data.user.id}`)
+        router.push(`/users/mypage`);
       } else {
-        console.error('프로필 편집에 문제가 생겼습니다.')
+        console.error('프로필 편집에 문제가 생겼습니다.');
       }
-    })
+    });
   };
 
   const handleChange = (e, key) => {
     console.log('handleChange', e.target);
     setState(prevState => ({
       ...prevState,
-      [key]: e.target.value
-    }))
+      [key]: e.target.value,
+    }));
   };
 
   const headerInfo = {
@@ -176,8 +188,8 @@ const EditProfile = props => {
               <img src={profileImageUrl} style={{ width: '50%', height: '50%' }} />
             </div>
           )}
-        
-          <label style={{ color: '#4494ff', textAlign: 'center', display: 'block'  }}>
+
+          <label style={{ color: '#4494ff', textAlign: 'center', display: 'block' }}>
             <input type="file" required onChange={handleFileChange} />
             프로필 사진 바꾸기
           </label>
@@ -187,7 +199,7 @@ const EditProfile = props => {
             <input
               type="text"
               value={name}
-              onChange={(e) => handleChange(e, 'name')}
+              onChange={e => handleChange(e, 'name')}
               placeholder="이름"
               className={s.inputForm}
             />
@@ -195,7 +207,7 @@ const EditProfile = props => {
             <input
               type="text"
               value={nickname}
-              onChange={(e) => handleChange(e, 'nickname')}
+              onChange={e => handleChange(e, 'nickname')}
               placeholder="사용자 이름"
               className={s.inputForm}
             />
@@ -203,7 +215,7 @@ const EditProfile = props => {
             <input
               type="text"
               value={intro}
-              onChange={(e) => handleChange(e, 'intro')}
+              onChange={e => handleChange(e, 'intro')}
               placeholder="소개"
               className={s.inputForm}
             />

@@ -8,7 +8,7 @@ function IssueCard(props) {
   return (
     <section key={issue.id} className={s.issueCard}>
       <h3 className={s.issueTitle}>
-        <Link key={issue.title} href={`/issues/${issue.id}?userId=${userId}`}>
+        <Link key={issue.title} href={`/issues/${issue.id}`}>
           {issue.title}
         </Link>
       </h3>

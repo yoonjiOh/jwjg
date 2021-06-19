@@ -97,7 +97,7 @@ const New = props => {
       }).then(result => {
         if (result.data.createOpinion.id) {
           if (window.confirm('의견이 등록되었습니다. 이전 이슈로 돌아가시겠습니까?')) {
-            window.location.href = `${config.host}/issues/${issueId}?userId=${userId}`;
+            window.location.href = `${config.host}/issues`;
           } else {
             window.location.href = `${config.host}`;
           }

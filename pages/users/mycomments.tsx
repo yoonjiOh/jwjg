@@ -11,6 +11,7 @@ import _ from 'lodash';
 
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
 
 dayjs.extend(relativeTime);
 
@@ -39,10 +40,28 @@ const GET_MY_COMMENTS_DATA = gql`
   }
 `;
 
-export const getServerSideProps = async context => {
-  const apolloClient = initializeApollo(null);
-  const { userId } = context.query;
+const GET_USERS = gql`
+  query($firebaseUID: String) {
+    userByFirebase(firebaseUID: $firebaseUID) {
+      id
+      firebaseUID
+      name
+      intro
+      profileImageUrl
+    }
+  }
+`;
 
+export const getServerSideProps = withAuthUserTokenSSR({
+  whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
+  authPageURL: '/users',
+})(async ({ AuthUser }) => {
+  const apolloClient = initializeApollo(null);
+  const meData = await apolloClient.query({
+    query: GET_USERS,
+    variables: { firebaseUID: AuthUser.id },
+  });
+  const userId = meData?.data?.userByFirebase?.id;
   const { data } = await apolloClient.query({
     query: GET_MY_COMMENTS_DATA,
     variables: { id: parseInt(userId) },
@@ -50,10 +69,10 @@ export const getServerSideProps = async context => {
 
   return {
     props: {
-      data: data
-    }
-  }
-}
+      data: data,
+    },
+  };
+});
 
 const MyComments = props => {
   const { user } = props.data;
@@ -67,11 +86,11 @@ const MyComments = props => {
   return (
     <Layout title={'작성한 댓글'} headerInfo={headerInfo}>
       <main className={s.main}>
-        {
-          user &&
-          user.opinionComments && user.opinionComments.length && user.opinionComments.map(comment => (
-            <div className={util_s.commentBox}
-            key={comment.id}>
+        {user &&
+          user.opinionComments &&
+          user.opinionComments.length &&
+          user.opinionComments.map(comment => (
+            <div className={util_s.commentBox} key={comment.id}>
               <div className={util_s[`stanceMark-${comment.stance.orderNum}`]} />
 
               <div className={util_s.commentWrapper}>
@@ -99,10 +118,8 @@ const MyComments = props => {
                   <span style={{ marginLeft: '5px' }}>{comment.opinionCommentReactsSum}</span>
                 </div>
               </div>
-
             </div>
-          ))
-        }
+          ))}
       </main>
     </Layout>
   );
