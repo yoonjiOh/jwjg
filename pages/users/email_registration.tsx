@@ -39,22 +39,27 @@ function EmailRegistration() {
 
   const handlePasswordChange = event => {
     const password = event.target.value;
-    try {
-      validatePassword(password);
-      setPassword(password);
-    } catch (err) {
-      handleSignupError(err);
-    }
+    setPassword(password);
   };
 
   const handleSubmit = async e => {
     e.preventDefault();
+
     try {
-      await doEmailSignup(email, pwd);
-      router.push('/users/terms_of_service');
+      await validatePassword(pwd);
     } catch (err) {
       handleSignupError(err);
+      return;
     }
+
+    try {
+      await doEmailSignup(email, pwd);
+    } catch (err) {
+      handleSignupError(err);
+      return;
+    }
+
+    router.push('/users/terms_of_service');
   };
 
   const headerInfo = {
