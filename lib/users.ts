@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { EmailAlreadyExistError, WrongPasswordFormatError } from './errors';
 
 const MINIMUM_PASSWORD_LENGTH = 8;
-const PASSWORD_REGEX = '^(?=w*[a-zA-Z])(?=w*[0-9])';
+const PASSWORD_REGEX = '^(?=\\w*[a-zA-Z])(?=\\w*[0-9])';
 export async function validatePassword(password: string) {
   if (password.length < MINIMUM_PASSWORD_LENGTH) {
     throw new WrongPasswordFormatError(
