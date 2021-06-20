@@ -1,5 +1,5 @@
 type User {
-  id: ID!
+  id: Int!
   firebaseUID: String
   name: String
   nickname: String
@@ -135,6 +135,7 @@ type UploadedFileResponse {
 type Query {
   users: [User]
   userByFirebase(firebaseUID: String): User
+  userByFirebaseWithIssuesId(firebaseUID: String, issuesId: Int): User
   user(id: Int!): User
   issue(id: Int!): Issue
   issues(id: Int): [Issue]

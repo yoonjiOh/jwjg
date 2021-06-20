@@ -28,20 +28,20 @@ const CurrentStances = props => {
           <div>내 입장 남기기</div>
         </div>
       ) : isStanceTied ? (
-        <p>
+        <p className={s.comment}>
           {sortedUserStances
             .filter((_e, i) => i <= isStanceTied)
             .map((s, i) => {
               if (i < isStanceTied) {
                 return (
                   <>
-                    <span>{s.title}</span> 입장과{' '}
+                    <span key={s.title}>{s.title}</span> 입장과{' '}
                   </>
                 );
               } else {
                 return (
                   <>
-                    <span>{s.title}</span> 입장이 각각{' '}
+                    <span key={s.title}>{s.title}</span> 입장이 각각{' '}
                   </>
                 );
               }
@@ -53,7 +53,7 @@ const CurrentStances = props => {
           로 동률이에요!
         </p>
       ) : (
-        <p>
+        <p className={s.comment}>
           <span>{sortedUserStances[0].title}</span> 입장이 전체의{' '}
           <span>{((sortedUserStances[0].count * 100) / userStancesSum).toFixed(1)}%</span>로 가장
           많아요

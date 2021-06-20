@@ -9,6 +9,7 @@ import { useRouter } from 'next/router';
 import { gql } from '@apollo/client';
 import { initializeApollo } from '../../apollo/apolloClient';
 import _ from 'lodash';
+import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
 
 const GET_MYPAGE_DATA = gql`
   query user($id: Int!) {
@@ -62,11 +63,28 @@ const GET_STANCES = gql`
     }
   }
 `;
+const GET_USERS = gql`
+  query($firebaseUID: String) {
+    userByFirebase(firebaseUID: $firebaseUID) {
+      id
+      firebaseUID
+      name
+      intro
+      profileImageUrl
+    }
+  }
+`;
 
-export const getServerSideProps = async context => {
+export const getServerSideProps = withAuthUserTokenSSR({
+  whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
+  authPageURL: '/users',
+})(async ({ AuthUser }) => {
   const apolloClient = initializeApollo(null);
-  const { userId } = context.query;
-
+  const meData = await apolloClient.query({
+    query: GET_USERS,
+    variables: { firebaseUID: AuthUser.id },
+  });
+  const userId = meData?.data?.userByFirebase?.id;
   const { data } = await apolloClient.query({
     query: GET_MYPAGE_DATA,
     variables: { id: parseInt(userId) },
@@ -87,7 +105,7 @@ export const getServerSideProps = async context => {
       stances_data: stances.data,
     },
   };
-};
+});
 
 const MyPage = props => {
   const { user } = props.data;
@@ -97,7 +115,7 @@ const MyPage = props => {
     props.data.user.userStances.map(stance => stance.issuesId),
   );
 
-  let tagsMap = {};
+  const tagsMap = {};
 
   relatedIssueIds.map(issueId => {
     const matchIssue = _.find(props.issues_data.issues, issue => issue.id === issueId);
@@ -113,7 +131,7 @@ const MyPage = props => {
       });
     }
   });
-  
+
   return (
     <Layout title={'마이페이지'} headerInfo={{ headerType: 'common' }}>
       <main className={s.main}>
@@ -126,7 +144,7 @@ const MyPage = props => {
             <span className={s.count}>{user && user.opinions && user.opinions.length}</span>
             <span
               onClick={() => {
-                router.push(`/users/myopinions?userId=${user && user.id}`);
+                router.push(`/users/myopinions`);
               }}
             >
               의견
@@ -136,7 +154,7 @@ const MyPage = props => {
             </span>
             <span
               onClick={() => {
-                router.push(`/users/mycomments?userId=${user && user.id}`);
+                router.push(`/users/mycomments`);
               }}
             >
               댓글
@@ -187,7 +205,7 @@ const MyPage = props => {
           <div
             className={s.hashTagsContainer}
             onClick={() => {
-              router.push(`/users/myopinions?userId=${user && user.id}`);
+              router.push(`/users/myopinions`);
             }}
           >
             <h3 className={s.title}>작성한 의견</h3>

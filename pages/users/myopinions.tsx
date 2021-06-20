@@ -11,6 +11,7 @@ import { initializeApollo } from '../../apollo/apolloClient';
 import _ from 'lodash';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
 
 dayjs.extend(relativeTime);
 
@@ -52,10 +53,28 @@ const GET_STANCES = gql`
   }
 `;
 
+const GET_USERS = gql`
+  query($firebaseUID: String) {
+    userByFirebase(firebaseUID: $firebaseUID) {
+      id
+      firebaseUID
+      name
+      intro
+      profileImageUrl
+    }
+  }
+`;
 
-export const getServerSideProps = async context => {
+export const getServerSideProps = withAuthUserTokenSSR({
+  whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
+  authPageURL: '/users',
+})(async ({ AuthUser }) => {
   const apolloClient = initializeApollo(null);
-  const { userId } = context.query;
+  const meData = await apolloClient.query({
+    query: GET_USERS,
+    variables: { firebaseUID: AuthUser.id },
+  });
+  const userId = meData?.data?.userByFirebase?.id;
 
   const { data } = await apolloClient.query({
     query: GET_MY_OPINIONS_DATA,
@@ -77,7 +96,7 @@ export const getServerSideProps = async context => {
       stances_data: stances.data,
     },
   };
-};
+});
 
 const MyOpinions = props => {
   const { user } = props.data;
@@ -89,9 +108,10 @@ const MyOpinions = props => {
   return (
     <Layout title={'작성한 의견'} headerInfo={headerInfo}>
       <main className={s.main}>
-        {
-          user &&
-          user.opinions && user.opinions.length && user.opinions.map(opinion => (
+        {user &&
+          user.opinions &&
+          user.opinions.length &&
+          user.opinions.map(opinion => (
             <div>
               <div className={s.smallProfileWrapper}>
                 <div>
@@ -102,14 +122,14 @@ const MyOpinions = props => {
                   <p className={s.ago}>{dayjs(opinion.createdAt).fromNow()}</p>
                 </div>
               </div>
-              <OpinionSummaryBox opinion={opinion}
+              <OpinionSummaryBox
+                opinion={opinion}
                 issues={props.issues_data.issues}
                 stances={props.stances_data.stances}
               />
               <Divider />
             </div>
-          ))
-        }
+          ))}
       </main>
     </Layout>
   );

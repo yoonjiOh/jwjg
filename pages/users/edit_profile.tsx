@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
 
 import Layout from '../../components/Layout';
+import { Prisma, Users } from '@prisma/client';
 import s from './users.module.scss';
 import { useRouter } from 'next/router';
 
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { initializeApollo } from '../../apollo/apolloClient';
+import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
 import _ from 'lodash';
 
-const GET_USER = gql`
-  query user($id: Int!) {
-    user(id: $id) {
+const GET_USERS = gql`
+  query($firebaseUID: String) {
+    userByFirebase(firebaseUID: $firebaseUID) {
       id
+      firebaseUID
       name
-      nickname
       intro
       profileImageUrl
     }
@@ -32,8 +34,20 @@ const SINGLE_UPLOAD_IMG = gql`
 `;
 
 export const UPDATE_PROFILE = gql`
-  mutation updateUserProfile($id: Int!, $name: String, $nickname: String, $intro: String, $profileImageUrl: String) {
-    updateUserProfile(id: $id, name: $name, nickname: $nickname, intro: $intro, profileImageUrl: $profileImageUrl) {
+  mutation updateUserProfile(
+    $id: Int!
+    $name: String
+    $nickname: String
+    $intro: String
+    $profileImageUrl: String
+  ) {
+    updateUserProfile(
+      id: $id
+      name: $name
+      nickname: $nickname
+      intro: $intro
+      profileImageUrl: $profileImageUrl
+    ) {
       id
       name
       nickname
@@ -43,28 +57,35 @@ export const UPDATE_PROFILE = gql`
   }
 `;
 
-export const getServerSideProps = async context => {
+export const getServerSideProps = withAuthUserTokenSSR({
+  whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
+  authPageURL: '/users',
+})(async ({ AuthUser }) => {
   const apolloClient = initializeApollo(null);
-  const { id } = context.query;
-
   const { data } = await apolloClient.query({
-    query: GET_USER,
-    variables: { id: parseInt(id) },
+    query: GET_USERS,
+    variables: { firebaseUID: AuthUser.id },
   });
+
+  console.log(data);
 
   return {
     props: {
-      data: data,
+      user: data.userByFirebase,
     },
   };
-};
+});
 
-const EditProfile = props => {
+interface Props {
+  user: Users;
+}
+
+const EditProfile = (props: Props) => {
   const initState = {
-    name: props.data.user.name,
-    nickname: props.data.user.nickname,
-    intro: props.data.user.intro,
-    profileImageUrl: props.data.user.profileImageUrl,
+    name: props.user.name,
+    nickname: props.user.nickname,
+    intro: props.user.intro,
+    profileImageUrl: props.user.profileImageUrl,
   };
   const [state, setState] = useState(initState);
   const [mutate, { loading, error }] = useMutation(SINGLE_UPLOAD_IMG);
@@ -72,6 +93,7 @@ const EditProfile = props => {
 
   const { name, nickname, intro, profileImageUrl } = state;
   const router = useRouter();
+  const { isFirst } = router.query;
 
   const handleFileChange = async ({
     target: {
@@ -94,7 +116,7 @@ const EditProfile = props => {
         }));
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async event => {
     event.preventDefault();
     await updateUserProfile({
       variables: {
@@ -102,28 +124,28 @@ const EditProfile = props => {
         name: name,
         nickname: nickname,
         intro: intro,
-        profileImageUrl: profileImageUrl
-      }
+        profileImageUrl: profileImageUrl,
+      },
     }).then(result => {
       if (result.data) {
-        router.push(`/users/mypage?userId=${props.data.user.id}`)
+        router.push(`/users/mypage?userId=${props.data.user.id}`);
       } else {
-        console.error('프로필 편집에 문제가 생겼습니다.')
+        console.error('프로필 편집에 문제가 생겼습니다.');
       }
-    })
+    });
   };
 
   const handleChange = (e, key) => {
     console.log('handleChange', e.target);
     setState(prevState => ({
       ...prevState,
-      [key]: e.target.value
-    }))
+      [key]: e.target.value,
+    }));
   };
 
   const headerInfo = {
     headerType: 'editMode',
-    subTitle: '프로필 편집',
+    subTitle: isFirst ? '프로필 만들기' : '프로필 편집',
     action: (
       <button
         style={{
@@ -176,8 +198,8 @@ const EditProfile = props => {
               <img src={profileImageUrl} style={{ width: '50%', height: '50%' }} />
             </div>
           )}
-        
-          <label style={{ color: '#4494ff', textAlign: 'center', display: 'block'  }}>
+
+          <label style={{ color: '#4494ff', textAlign: 'center', display: 'block' }}>
             <input type="file" required onChange={handleFileChange} />
             프로필 사진 바꾸기
           </label>
@@ -187,7 +209,7 @@ const EditProfile = props => {
             <input
               type="text"
               value={name}
-              onChange={(e) => handleChange(e, 'name')}
+              onChange={e => handleChange(e, 'name')}
               placeholder="이름"
               className={s.inputForm}
             />
@@ -195,7 +217,7 @@ const EditProfile = props => {
             <input
               type="text"
               value={nickname}
-              onChange={(e) => handleChange(e, 'nickname')}
+              onChange={e => handleChange(e, 'nickname')}
               placeholder="사용자 이름"
               className={s.inputForm}
             />
@@ -203,7 +225,7 @@ const EditProfile = props => {
             <input
               type="text"
               value={intro}
-              onChange={(e) => handleChange(e, 'intro')}
+              onChange={e => handleChange(e, 'intro')}
               placeholder="소개"
               className={s.inputForm}
             />
@@ -214,4 +236,5 @@ const EditProfile = props => {
   );
 };
 
+// TODO: add login required.
 export default EditProfile;
