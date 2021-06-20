@@ -5,19 +5,8 @@ import { useRouter } from 'next/router';
 import { gql, useQuery } from '@apollo/client';
 import { useAuthUser, withAuthUser } from 'next-firebase-auth';
 
-export const GET_USER = gql`
-  query userByFirebase($firebaseUID: String) {
-    userByFirebase(firebaseUID: $firebaseUID) {
-      id
-    }
-  }
-`;
-
 const CommonHeader = () => {
   const AuthUser = useAuthUser();
-  const { data } = useQuery(GET_USER, {
-    variables: { firebaseUID: AuthUser.id },
-  });
   const router = useRouter();
 
   return (

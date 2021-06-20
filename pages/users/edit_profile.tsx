@@ -9,18 +9,8 @@ import { gql, useMutation, useQuery } from '@apollo/client';
 import { initializeApollo } from '../../apollo/apolloClient';
 import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
 import _ from 'lodash';
-
-const GET_USERS = gql`
-  query($firebaseUID: String) {
-    userByFirebase(firebaseUID: $firebaseUID) {
-      id
-      firebaseUID
-      name
-      intro
-      profileImageUrl
-    }
-  }
-`;
+import { empty_string_if_null } from '../../utils/string_utils';
+import { GET_USERS } from './queries';
 
 const SINGLE_UPLOAD_IMG = gql`
   mutation($file: Upload!) {
@@ -67,8 +57,6 @@ export const getServerSideProps = withAuthUserTokenSSR({
     variables: { firebaseUID: AuthUser.id },
   });
 
-  console.log(data);
-
   return {
     props: {
       user: data.userByFirebase,
@@ -83,9 +71,9 @@ interface Props {
 const EditProfile = (props: Props) => {
   const initState = {
     name: props.user.name,
-    nickname: props.user.nickname,
-    intro: props.user.intro,
-    profileImageUrl: props.user.profileImageUrl,
+    nickname: empty_string_if_null(props.user.nickname),
+    intro: empty_string_if_null(props.user.intro),
+    profileImageUrl: empty_string_if_null(props.user.profileImageUrl),
   };
   const [state, setState] = useState(initState);
   const [mutate, { loading, error }] = useMutation(SINGLE_UPLOAD_IMG);
@@ -138,7 +126,6 @@ const EditProfile = (props: Props) => {
   };
 
   const handleChange = (e, key) => {
-    console.log('handleChange', e.target);
     setState(prevState => ({
       ...prevState,
       [key]: e.target.value,
@@ -238,5 +225,4 @@ const EditProfile = (props: Props) => {
   );
 };
 
-// TODO: add login required.
 export default EditProfile;

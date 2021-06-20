@@ -1,11 +1,8 @@
 import { withAuthUser, AuthAction } from 'next-firebase-auth';
 import Layout from '../../components/Layout';
-// @ts-ignore
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-// @ts-ignore
 import Checkbox from '@material-ui/core/Checkbox';
-// @ts-ignore
-import Link from '@material-ui/core/Link';
+import Link from 'next/link';
 import { useState } from 'react';
 import common_style from '../index.module.scss';
 import { useRouter } from 'next/router';
@@ -47,15 +44,13 @@ function TermsOfService() {
           control={<Checkbox checked={agreed} onChange={handleChange} color="primary" />}
           label="이용 약관에 동의해요"
         />
-        <Link
-          component="button"
-          variant="body2"
-          onClick={() => {
-            // Move to 약관내용 페이지
-          }}
+        <a
+          target="_blank"
+          href="https://docs.google.com/document/d/1ezGQ7FzFbWPPsnzZjmZLWVFA0hI5N75wP0R1LQ17Dgg/edit?usp=sharing"
+          rel="noopener noreferrer"
         >
           더 보기
-        </Link>
+        </a>
         {/* <form onSubmit={handleSubmit}>
           <label>
             사용자 이름
