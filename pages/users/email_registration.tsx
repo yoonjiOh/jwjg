@@ -7,8 +7,8 @@ import common_style from '../index.module.scss';
 import s from './users.module.scss';
 
 // @ts-ignore
-import { doEmailSignup } from '../../lib/users.ts';
-import { EmailAlreadyExistError, WeakPasswordError } from '../../lib/errors';
+import { validatePassword, doEmailSignup } from '../../lib/users.ts';
+import { EmailAlreadyExistError, WrongPasswordFormatError } from '../../lib/errors';
 
 function EmailRegistration() {
   const [email, setEmail] = useState('');
@@ -21,9 +21,30 @@ function EmailRegistration() {
     setEmailError('');
     setEmail(event.target.value);
   };
-  const handlePasswordChange = event => {
+
+  const handleSignupError = (err: Error) => {
+    if (err instanceof EmailAlreadyExistError) {
+      setEmailError(err.message);
+    } else if (err instanceof WrongPasswordFormatError) {
+      setPwdError(err.message);
+    } else {
+      throw err; // unknown error, rethrow it.
+    }
+  };
+
+  const setPassword = (password: string) => {
     setPwdError('');
-    setPwd(event.target.value);
+    setPwd(password);
+  };
+
+  const handlePasswordChange = event => {
+    const password = event.target.value;
+    try {
+      validatePassword(password);
+      setPassword(password);
+    } catch (err) {
+      handleSignupError(err);
+    }
   };
 
   const handleSubmit = async e => {
@@ -32,17 +53,8 @@ function EmailRegistration() {
       await doEmailSignup(email, pwd);
       router.push('/users/terms_of_service');
     } catch (err) {
-      if (err instanceof EmailAlreadyExistError) {
-        setEmailError(err.message);
-      } else if (err instanceof WeakPasswordError) {
-        setPwdError(err.message);
-      } else {
-        throw err; // unknown error, rethrow it.
-      }
+      handleSignupError(err);
     }
-    // if (ret == true) {
-    // router.push('/users/additional_information');
-    // }
   };
 
   const headerInfo = {

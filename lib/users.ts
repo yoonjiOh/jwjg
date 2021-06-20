@@ -2,85 +2,20 @@ import React, { useState, useEffect, useContext, createContext } from 'react';
 import firebase from 'firebase/app';
 import { JsonWebTokenError } from 'jsonwebtoken';
 import { useRouter } from 'next/router';
-import { EmailAlreadyExistError, WeakPasswordError } from './errors';
+import { EmailAlreadyExistError, WrongPasswordFormatError } from './errors';
 
-// const authContext = createContext();
-
-// export function ProvideAuth({ children }) {
-//   const auth = useProvideAuth();
-//   return <authContext.Provider value={auth}>{children}</authContext.Provider>;
-// }
-
-// export const useAuth = () => {
-//   return useContext(authContext);
-// };
-
-// function useProvideAuth() {
-//   const [user, setUser] = useState(null);
-
-//   const doEmailSignup = (email, password) => {
-//     return firebase
-//       .auth()
-//       .createUserWithEmailAndPassword(email, password)
-//       .then(userCredential => {
-//         var user = userCredential.user;
-//         registerFirebaseUser(user);
-//         setUser(user);
-//         return user;
-//       })
-//       .catch(error => {
-//         var errorCode = error.code;
-//         var errorMessage = error.message;
-//         console.log(errorCode);
-//         console.log(errorMessage);
-
-//         if (errorCode == 'auth/email-already-in-use') {
-//           doEmailLogin(email, password);
-//         }
-//       });
-//   };
-
-//   const doEmailLogin = (email, password) => {
-//     return firebase
-//       .auth()
-//       .signInWithEmailAndPassword(email, password)
-//       .then(userCredential => {
-//         var user = userCredential.user;
-//         registerFirebaseUser(user);
-//         setUser(user);
-//         return user;
-//       })
-//       .catch(error => {
-//         var errorCode = error.code;
-//         var errorMessage = error.message;
-//         console.log(errorCode);
-//         console.log(errorMessage);
-
-//         if (errorCode == 'auth/wrong-password') {
-//           alert('wrong password!');
-//         }
-//       });
-//   };
-
-//   useEffect(() => {
-//     const unsubscribe = firebase.auth().onAuthStateChanged(user => {
-//       if (user) {
-//         console.log('hey ho', user);
-//         setUser(user);
-//       } else {
-//         setUser(false);
-//       }
-//     });
-
-//     return () => unsubscribe();
-//   }, []);
-
-//   return {
-//     user,
-//     doEmailSignup,
-//     doEmailLogin,
-//   };
-// }
+const MINIMUM_PASSWORD_LENGTH = 8;
+const PASSWORD_REGEX = '^(?=w*[a-zA-Z])(?=w*[0-9])';
+export async function validatePassword(password: string) {
+  if (password.length < MINIMUM_PASSWORD_LENGTH) {
+    throw new WrongPasswordFormatError(
+      'The password should be longer than ' + MINIMUM_PASSWORD_LENGTH + '.',
+    );
+  }
+  if (!password.match(PASSWORD_REGEX)) {
+    throw new WrongPasswordFormatError('The password should contain both alphabets and numbers.');
+  }
+}
 
 export async function doEmailSignup(email, password) {
   return firebase
@@ -104,7 +39,7 @@ export async function doEmailSignup(email, password) {
       if (errorCode == 'auth/email-already-in-use') {
         throw new EmailAlreadyExistError(errorMessage);
       } else if (errorCode == 'auth/weak-password') {
-        throw new WeakPasswordError(errorMessage);
+        throw new WrongPasswordFormatError(errorMessage);
       }
       throw Error(errorMessage);
     });
