@@ -11,7 +11,7 @@ import { GET_USER } from '../../components/CommonHeader';
 function AdditionalInformation() {
   const router = useRouter();
   const AuthUser = useAuthUser();
-  const [name, setName] = useState('');
+  const [name, setName] = useState('@');
 
   const [updateUserProfile] = useMutation(UPDATE_PROFILE);
 
@@ -19,7 +19,9 @@ function AdditionalInformation() {
     variables: { firebaseUID: AuthUser.id },
   });
 
-  const handleNameChange = event => setName(event.target.value);
+  const handleNameChange = event => {
+    setName('@' + event.target.value.substr(1));
+  };
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -34,7 +36,10 @@ function AdditionalInformation() {
         console.log(result);
       })
       .finally(() => {
-        router.push('/');
+        router.push({
+          pathname: '/users/edit_profile',
+          query: { isFirst: true },
+        });
       });
   };
 
@@ -58,7 +63,7 @@ function AdditionalInformation() {
         <form onSubmit={handleSubmit}>
           <label>
             사용자 이름
-            <input name="name" value={name} onChange={handleNameChange} placeholder="@" />
+            <input name="name" value={name} onChange={handleNameChange} />
           </label>
           <br />
         </form>
