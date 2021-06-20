@@ -121,7 +121,7 @@ const EditProfile = (props: Props) => {
     await updateUserProfile({
       variables: {
         // @ts-ignore
-        id: parseInt(props.data.user.id),
+        id: parseInt(props.user.id),
         name: name,
         nickname: nickname,
         intro: intro,
@@ -130,7 +130,7 @@ const EditProfile = (props: Props) => {
     }).then(result => {
       if (result.data) {
         // @ts-ignore
-        router.push(`/users/mypage?userId=${props.data.user.id}`);
+        router.push('/users/mypage');
       } else {
         console.error('프로필 편집에 문제가 생겼습니다.');
       }
