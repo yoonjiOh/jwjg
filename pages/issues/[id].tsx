@@ -164,6 +164,10 @@ const Issue: any = () => {
   const myStanceId = userData?.userByFirebaseWithIssuesId?.userStance?.stancesId;
 
   const onStanceClick = async stancesId => {
+    if (!userId) {
+      router.push('/users');
+      return;
+    }
     await createUserStance({
       variables: {
         usersId: userId,
