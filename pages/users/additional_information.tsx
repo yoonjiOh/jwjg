@@ -19,6 +19,8 @@ function AdditionalInformation() {
     variables: { firebaseUID: AuthUser.id },
   });
 
+  console.log(userData);
+
   const handleNameChange = event => {
     setName('@' + event.target.value.substr(1));
   };
