@@ -7,6 +7,7 @@ import _ from 'lodash';
 import Layout from '../components/Layout';
 import IssueCard from '../components/IssueCard';
 import { withAuthUser, withAuthUserTokenSSR } from 'next-firebase-auth';
+import CurrentStances from '../components/issue/CurrentStances';
 
 const GET_ISSUES_AND_OPINIONS = gql`
   query {
@@ -31,6 +32,7 @@ const GET_ISSUES_AND_OPINIONS = gql`
       }
       userStances {
         stancesId
+        issuesId
       }
     }
   }
@@ -103,9 +105,8 @@ export const getServerSideProps = withAuthUserTokenSSR({})(async ({ AuthUser }) 
 
 const Main = props => {
   const { issues, me } = props.data;
-  const hot_issue = _.maxBy(issues, i => i.opinions.length);
-  const other_issues = issues.filter(i => i.id !== hot_issue.id);
-
+  const hotIssue = _.maxBy(issues, i => i.opinions.length);
+  const other_issues = issues.filter(i => i.id !== hotIssue.id);
   return (
     <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }}>
       <main className={s.main}>
@@ -114,22 +115,29 @@ const Main = props => {
           <article className={s.issueCardWrap}>
             <section className={s.issueCard}>
               {
-                <div key={hot_issue.id}>
+                <div key={hotIssue.id}>
                   <h3 className={s.issueTitle}>
-                    <Link key={hot_issue.title} href={`/issues/${hot_issue.id}`}>
-                      {hot_issue.title}
+                    <Link key={hotIssue.title} href={`/issues/${hotIssue.id}`}>
+                      {hotIssue.title}
                     </Link>
                   </h3>
                   <div className={s.image}>
-                    <img src={hot_issue.imageUrl} />
+                    <Link key={hotIssue.title} href={`/issues/${hotIssue.id}`}>
+                      <img src={hotIssue.imageUrl} />
+                    </Link>
                   </div>
                   <div>
                     <div className={s.issueCardTop}>
-                      <div className={s.responseSum}>🔥 {hot_issue.userStancesSum}명 참여</div>
+                      <div className={s.responseSum}>🔥 참여 {hotIssue.userStancesSum}</div>
+                      <CurrentStances
+                        userStances={hotIssue.userStances}
+                        stances={hotIssue.stances}
+                        withStats={false}
+                      />
                       <div className={s.barchart}>
-                        {_.map(hot_issue.newStances, (userStance, idx) => {
+                        {_.map(hotIssue.newStances, (userStance, idx) => {
                           const ratio =
-                            ((userStance.sum / hot_issue.userStancesSum) * 100).toFixed(1) + '%';
+                            ((userStance.sum / hotIssue.userStancesSum) * 100).toFixed(0) + '%';
                           return (
                             <div
                               key={userStance.title}
@@ -147,15 +155,15 @@ const Main = props => {
                     </div>
                     <div className={s.line}></div>
                     <div className={s.issueCardCommentWrap}>
-                      <p className={s.commentSum}>💬 글 {hot_issue.opinionsSum}개</p>
+                      <p className={s.commentSum}>💬 의견 {hotIssue.opinionsSum}</p>
                       <div className={s.issueCardComments}>
                         <div className={s.issueCardComment}>
-                          <p>{hot_issue.opinions[0]?.usersId}</p>
-                          <p>{hot_issue.opinions[0]?.content}</p>
+                          <p>{hotIssue.opinions[0]?.usersId}</p>
+                          <p>{hotIssue.opinions[0]?.content}</p>
                         </div>
                         <div className={s.issueCardComment}>
-                          <p>{hot_issue.opinions[1]?.usersId}</p>
-                          <p>{hot_issue.opinions[1]?.content}</p>
+                          <p>{hotIssue.opinions[1]?.usersId}</p>
+                          <p>{hotIssue.opinions[1]?.content}</p>
                         </div>
                       </div>
                     </div>

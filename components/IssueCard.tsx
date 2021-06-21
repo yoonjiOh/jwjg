@@ -2,16 +2,11 @@ import React from 'react';
 import s from './IssueCard.module.scss';
 import Link from 'next/link';
 import _ from 'lodash';
+import CurrentStances from './issue/CurrentStances';
 
-function IssueCard(props) {
-  const { issue, userId } = props;
+function IssueCard({ issue, userId }) {
   return (
     <section key={issue.id} className={s.issueCard}>
-      <h3 className={s.issueTitle}>
-        <Link key={issue.title} href={`/issues/${issue.id}`}>
-          {issue.title}
-        </Link>
-      </h3>
       <div className={s.image}>
         <img src={issue.imageUrl} />
       </div>
@@ -33,8 +28,9 @@ function IssueCard(props) {
             {issue.title}
           </Link>
         </h3>
-        <span className={s.responseSum}>🔥 {issue.userStancesSum}명 참여</span>
-        <span className={s.commentSum}>💬 글 {issue.opinionsSum}개</span>
+        <CurrentStances userStances={issue.userStances} stances={issue.stances} withStats={false} />
+        <span className={s.responseSum}>🔥 참여 {issue.userStancesSum}</span>
+        <span className={s.commentSum}>💬 의견 {issue.opinionsSum}</span>
       </div>
     </section>
   );

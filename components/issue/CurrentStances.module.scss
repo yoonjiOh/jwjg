@@ -31,7 +31,7 @@
   font-size: $font-lg;
 }
 .comment {
-  min-height: 4em;
+  min-height: 2.5em;
 }
 .stanceCount{
   text-align: right;
@@ -52,4 +52,8 @@
 }
 .🍊{
   background-color: $orange;
+}
+.blueMain{
+  font-weight: bold;
+  color: $blue_main;
 }
