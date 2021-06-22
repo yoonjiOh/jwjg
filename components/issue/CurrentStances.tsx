@@ -45,24 +45,18 @@ const CurrentStances = ({ userStances, stances, withStats }) => {
         <p className={s.comment}>
           {sortedUserStances
             .filter((_e, i) => i <= isStanceTied)
-            .map((s, i) => {
+            .map((stance, i) => {
               if (i < isStanceTied) {
                 return (
-                  <>
-                    <span className={s.blueMain} key={s.title}>
-                      {s.title}
-                    </span>{' '}
-                    입장과{' '}
-                  </>
+                  <span key={stance.title}>
+                    <span className={s.blueMain}>{stance.title}</span> 입장과{' '}
+                  </span>
                 );
               } else {
                 return (
-                  <>
-                    <span className={s.blueMain} key={s.title}>
-                      {s.title}
-                    </span>{' '}
-                    입장이 각각{' '}
-                  </>
+                  <span key={stance.title}>
+                    <span className={s.blueMain}>{stance.title}</span> 입장이 각각{' '}
+                  </span>
                 );
               }
             })}
@@ -72,19 +66,19 @@ const CurrentStances = ({ userStances, stances, withStats }) => {
           로 동률이에요!
         </p>
       ) : (
-        <p className={s.comment}>
+        <div className={s.comment}>
           <span className={s.blueMain}>{sortedUserStances[0].title}</span> 입장이 전체의{' '}
           <span className={s.blueMain}>
             {((sortedUserStances[0].count * 100) / userStancesSum).toFixed(0)}%
           </span>
           로 가장 많아요
-        </p>
+        </div>
       )}
       {withStats && (
         <>
           <ul className={s.stanceItems}>
             {sortedUserStances.map(stance => (
-              <li className={s.stanceItem} key={stance.id}>
+              <li className={s.stanceItem} key={stance.title}>
                 <div
                   className={`${s.stanceItemBarChart} ${s[stance.fruit]}`}
                   style={{

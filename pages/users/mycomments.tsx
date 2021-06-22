@@ -12,6 +12,7 @@ import _ from 'lodash';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
+import { GET_USERS } from '../../queries';
 
 dayjs.extend(relativeTime);
 
@@ -36,18 +37,6 @@ const GET_MY_COMMENTS_DATA = gql`
         }
         opinionCommentReactsSum
       }
-    }
-  }
-`;
-
-const GET_USERS = gql`
-  query($firebaseUID: String) {
-    userByFirebase(firebaseUID: $firebaseUID) {
-      id
-      firebaseUID
-      name
-      intro
-      profileImageUrl
     }
   }
 `;

@@ -8,6 +8,7 @@ import Layout from '../components/Layout';
 import IssueCard from '../components/IssueCard';
 import { withAuthUser, withAuthUserTokenSSR } from 'next-firebase-auth';
 import CurrentStances from '../components/issue/CurrentStances';
+import { GET_USERS } from '../queries';
 
 const GET_ISSUES_AND_OPINIONS = gql`
   query {
@@ -34,18 +35,6 @@ const GET_ISSUES_AND_OPINIONS = gql`
         stancesId
         issuesId
       }
-    }
-  }
-`;
-
-const GET_USERS = gql`
-  query($firebaseUID: String) {
-    userByFirebase(firebaseUID: $firebaseUID) {
-      id
-      firebaseUID
-      name
-      intro
-      profileImageUrl
     }
   }
 `;
@@ -175,7 +164,7 @@ const Main = props => {
         </div>
         <div className={s.issueWrap}>
           <h2 className={s.issue}>📫 가장 최근 이슈</h2>
-          <article>
+          <article style={{ paddingBottom: '25px' }}>
             {other_issues.map(issue => (
               <IssueCard issue={issue} key={issue.id} userId={me && me.id} />
             ))}
