@@ -1,14 +1,43 @@
 {
+  "eslint.alwaysShowStatus": true,
+  "git.enableSmartCommit": true,
+  "explorer.confirmDragAndDrop": false,
+  "prettier.printWidth": 800,
+  "explorer.confirmDelete": false,
+  "eslint.provideLintTask": true,
+  "prettier.eslintIntegration": true,
+  "prettier.stylelintIntegration": true,
+  "prettier.tslintIntegration": true,
+  "prettier.arrowParens": "always",
+  "prettier.bracketSpacing": false,
+  "eslint.autoFixOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnSaveMode": "modifications",
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "html.format.indentHandlebars": true,
+  "html.format.indentInnerHtml": true,
+  "editor.tabSize": 2,
+  "liveServer.settings.donotShowInfoMsg": true,
+  "git.confirmSync": false,
+  "editor.renderWhitespace": "boundary",
+  "diffEditor.ignoreTrimWhitespace": false,
+  "editor.codeActionsOnSave": {"source.fixAll": true,
+    "source.fixAll.eslint": true
   },
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "prettier.enableDebugLogs": true,
+  "workbench.startupEditor": "newUntitledFile",
+  "cSpell.userWords": [
+    "Dailymotion",
+    "ENCONNREFUSED",
+    "dable"
+  ],
+  "editor.formatOnPaste": true,
+  "eslint.format.enable": true,
+  "eslint.validate": [
+    "html",
+    "vue",
+    "javascript",
+    "javascriptreact",
+  ],
+  "javascript.format.enable": false,
+  "editor.formatOnSave": true,
+  "window.zoomLevel": 2,
+  "terminal.integrated.tabs.enabled": false
 }

@@ -6,7 +6,6 @@ import firebase from 'firebase/app';
 // POST /api/user
 // Required fields in body: firebaseUID, email
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  console.log('here!');
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }

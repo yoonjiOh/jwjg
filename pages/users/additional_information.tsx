@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
+import { withAuthUserTokenSSR, AuthAction, AuthUser } from 'next-firebase-auth';
 import { Users } from '@prisma/client';
 import Layout from '../../components/Layout';
 import common_style from '../index.module.scss';
@@ -9,36 +9,35 @@ import { GET_USERS } from './queries';
 import { UPDATE_PROFILE } from './edit_profile';
 import { useMutation, useQuery } from '@apollo/client';
 import { initializeApollo } from '../../apollo/apolloClient';
+import { createUserFromFirebaseUser } from '../../lib/users';
 
-// export default withAuthUser({
-//   whenAuthed: AuthAction.RENDER,
-//   whenUnauthedBeforeInit: AuthAction.RETURN_NULL,
-//   whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
-// })(AdditionalInformation);
+export interface SerializedAuthUser {
+  id: string;
+  email: string;
+}
 
 export const getServerSideProps = withAuthUserTokenSSR({
   whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
   authPageURL: '/users',
 })(async ({ AuthUser }) => {
-  const apolloClient = initializeApollo(null);
-  const { data } = await apolloClient.query({
-    query: GET_USERS,
-    variables: { firebaseUID: AuthUser.id },
-  });
-
+  const firebaseUser: SerializedAuthUser = {
+    id: AuthUser.id,
+    email: AuthUser.email,
+  };
   return {
     props: {
-      user: data.userByFirebase,
+      firebaseUser: firebaseUser,
     },
   };
 });
 
 interface Props {
-  user: Users;
+  firebaseUser: SerializedAuthUser;
 }
 
 const AdditionalInformation = (props: Props) => {
   const router = useRouter();
+  const apolloClient = initializeApollo(null);
   const [name, setName] = useState('@');
 
   const [updateUserProfile] = useMutation(UPDATE_PROFILE);
@@ -49,10 +48,19 @@ const AdditionalInformation = (props: Props) => {
 
   const handleSubmit = async e => {
     e.preventDefault();
+
+    // Creates user in our backend.
+    await createUserFromFirebaseUser(props.firebaseUser);
+    const { data } = await apolloClient.query({
+      query: GET_USERS,
+      variables: { firebaseUID: props.firebaseUser.id },
+    });
+    const user = data.userByFirebase;
+
     // handle user info update mutation using useMutation hook.
     await updateUserProfile({
       variables: {
-        id: props.user.id,
+        id: user.id,
         name: name.substr(1),
       },
     })
@@ -94,6 +102,6 @@ const AdditionalInformation = (props: Props) => {
       </main>
     </Layout>
   );
-}
+};
 
 export default AdditionalInformation;

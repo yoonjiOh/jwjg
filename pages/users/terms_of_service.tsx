@@ -15,7 +15,6 @@ function TermsOfService() {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    // TODO: mark db that user acceepted ToS.
     router.push('/users/additional_information');
   };
 
@@ -51,13 +50,6 @@ function TermsOfService() {
         >
           더 보기
         </a>
-        {/* <form onSubmit={handleSubmit}>
-          <label>
-            사용자 이름
-            <input name="name" value={name} onChange={handleNameChange} placeholder="@" />
-          </label>
-          <br />
-        </form> */}
       </main>
     </Layout>
   );

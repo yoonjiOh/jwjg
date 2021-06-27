@@ -2,10 +2,29 @@ import React, { useState, useEffect, useContext, createContext } from 'react';
 import firebase from 'firebase/app';
 import { JsonWebTokenError } from 'jsonwebtoken';
 import { useRouter } from 'next/router';
-import { EmailAlreadyExistError, WrongPasswordFormatError } from './errors';
+import { WrongEmailError, EmailAlreadyExistError, WrongPasswordFormatError } from './errors';
+import { AuthUser } from 'next-firebase-auth';
+import { SerializedAuthUser } from '../pages/users/additional_information';
 
+const EMAIL_REGEX = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const MINIMUM_PASSWORD_LENGTH = 8;
 const PASSWORD_REGEX = '^(?=\\w*[a-zA-Z])(?=\\w*[0-9])';
+
+export async function validateEmail(email: string) {
+  if (!EMAIL_REGEX.test(email.toLowerCase())) {
+    throw new WrongEmailError('The email format is invalid.');
+  }
+
+  firebase
+    .auth()
+    .fetchSignInMethodsForEmail(email)
+    .then(providers => {
+      if (providers.length != 0) {
+        throw new WrongEmailError('The email already in used.');
+      }
+    });
+}
+
 export async function validatePassword(password: string) {
   if (password.length < MINIMUM_PASSWORD_LENGTH) {
     throw new WrongPasswordFormatError(
@@ -17,17 +36,11 @@ export async function validatePassword(password: string) {
   }
 }
 
-export async function doEmailSignup(email, password) {
+export async function firebaseUserSignup(email, password) {
   return firebase
     .auth()
     .createUserWithEmailAndPassword(email, password)
-    .then(userCredential => {
-      // Signed in
-      const user = userCredential.user;
-
-      // Creates user in our backend.
-      return registerFirebaseUser(user);
-    })
+    .then(userCredential => {})
     .catch(async error => {
       const errorCode = error.code;
       const errorMessage = error.message;
@@ -69,12 +82,14 @@ export async function doEmailLogin(email, password) {
 /**
  * @returns Returns true if user is newly created. Otherwise, it returns False.
  */
-async function registerFirebaseUser(firebaseUser): Promise<boolean> {
-  console.log('firebaseUser:' + firebaseUser.uid + '/' + firebaseUser.email);
+export async function createUserFromFirebaseUser(
+  firebaseUser: SerializedAuthUser,
+): Promise<boolean> {
+  console.log('firebaseUser:' + firebaseUser.id + '/' + firebaseUser.email);
   const response = await fetch('/api/users', {
     method: 'POST',
     body: JSON.stringify({
-      firebaseUID: firebaseUser.uid,
+      firebaseUID: firebaseUser.id,
       email: firebaseUser.email,
     }),
   });
@@ -106,7 +121,7 @@ async function registerFirebaseUser(firebaseUser): Promise<boolean> {
 }
 
 export function startFacebookSigninFlow() {
-  var provider = new firebase.auth.FacebookAuthProvider();
+  const provider = new firebase.auth.FacebookAuthProvider();
   // TODO: updates scopes
   provider.addScope('user_birthday');
   // To localize the provider's OAuth flow to the user's preferred language
@@ -120,25 +135,25 @@ export function startFacebookSigninFlow() {
     .signInWithPopup(provider)
     .then(result => {
       /** @type {firebase.auth.OAuthCredential} */
-      var credential = result.credential;
+      const credential = result.credential;
 
       // The signed-in user info.
-      var user = result.user;
+      const user = result.user;
 
       // This gives you a Facebook Access Token. You can use it to access the Facebook API.
       // @ts-ignore
-      var accessToken = credential.accessToken;
+      const accessToken = credential.accessToken;
 
       // ...
     })
     .catch(error => {
       // Handle Errors here.
-      var errorCode = error.code;
-      var errorMessage = error.message;
+      const errorCode = error.code;
+      const errorMessage = error.message;
       // The email of the user's account used.
-      var email = error.email;
+      const email = error.email;
       // The firebase.auth.AuthCredential type that was used.
-      var credential = error.credential;
+      const credential = error.credential;
 
       // ...
     });

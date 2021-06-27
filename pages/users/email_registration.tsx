@@ -6,8 +6,7 @@ import Layout from '../../components/Layout';
 import common_style from '../index.module.scss';
 import s from './users.module.scss';
 
-// @ts-ignore
-import { validatePassword, doEmailSignup } from '../../lib/users.ts';
+import { validatePassword, firebaseUserSignup, validateEmail } from '../../lib/users';
 import { EmailAlreadyExistError, WrongPasswordFormatError } from '../../lib/errors';
 
 function EmailRegistration() {
@@ -46,14 +45,9 @@ function EmailRegistration() {
     e.preventDefault();
 
     try {
+      await validateEmail(email);
       await validatePassword(pwd);
-    } catch (err) {
-      handleSignupError(err);
-      return;
-    }
-
-    try {
-      await doEmailSignup(email, pwd);
+      await firebaseUserSignup(email, pwd);
     } catch (err) {
       handleSignupError(err);
       return;
