@@ -7,7 +7,7 @@ const link_style = {
 const footer_style = {
   position: 'fixed',
   bottom: 0,
-  width: '360px',
+  marginLeft: 290,
 };
 
 const icon_style = {

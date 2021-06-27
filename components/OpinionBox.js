@@ -70,7 +70,7 @@ const OpinionBox = ({ opinion, userId }) => {
           <span style={{ marginLeft: '5px' }}>{opinion.content}</span>
         </div>
         <div className={s.likeWrapper}>
-          <span style={{ marginRight: '10px' }}>좋아요</span>
+          <span style={{ marginRight: '10px' }}></span>
           <img
             src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
             alt="좋아요 버튼"

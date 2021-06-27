@@ -1,6 +1,7 @@
 @use "../../styles/_variables" as *;
 
 .main {
+  margin-top: 56px;
   background-color: #fff;
   height: 100vh;
 }
@@ -68,6 +69,8 @@
 .responseSum,
 .commentSum {
   margin: 0 0 8px 0;
+  font-size: 12px;
+  font-weight: bold;
 }
 .stancePickItems {
 }
@@ -109,7 +112,10 @@
   font-size: $font-sm;
 }
 .title {
-  font-size: $font-lg;
+  font-size: 16px;
+}
+.body {
+  font-size: 14px;
 }
 .stanceCount{
   text-align: right;
@@ -132,6 +138,7 @@
   background-color: $orange;
 }
 .opinionTitleContainer {
+  margin-bottom: 20px;
   cursor: pointer;
   @include borderBottom;
   .title, .opinionSum, .opinionNext {

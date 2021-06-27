@@ -223,7 +223,6 @@ const Opinion = props => {
                   src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/blue_like.svg"
                   alt="좋아요 버튼"
                 />{' '}
-                좋아요
               </label>
             ) : (
               <label style={{ cursor: 'pointer' }}>
@@ -232,7 +231,6 @@ const Opinion = props => {
                   alt="좋아요 버튼"
                   style={{ marginRight: '5px' }}
                 />{' '}
-                좋아요
               </label>
             )}
           </div>
