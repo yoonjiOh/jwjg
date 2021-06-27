@@ -1,6 +1,7 @@
 .main {
   background-color: #fff;
   height: 100vh;
+  margin-top: 56px;
 }
 .image {
   height: 140px;
@@ -66,6 +67,8 @@
 .responseSum,
 .commentSum {
   margin: 0 0 8px 0;
+  font-size: 12px;
+  font-weight: bold;
 }
 .opinionWrapper {
   width: 360px;

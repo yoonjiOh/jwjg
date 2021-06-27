@@ -3,6 +3,7 @@
 .main {
   background-color: #f3f3f3;
   height: 100vh;
+  margin-top: 56px;
 }
 .image {
   height: 140px;
@@ -68,6 +69,8 @@
 .responseSum,
 .commentSum {
   margin: 0 0 8px 0;
+  font-size: 12px;
+  font-weight: bold;
 }
 .stancePickItems {
 }
@@ -132,6 +135,7 @@
   background-color: $orange;
 }
 .opinionTitleContainer {
+  margin-bottom: 20px;
   @include borderBottom;
   .title, .opinionSum, .opinionNext {
     display: inline-block;

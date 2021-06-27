@@ -86,7 +86,7 @@ export const getServerSideProps = async context => {
   const apolloClient = initializeApollo(null);
   const { data } = await apolloClient.query({
     query: GET_OPINIONS_COMMENTS_DATA,
-    variables: { issuesId: Number(context.query.issuesId) },
+    variables: { issuesId: Number(context.query.issue_id) },
   });
 
   return {
