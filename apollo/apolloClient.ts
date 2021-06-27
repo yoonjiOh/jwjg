@@ -11,7 +11,7 @@ function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === 'undefined',
     link: createUploadLink({
-      uri: process.env.URI + '/api',
+      uri: process.env.HOSTNAME + '/api',
       credentials: 'same-origin',
     }),
     cache: new InMemoryCache(),
