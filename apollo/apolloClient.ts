@@ -11,7 +11,7 @@ function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === 'undefined',
     link: createUploadLink({
-      uri: 'http://jwjg-dev.ap-northeast-2.elasticbeanstalk.com/api',
+      uri: process.env.API_HOSTNAME + '/api',
       credentials: 'same-origin',
     }),
     cache: new InMemoryCache(),
