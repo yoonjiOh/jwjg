@@ -7,13 +7,11 @@ import merge from 'deepmerge';
 let apolloClient: ApolloClient<NormalizedCacheObject> = null;
 const prod = process.env.NODE_ENV === 'production';
 
-
 function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === 'undefined',
     link: createUploadLink({
-      uri: prod ? 'https://repol.vercel.app/api' : 'http://localhost:3000/api',
-      // TODO: url 확정되면 수정 필요함. credentials도 확인.
+      uri: 'http://localhost:3000/api',
       credentials: 'same-origin',
     }),
     cache: new InMemoryCache(),
