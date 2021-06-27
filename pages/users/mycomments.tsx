@@ -12,7 +12,7 @@ import _ from 'lodash';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
-import { GET_USERS } from '../../queries';
+import { GET_USERS } from '../../lib/queries';
 
 dayjs.extend(relativeTime);
 

@@ -8,7 +8,7 @@ import Layout from '../components/Layout';
 import IssueCard from '../components/IssueCard';
 import { withAuthUser, withAuthUserTokenSSR } from 'next-firebase-auth';
 import CurrentStances from '../components/issue/CurrentStances';
-import { GET_USERS } from '../queries';
+import { GET_USERS } from '../lib/queries';
 
 const GET_ISSUES_AND_OPINIONS = gql`
   query {

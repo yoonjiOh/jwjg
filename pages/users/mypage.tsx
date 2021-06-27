@@ -10,7 +10,7 @@ import { gql } from '@apollo/client';
 import { initializeApollo } from '../../apollo/apolloClient';
 import _ from 'lodash';
 import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
-import { GET_USERS } from '../../queries';
+import { GET_USERS } from '../../lib/queries';
 
 const GET_MYPAGE_DATA = gql`
   query user($id: Int!) {
