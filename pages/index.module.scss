@@ -20,6 +20,7 @@
   margin: 12px 0 0 0;
   height: 140px;
   z-index: -100;
+  cursor: pointer;
 }
 .image img {
   width: 360px;
@@ -49,9 +50,8 @@
 .issueTitle {
   font-size: 24px;
   color: #333333;
-  font-weight: normal;
+  font-weight: bold;
   margin: 0;
-  padding-top: 12px;
   padding-bottom: 12px;
   line-height: 1.6;
 }

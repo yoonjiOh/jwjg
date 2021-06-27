@@ -4,7 +4,7 @@ import { withAuthUserTokenSSR, AuthAction, AuthUser } from 'next-firebase-auth';
 import { Users } from '@prisma/client';
 import Layout from '../../components/Layout';
 import common_style from '../index.module.scss';
-import { GET_USERS } from './queries';
+import { GET_USERS } from '../../queries';
 
 import { UPDATE_PROFILE } from './edit_profile';
 import { useMutation, useQuery } from '@apollo/client';

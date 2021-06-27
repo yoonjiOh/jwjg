@@ -10,6 +10,7 @@ import { gql } from '@apollo/client';
 import { initializeApollo } from '../../apollo/apolloClient';
 import _ from 'lodash';
 import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
+import { GET_USERS } from '../../queries';
 
 const GET_MYPAGE_DATA = gql`
   query user($id: Int!) {
@@ -60,17 +61,6 @@ const GET_STANCES = gql`
       id
       orderNum
       title
-    }
-  }
-`;
-const GET_USERS = gql`
-  query($firebaseUID: String) {
-    userByFirebase(firebaseUID: $firebaseUID) {
-      id
-      firebaseUID
-      name
-      intro
-      profileImageUrl
     }
   }
 `;

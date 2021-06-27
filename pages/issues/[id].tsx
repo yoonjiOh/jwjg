@@ -143,23 +143,6 @@ const Issue: any = () => {
   if (error || userError) return `Error! ${error.message}`;
   const issue = issueData.issue;
   const tags = issue.issueHashTags.map(issueHashTag => issueHashTag.hashTags[0].name);
-  const userStances = _.reduce(
-    issue.userStances,
-    (acc, userStance) => {
-      if (acc[userStance.stancesId]) {
-        acc[userStance.stancesId] += 1;
-      } else {
-        acc[userStance.stancesId] = 1;
-      }
-      return acc;
-    },
-    {},
-  );
-  const stances = issue.stances.map(stance => ({
-    ...stance,
-    title: stance.fruit + ' ' + stance.title,
-    count: userStances[stance.id] ? userStances[stance.id] : 0,
-  }));
   const userId = userData?.userByFirebaseWithIssuesId?.id;
   const myStanceId = userData?.userByFirebaseWithIssuesId?.userStance?.stancesId;
 
@@ -210,13 +193,16 @@ const Issue: any = () => {
               {/* TODO: issue 작성자 추가 */}
             </div>
           )}
-          {/* TODO: mutation 후 변경된 데이터로 화면 새로 그리기 */}
-          {/* mutation 후에 refetch는 일어남. 그러면 화면은 어떻게 새로 그릴까? */}
-          <CurrentStances userStances={issue.userStances} stances={stances} />
+          <h3 className={s.title}>지금 여론</h3>
+          <CurrentStances
+            userStances={issue.userStances}
+            stances={issue.stances}
+            withStats={true}
+          />
           <div>
             <h3 className={s.title}>내 입장</h3>
             <ul className={s.stancePickItems}>
-              {stances.map(stance => (
+              {issue.stances.map(stance => (
                 <li
                   className={
                     `${s.stancePickItem}` +
