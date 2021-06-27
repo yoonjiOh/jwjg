@@ -186,7 +186,8 @@
 .filter {
   height: 40px;
   padding: 8px 15px;
-  font-size: 14px;
+  font-size: 12px;
+  font-weight: bold;
   cursor: pointer;
 }
 .filterSelector {
@@ -207,6 +208,7 @@
   font-weight: 700;
 }
 .filterRow {
+  font-size: 13px;
   cursor: pointer;
   padding: 10px 0;
   border-bottom: 1px solid #E5E5E5;
@@ -220,4 +222,6 @@
   align-items: center;
   padding-left: 10px;
 }
-
+.filterSelectorRow {
+  padding-bottom: 32px;
+}

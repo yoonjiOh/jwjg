@@ -95,7 +95,7 @@ export const getServerSideProps = async context => {
     },
   };
 };
- 
+
 const Opinions = props => {
   console.log('Opinions 여기 아냐?', props.data.opinionsWithIssuesId);
   const [selectedFilter, setFilter] = useState('opinionReactsSum');
@@ -162,7 +162,7 @@ const Opinions = props => {
             const myReact =
             opinion.opinionReacts.filter(react => react.usersId === Number(usersId));
             const isLikedByMe = !_.isEmpty(myReact) && _.head(myReact).like;
-            
+
             return (
               <div className={s.opinionWrapper} key={opinion.id}>
                 <div className={util_s.commentBox}>
@@ -206,7 +206,6 @@ const Opinions = props => {
                               src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/blue_like.svg"
                               alt="좋아요 버튼"
                             />{' '}
-                            좋아요
                           </label>
                         ) : (
                           <label
@@ -223,7 +222,6 @@ const Opinions = props => {
                               alt="좋아요 버튼"
                               style={{ marginRight: '5px' }}
                             />{' '}
-                            좋아요
                           </label>
                         )}
                         <span style={{ marginLeft: '5px' }}>{opinion.opinionReactsSum}</span>
@@ -259,7 +257,7 @@ const Opinions = props => {
 
       {
         isOpenFilter && <div className={s.filterSelector}>
-          <div>
+          <div className={s.filterSelectorRow}>
             <span className={s.cancelBtn} onClick={handleOpenFilter}>취소</span>
             <span className={s.header}>정렬 기준</span>
           </div>
@@ -275,7 +273,7 @@ const Opinions = props => {
               );
             })
           }
-          
+
         </div>
       }
       </main>

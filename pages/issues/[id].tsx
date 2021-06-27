@@ -189,7 +189,7 @@ const Issue: any = () => {
           {issue.content && (
             <div>
               <h3 className={s.title}>이슈의 맥</h3>
-              <p>{issue.content}</p>
+              <p className={s.body}>{issue.content}</p>
               {/* TODO: issue 작성자 추가 */}
             </div>
           )}

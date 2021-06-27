@@ -39,7 +39,7 @@ const DO_LIKE_ACTION_TO_OPINION_COMMENT = gql`
 const CommentBox = ({ comment, me }) => {
   const { data } = useQuery(GET_OPINION_COMMENT_REACTS, { variables: { id: comment.id } });
   const [doLikeActionToOpinionComment] = useMutation(DO_LIKE_ACTION_TO_OPINION_COMMENT);
-  
+
   const router = useRouter();
   const likeCount =
     data &&
@@ -82,13 +82,13 @@ const CommentBox = ({ comment, me }) => {
           <span style={{ marginLeft: '5px' }}>{comment.content}</span>
         </div>
         <div className={s.likeWrapper} onClick={() => handleClickLike(comment.id, isLikedByMe)}>
-          { isLikedByMe ? 
-          <label style={{ marginRight: '10px', color: '#4494FF' }}>좋아요
+          { isLikedByMe ?
+          <label style={{ color: '#4494FF' }}>
           <img
             src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/blue_like.svg"
             alt="좋아요 버튼"
-          /></label> : 
-          <label style={{ marginRight: '10px' }}>좋아요
+          /></label> :
+          <label>
           <img
             src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
             alt="좋아요 버튼"
