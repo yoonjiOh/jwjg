@@ -7,14 +7,15 @@ const link_style = {
 const footer_style = {
   position: 'fixed',
   bottom: 0,
-  marginLeft: 290,
+  right: 0,
+  marginRight: 10,
 };
 
 const icon_style = {
   display: 'block',
   float: 'right',
   cursor: 'pointer',
-}
+};
 
 const FloatingNewOpinionBtn = ({ userId, issueId, stancesId }) => {
   const router = useRouter();

@@ -7,14 +7,15 @@
 }
 .image img {
   border-radius: 20px 20px 0 0;
-  width: 335px;
+  width: 100%;
+  min-width: 220px;
   height: 140px;
   object-fit: cover;
   z-index: -100;
 }
 .issueCard {
   font-size: 12px;
-  width: 335px;
+  min-width: 220px;
   background: #fff;
   margin: 0 auto 32px;
   border-radius: 20px 20px 20px 20px;
@@ -59,7 +60,7 @@
 .barchart {
   line-height: 0;
 }
-.stanceItemBarChart{
+.stanceItemBarChart {
   display: inline-block;
   font-size: 0;
   height: 6px;
@@ -70,12 +71,12 @@
 .🍋 {
   background-color: $lemon;
 }
-.🍇{
+.🍇 {
   background-color: $grape;
 }
-.🍈{
+.🍈 {
   background-color: $melon;
 }
-.🍊{
+.🍊 {
   background-color: $orange;
 }
