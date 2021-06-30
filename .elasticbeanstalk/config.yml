@@ -1,0 +1,17 @@
+branch-defaults:
+  main:
+    environment: jwjg-dev
+global:
+  application_name: jwjg
+  branch: null
+  default_ec2_keyname: repol
+  default_platform: Node.js 14 running on 64bit Amazon Linux 2
+  default_region: ap-northeast-2
+  include_git_submodules: true
+  instance_profile: null
+  platform_name: null
+  platform_version: null
+  profile: eb-cli
+  repository: null
+  sc: git
+  workspace_type: Application
