@@ -11,7 +11,6 @@ import { initializeApollo } from '../../../apollo/apolloClient';
 
 import dynamic from 'next/dynamic';
 
-
 interface MultiSelectProps {
   options: any;
   onSelect: (removedHashTag: any) => void;
@@ -113,9 +112,10 @@ const reducer = (state, action) => {
         tags: action.data,
       };
     case 'SET_HASHTAGS':
+      console.log(1, action.tag);
       return {
         ...state,
-        selected_tags: action.data,
+        selected_tags: state.selected_tags.push(action.tag),
       };
     case 'SET_IMAGE_URL':
       return {
@@ -161,6 +161,7 @@ const NewIssue = props => {
   const [state, dispatch] = useReducer(reducer, initial_state);
   const { issue, addStanceMode, newStance, stances, tags, selected_tags } = state;
 
+  console.log('state', state);
   const [createIssue] = useMutation(CREATE_ISSUE);
   const [createTagsByIssue] = useMutation(CREATE_TAGS_BY_ISSUE);
   const [createStancesByIssue] = useMutation(CREATE_STANCES_BY_ISSUE);
@@ -173,7 +174,7 @@ const NewIssue = props => {
     });
   };
 
-  const handleNewStanceInput = value => {  
+  const handleNewStanceInput = value => {
     dispatch({
       type: 'INPUT_NEW_STANCE_TITLE',
       value: value,
@@ -182,7 +183,7 @@ const NewIssue = props => {
 
   const handleAddStanceBtn = () => {
     const stanceIdx = _.isEmpty(stances) ? 1 : _.size(stances) + 1;
-    const payload: Stance = { 
+    const payload: Stance = {
       ...newStance,
       orderNum: stanceIdx,
     };
@@ -193,19 +194,20 @@ const NewIssue = props => {
     });
   };
 
-  const handleSelectTag = selectedHashTags => {
+  const handleSelectTag = e => {
+    console.log('handleSelectTag', e.target);
     dispatch({
       type: 'SET_HASHTAGS',
-      data: selectedHashTags,
+      tag: { id: e.target.id, value: e.target.value },
     });
   };
 
-  const handleRemoveTag = removedHashTag => {
-    dispatch({
-      type: 'SET_HASHTAGS',
-      data: selected_tags.filter(tag => tag.id !== removedHashTag.name),
-    });
-  }
+  // const handleRemoveTag = removedHashTag => {
+  //   dispatch({
+  //     type: 'SET_HASHTAGS',
+  //     data: selected_tags.filter(tag => tag.id !== removedHashTag.name),
+  //   });
+  // };
 
   const handleFileChange = async ({
     target: {
@@ -250,7 +252,7 @@ const NewIssue = props => {
         .then(result => {
           createdIssueId = result.data.createIssue.id;
         })
-        .then(async() => {
+        .then(async () => {
           const tagsPayload = selected_tags.map(tag => {
             return { issuesId: createdIssueId, hashTagsId: tag.id };
           });
@@ -289,9 +291,9 @@ const NewIssue = props => {
 
   return (
     <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }}>
-      <main className={style.main}>
+      <main className={style.main} style={{ background: '#fff' }}>
         <div className={style.button_wrapper}>
-          <button className={style.btn_submit} onClick={handleSubmit}>
+          <button className={style.btn_submit} style={{ marginTop: '30px' }} onClick={handleSubmit}>
             발제하기
           </button>
           <button className={style.btn_cancel} onClick={() => router.back()}>
@@ -339,10 +341,27 @@ const NewIssue = props => {
             옵션 추가하기
           </button>
 
-          <p className={style.title_sm} style={{ marginBottom: '15px' }}>
+          <div>선택된 태그: {_.values(selected_tags).join(', ')}</div>
+
+          <div className={style.title_sm} style={{ marginBottom: '15px' }}>
             태그 선택
-          </p>
-          <Multiselect options={tags} onSelect={handleSelectTag} onRemove={handleRemoveTag} />
+          </div>
+
+          <select name="tag" multiple id="tag-select">
+            {tags &&
+              tags.map(tag => {
+                return (
+                  <option
+                    onClick={handleSelectTag}
+                    disabled={_.keys(selected_tags).includes(tag.id)}
+                    id={tag.name}
+                    value={tag.id}
+                  >
+                    {tag.name}
+                  </option>
+                );
+              })}
+          </select>
         </div>
       </main>
     </Layout>

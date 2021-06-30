@@ -27,12 +27,12 @@ export type UploadedFileResponse = {
   mimetype: string;
   encoding: string;
   url: string;
-}
+};
 
 export interface IUploader {
   singleFileUploadResolver: (
     parent,
-    { file } : { file: Promise<File> }
+    { file }: { file: Promise<File> },
   ) => Promise<UploadedFileResponse>;
 }
 
@@ -43,9 +43,9 @@ export class AWSS3Uploader implements IUploader {
   constructor(config: S3UploadConfig) {
     AWS.config = new AWS.Config();
     AWS.config.update({
-      region: config.region || "ap-northeast-2",
+      region: config.region || 'ap-northeast-2',
       accessKeyId: config.accessKeyId,
-      secretAccessKey: config.secretAccessKey
+      secretAccessKey: config.secretAccessKey,
     });
 
     this.s3 = new AWS.S3();
@@ -60,23 +60,20 @@ export class AWSS3Uploader implements IUploader {
         .upload({
           Bucket: this.config.destinationBucketName,
           Key: key,
-          Body: pass
+          Body: pass,
+          ACL: 'public-read',
         })
-        .promise()
+        .promise(),
     };
   }
 
-  private createDestinationFilePath(
-    fileName: string,
-    mimetype: string,
-    encoding: string
-  ): string {
+  private createDestinationFilePath(fileName: string, mimetype: string, encoding: string): string {
     return fileName;
   }
 
   async singleFileUploadResolver(
     parent,
-    { file }: { file: Promise<File> }
+    { file }: { file: Promise<File> },
   ): Promise<UploadedFileResponse> {
     const { stream, filename, mimetype, encoding } = await file;
 
@@ -99,5 +96,3 @@ export class AWSS3Uploader implements IUploader {
     return { filename, mimetype, encoding, url: link };
   }
 }
-
-
