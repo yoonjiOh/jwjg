@@ -12,7 +12,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ApolloProvider client={apolloClient}>
       {/* <ProvideAuth> */}
-        <Component {...pageProps} />
+      <Component {...pageProps} />
       {/* </ProvideAuth> */}
     </ApolloProvider>
   );
