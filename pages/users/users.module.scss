@@ -359,3 +359,12 @@
 .agreed {
   color: #4494ff;
 }
+.inputWrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.inputWrapper img {
+  width: 28px;
+  cursor: pointer;
+}
