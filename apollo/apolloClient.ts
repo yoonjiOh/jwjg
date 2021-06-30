@@ -11,7 +11,7 @@ function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === 'undefined',
     link: createUploadLink({
-      uri: prod ? 'http://jwjg.kr/api' : 'http://localhost:3000/api',
+      uri: prod ? 'http://localhost:8000/api' : 'http://localhost:3000/api',
       credentials: 'same-origin',
     }),
     cache: new InMemoryCache(),

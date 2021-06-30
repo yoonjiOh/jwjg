@@ -12,6 +12,10 @@ import path from 'path';
 import { getUserId } from './utils';
 import prisma from '../../lib/db';
 
+import Cors from 'micro-cors';
+
+const cors = Cors();
+
 const resolvers = {
   Query,
   Mutation,
@@ -41,4 +45,10 @@ export const config = {
   },
 };
 
-export default apolloServer.createHandler({ path: '/api' });
+export default cors((req, res) => {
+  return apolloServer.createHandler({
+    path: '/api',
+  })(req, res);
+});
+
+// export default apolloServer.createHandler({ path: '/api' });
