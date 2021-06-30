@@ -14,7 +14,18 @@ import prisma from '../../lib/db';
 
 import Cors from 'micro-cors';
 
-const cors = Cors({ origin: '*' });
+const cors = Cors({
+  allowMethods: ['POST', 'GET', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowHeaders: [
+    'X-Requested-With',
+    'Access-Control-Allow-Origin',
+    'X-HTTP-Method-Override',
+    'Content-Type',
+    'Authorization',
+    'Accept',
+  ],
+  origin: '*',
+});
 
 const resolvers = {
   Query,
