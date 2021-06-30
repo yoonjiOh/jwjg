@@ -8,21 +8,6 @@ import Layout from '../../../components/Layout';
 // import common_style from '../index.module.css';
 import style from './new.module.css';
 import { initializeApollo } from '../../../apollo/apolloClient';
-
-import dynamic from 'next/dynamic';
-
-interface MultiSelectProps {
-  options: any;
-  onSelect: (removedHashTag: any) => void;
-  onRemove: (removedHashTag: any) => void;
-}
-
-const Multiselect: React.ComponentType<MultiSelectProps> = dynamic(
-  () => import('multiselect-react-dropdown').then(module => module.Multiselect),
-  {
-    ssr: false,
-  },
-);
 interface Stance {
   title: String;
   orderNum: Number;
@@ -113,9 +98,10 @@ const reducer = (state, action) => {
       };
     case 'SET_HASHTAGS':
       console.log(1, action.tag);
+      console.log(2, state.selected_tags);
       return {
         ...state,
-        selected_tags: state.selected_tags.push(action.tag),
+        selected_tags: state.selected_tags.concat(action.tag),
       };
     case 'SET_IMAGE_URL':
       return {
@@ -198,7 +184,7 @@ const NewIssue = props => {
     console.log('handleSelectTag', e.target);
     dispatch({
       type: 'SET_HASHTAGS',
-      tag: { id: e.target.id, value: e.target.value },
+      tag: { id: e.target.id, value: +e.target.value },
     });
   };
 
@@ -254,7 +240,7 @@ const NewIssue = props => {
         })
         .then(async () => {
           const tagsPayload = selected_tags.map(tag => {
-            return { issuesId: createdIssueId, hashTagsId: tag.id };
+            return { issuesId: createdIssueId, hashTagsId: tag.value };
           });
 
           await createTagsByIssue({
@@ -341,7 +327,7 @@ const NewIssue = props => {
             옵션 추가하기
           </button>
 
-          <div>선택된 태그: {_.values(selected_tags).join(', ')}</div>
+          <div>선택된 태그: {selected_tags.map(tag => tag.id).join(', ')}</div>
 
           <div className={style.title_sm} style={{ marginBottom: '15px' }}>
             태그 선택
@@ -350,10 +336,12 @@ const NewIssue = props => {
           <select name="tag" multiple id="tag-select">
             {tags &&
               tags.map(tag => {
+                const isSelected = selected_tags.filter(t => t.value === tag.id).length;
+
                 return (
                   <option
                     onClick={handleSelectTag}
-                    disabled={_.keys(selected_tags).includes(tag.id)}
+                    disabled={!!isSelected}
                     id={tag.name}
                     value={tag.id}
                   >

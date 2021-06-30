@@ -3,13 +3,13 @@ import React, { useReducer, useEffect } from 'react';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import _ from 'lodash';
 import Layout from '../../../components/Layout';
-// import common_style from '../../index.module.css';
-import style from './[id].module.css';
+import style from './new.module.css';
+import { initializeApollo } from '../../../apollo/apolloClient';
 
 interface Stance {
   title: String;
   orderNum: Number;
-  IssueId: Number;
+  issuesId: Number;
 }
 
 const GET_ISSUE = gql`
@@ -44,6 +44,25 @@ const GET_STANCES = gql`
   }
 `;
 
+const UPDATE_STANCES_BY_ISSUE = gql`
+  mutation updateStancesByIssue($id: Int, $title: String!, $orderNum: Int!, $issuesId: Int!) {
+    updateStancesByIssue(id: $id, title: $title, orderNum: $orderNum, issuesId: $issuesId) {
+      id
+      title
+      orderNum
+      issuesId
+    }
+  }
+`;
+
+const CREATE_STANCES_BY_ISSUE = gql`
+  mutation createStancesByIssue($data: [IssueStancesInput]) {
+    createStancesByIssue(data: $data) {
+      count
+    }
+  }
+`;
+
 const reducer = (state, action) => {
   switch (action.type) {
     case 'FETCH_ISSUE':
@@ -60,7 +79,10 @@ const reducer = (state, action) => {
       const { key, value } = action.payload;
       return {
         ...state,
-        [key]: value,
+        issue: {
+          ...state.issue,
+          [key]: value,
+        },
       };
     case 'SHOW_STANCE_INPUT':
       return {
@@ -83,12 +105,34 @@ const reducer = (state, action) => {
   }
 };
 
-const IssueDetail = () => {
+export const getServerSideProps = async context => {
+  const apolloClient = initializeApollo(null);
+  const { id } = context.query;
+  const { data } = await apolloClient.query({
+    query: GET_ISSUE,
+    variables: { id: parseInt(id) },
+  });
+
+  const { data: stances } = await apolloClient.query({
+    query: GET_STANCES,
+    variables: { issuesId: parseInt(id) },
+  });
+
+  return {
+    props: {
+      issue_data: data,
+      stances_data: stances,
+    },
+  };
+};
+
+const IssueDetail = props => {
   const router = useRouter();
   const issue_id = Number(router.query.id);
 
-  const { data: issue_data } = useQuery(GET_ISSUE, { variables: { id: issue_id } });
-  const { data: stances_data } = useQuery(GET_STANCES, { variables: { issuesId: issue_id } });
+  const issue_data = props.issue_data;
+  const stances_data = props.stances_data;
+  console.log('props', props);
 
   const initial_state = {
     issue: {
@@ -99,13 +143,14 @@ const IssueDetail = () => {
     },
     stances: [],
     addStanceMode: false,
-    newStance: { title: '', orderNum: null, issueId: null },
+    newStance: { title: '', orderNum: null, issuesId: null },
   };
 
   const [state, dispatch] = useReducer(reducer, initial_state);
   const { issue, addStanceMode, stances, newStance } = state;
 
   const [updateIssue, { data }] = useMutation(UPDATE_ISSUE);
+  const [createStancesByIssue] = useMutation(CREATE_STANCES_BY_ISSUE);
 
   useEffect(() => {
     dispatch({
@@ -146,7 +191,7 @@ const IssueDetail = () => {
 
   const handleAddStanceBtn = () => {
     const stanceIdx = _.isEmpty(stances) ? 1 : _.size(stances) + 1;
-    const payload: Stance = { ...newStance, orderNum: stanceIdx };
+    const payload: Stance = { title: newStance, orderNum: stanceIdx, issuesId: issue_id };
 
     dispatch({
       type: 'ADD_STANCE',
@@ -156,24 +201,35 @@ const IssueDetail = () => {
 
   return (
     <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }}>
-      <main className={style.main}>
-        <button
-          className={style.btn_submit}
-          onClick={() =>
-            updateIssue({
-              variables: {
-                id: issue_id,
-                title: issue.title,
-                content: issue.content,
-                option_list_json: JSON.stringify(issue.option_list),
-              },
-            })
-          }
-        >
-          수정
-        </button>
-
+      <main className={style.main} style={{ background: '#fff' }}>
         <div className={style.wrapper}>
+          <button
+            className={style.btn_submit}
+            style={{ marginTop: '50px' }}
+            onClick={() =>
+              updateIssue({
+                variables: {
+                  id: issue_id,
+                  title: issue.title,
+                  content: issue.content,
+                  imageUrl: issue.imageUrl,
+                },
+              }).then(async () => {
+                state.stances.map(async stance => {
+                  if (!_.has(stance, 'id')) {
+                    await createStancesByIssue({
+                      variables: {
+                        data: stance,
+                      },
+                    });
+                  }
+                });
+              })
+            }
+          >
+            수정
+          </button>
+
           <div className={style.img_wrapper}>
             <p className={style.title_sm}>대표 이미지</p>
             <img alt="issue_img" src={issue.imageUrl} />

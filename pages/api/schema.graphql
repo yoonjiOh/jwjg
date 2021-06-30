@@ -151,12 +151,7 @@ type Query {
 }
 
 type Mutation {
-  createIssue(
-    title: String,
-    content: String,
-    imageUrl: String,
-    option_list_json: String
-  ): Issue!
+  createIssue(title: String, content: String, imageUrl: String, option_list_json: String): Issue!
   updateIssue(
     id: Int!
     title: String
@@ -165,24 +160,32 @@ type Mutation {
     option_list_json: String
   ): Issue!
   createTagsByIssue(data: [IssueHashTagInput]): bulkInsertCount
+  updateStancesByIssue(id: Int, title: String!, orderNum: Int!, issuesId: Int!): Stance
   createStancesByIssue(data: [IssueStancesInput]): bulkInsertCount
   createUserStance(usersId: Int, issuesId: Int, stancesId: Int): UserStance
   signup(email: String!, password: String!, name: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload
   singleUpload(file: Upload!): UploadedFileResponse!
   createOpinion(content: String, usersId: Int!, issuesId: Int!, stancesId: Int!): Opinion
-  createOpinionComment(content: String, usersId: Int!, opinionsId: Int!, stancesId: Int!): OpinionComment
-  doLikeActionToOpinion(
-    usersId: Int!,
-    opinionsId: Int!,
-    like: Boolean!
-  ): OpinionReact
+  createOpinionComment(
+    content: String
+    usersId: Int!
+    opinionsId: Int!
+    stancesId: Int!
+  ): OpinionComment
+  doLikeActionToOpinion(usersId: Int!, opinionsId: Int!, like: Boolean!): OpinionReact
   doLikeActionToOpinionComment(
-    usersId: Int!,
-    opinionCommentsId: Int!,
+    usersId: Int!
+    opinionCommentsId: Int!
     like: Boolean!
   ): OpinionCommentReact
-  updateUserProfile(id: Int!, name: String, nickname: String, intro: String, profileImageUrl: String): User
+  updateUserProfile(
+    id: Int!
+    name: String
+    nickname: String
+    intro: String
+    profileImageUrl: String
+  ): User
 }
 
 scalar DateTime

@@ -1,7 +1,7 @@
 .main {
   margin-top: 56px;
   background-color: #fff;
-  /* height: 100vh; */
+  height: 100vh;
 }
 .btn_add_issue {
   display: block;
@@ -20,6 +20,7 @@
 .wrapper {
   padding: 10px;
   margin: 0 30px 30px 30px;
+  height: 100vh;
 }
 
 .issue_title {
