@@ -197,16 +197,16 @@ const EditProfile = (props: Props) => {
             <span className={s.inputTitle}>이름</span>
             <input
               type="text"
-              value={name}
-              onChange={e => handleChange(e, 'name')}
+              value={nickname}
+              onChange={e => handleChange(e, 'nickname')}
               placeholder="이름"
               className={s.inputForm}
             />
             <span className={s.inputTitle}>사용자 이름</span>
             <input
               type="text"
-              value={nickname}
-              onChange={e => handleChange(e, 'nickname')}
+              value={name}
+              onChange={e => handleChange(e, 'name')}
               placeholder="사용자 이름"
               className={s.inputForm}
             />

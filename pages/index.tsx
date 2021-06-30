@@ -164,7 +164,7 @@ const Main = props => {
         </div>
         <div className={s.issueWrap}>
           <h2 className={s.issue}>📫 가장 최근 이슈</h2>
-          <article style={{ paddingBottom: '25px' }}>
+          <article className={s.article}>
             {other_issues.map(issue => (
               <IssueCard issue={issue} key={issue.id} userId={me && me.id} />
             ))}

@@ -7,7 +7,9 @@
   height: 140px;
 }
 .image img {
-  width: 360px;
+  width: 100%;
+  min-width: 240px;
+  max-width: 480px;
   height: 140px;
   object-fit: cover;
 }
@@ -71,37 +73,39 @@
   font-weight: bold;
 }
 .opinionWrapper {
-  width: 360px;
+  min-width: 240px;
+  max-width: 480px;
   height: 320px;
   display: flex;
 }
 .opinionContent {
-  border: 1px solid #E5E5E5;
+  border: 1px solid #e5e5e5;
   border-left: none;
   border-right: none;
   width: 100%;
   padding: 0 10px;
 }
 .commentInputWrapper {
-  background: #F3F3F3;
+  background: #f3f3f3;
   padding: 13px;
   cursor: pointer;
 }
 .commentWrapper {
   position: fixed;
   bottom: 0;
-  width: 360px;
+  min-width: 240px;
+  max-width: 480px;
 }
 .commentInputWrapper textarea {
   width: 280px;
   border: none;
-  background: #F3F3F3;
+  background: #f3f3f3;
 }
 .commentWrapper textarea:focus {
   outline: none;
 }
 .commentWrapper button {
-  color: #4494FF;
+  color: #4494ff;
   border: none;
   background: none;
   cursor: pointer;
@@ -117,7 +121,7 @@
   height: 40px;
   font-size: 12px;
   color: #777777;
-  border-bottom: 1px solid #E5E5E5;
+  border-bottom: 1px solid #e5e5e5;
 }
 .action {
   width: 33%;

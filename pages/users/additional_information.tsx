@@ -4,6 +4,7 @@ import { withAuthUserTokenSSR, AuthAction, AuthUser } from 'next-firebase-auth';
 import { Users } from '@prisma/client';
 import Layout from '../../components/Layout';
 import common_style from '../index.module.scss';
+import u_style from './users.module.scss';
 import { GET_USERS } from '../../lib/queries';
 
 import { UPDATE_PROFILE } from './edit_profile';
@@ -46,6 +47,10 @@ const AdditionalInformation = (props: Props) => {
     setName('@' + event.target.value.substr(1));
   };
 
+  const handleDeleteInput = () => {
+    setName('@');
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
 
@@ -80,7 +85,8 @@ const AdditionalInformation = (props: Props) => {
     subTitle: '회원가입',
     action: (
       <button
-        // className={`${s.registerOpinionBtn} ${!opinionBody.length && s.disabled}`}
+        className={`${u_style.headerBtn} ${name.length === 1 && u_style.disabled}`}
+        disabled={name.length === 1}
         onClick={handleSubmit}
       >
         완료
@@ -91,14 +97,27 @@ const AdditionalInformation = (props: Props) => {
   return (
     <Layout title={'유저 상세 정보 입력'} headerInfo={headerInfo}>
       <main className={common_style.main}>
-        <span>사용자 이름을 정해 주세요</span>
-        <form onSubmit={handleSubmit}>
-          <label>
-            사용자 이름
-            <input name="name" value={name} onChange={handleNameChange} />
-          </label>
-          <br />
-        </form>
+        <div className={u_style.wrapper}>
+          <div className={u_style.bigHeader}>사용자 이름을 정해 주세요</div>
+          <form className={u_style.formWrapper} onSubmit={handleSubmit}>
+            <label>
+              사용자 이름
+              <div className={u_style.inputWrapper}>
+                <input
+                  className={u_style.inputForm}
+                  name="name"
+                  value={name}
+                  onChange={handleNameChange}
+                />
+                <img
+                  src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/ico_x.png"
+                  onClick={handleDeleteInput}
+                />
+              </div>
+            </label>
+            <br />
+          </form>
+        </div>
       </main>
     </Layout>
   );

@@ -17,6 +17,9 @@
   color: #999999;
   margin-bottom: 5px;
 }
+.article {
+  padding: 0 13px 25px 13px;
+}
 .image {
   margin: 12px 0 0 0;
   height: 140px;
@@ -24,7 +27,9 @@
   cursor: pointer;
 }
 .image img {
-  width: 360px;
+  width: 100%;
+  min-width: 240px;
+  max-width: 480px;
   height: 140px;
   object-fit: cover;
   z-index: -100;
@@ -83,7 +88,7 @@
   font-size: 12px;
   font-weight: bold;
 }
-.stanceItemBarChart{
+.stanceItemBarChart {
   border: 2px solid #fff;
   font-size: $font-ss;
   font-weight: bold;
@@ -98,12 +103,12 @@
 .🍋 {
   background-color: $lemon;
 }
-.🍇{
+.🍇 {
   background-color: $grape;
 }
-.🍈{
+.🍈 {
   background-color: $melon;
 }
-.🍊{
+.🍊 {
   background-color: $orange;
 }

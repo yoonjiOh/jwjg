@@ -1,4 +1,3 @@
-
 @use "../styles/_variables" as *;
 $stance1: $apple;
 $stance2: $lemon;
@@ -6,11 +5,11 @@ $stance3: $grape;
 $stance4: $melon;
 $stance5: $orange;
 
-
 .commentBox {
   display: flex;
-  width: 360px;
-  border-bottom: 1px solid #E5E5E5;
+  min-width: 240px;
+  max-width: 480px;
+  border-bottom: 1px solid #e5e5e5;
 }
 .stanceMark-1 {
   width: 4px;
@@ -52,7 +51,7 @@ $stance5: $orange;
   position: relative;
 }
 .profilePlaceholder {
-  background: #F3F3F3;
+  background: #f3f3f3;
   width: 20px;
   height: 20px;
   border-radius: 50px;
@@ -75,7 +74,7 @@ $stance5: $orange;
   font-size: 12px;
 }
 .commentInputWrapper {
-  background: #F3F3F3;
+  background: #f3f3f3;
   padding: 13px;
 }
 .commentStance {
@@ -98,7 +97,7 @@ $stance5: $orange;
   right: 10px;
 }
 .tag {
-  background: #F3F3F3;
+  background: #f3f3f3;
   width: 92px;
   height: 39px;
   padding: 9px 16px 11px;
