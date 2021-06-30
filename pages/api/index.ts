@@ -14,7 +14,7 @@ import prisma from '../../lib/db';
 
 import Cors from 'micro-cors';
 
-const cors = Cors();
+const cors = Cors({ origin: '*' });
 
 const resolvers = {
   Query,
