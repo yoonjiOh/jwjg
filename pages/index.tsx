@@ -124,19 +124,18 @@ const Main = props => {
                         withStats={false}
                       />
                       <div className={s.barchart}>
-                        {_.map(hotIssue.newStances, (userStance, idx) => {
-                          const ratio =
-                            ((userStance.sum / hotIssue.userStancesSum) * 100).toFixed(0) + '%';
+                        {_.map(hotIssue.newStances, userStance => {
+                          const ratio = (userStance.sum / hotIssue.userStancesSum) * 100;
                           return (
                             <div
                               key={userStance.title}
                               className={`${s.stanceItemBarChart} ${s[userStance.fruit]}`}
                               style={{
                                 display: 'inline-block',
-                                width: ratio,
+                                width: ratio + '%',
                               }}
                             >
-                              <span>{ratio}</span>
+                              <span>{ratio.toFixed(0)} %</span>
                             </div>
                           );
                         })}
