@@ -136,6 +136,7 @@ const Issue: any = () => {
       variables: { firebaseUID: AuthUser.id, issuesId: issueId },
     },
   );
+
   const [createUserStance, { loading: mutationLoading, error: mutationError }] = useMutation(
     CREATE_USER_STANCE,
   );
@@ -223,17 +224,18 @@ const Issue: any = () => {
               router.push({
                 pathname: '/opinions',
                 query: {
-                  issuesId: issue.id,
-                  usersId: userId,
+                  issueId: issue.id,
                 },
               });
             }}
           >
-            <h3 className={s.title}>의견</h3>
-            <p className={s.opinionSum}>{issue.opinions.length}</p>
+            <div>
+              <h3 className={s.title}>의견</h3>
+              <p className={s.opinionSum}>{issue.opinions.length}</p>
+            </div>
             <div className={s.opinionNext}></div>
           </div>
-          <div className={s.opinionTitleContainer}>
+          <div className={s.opinionsContainer}>
             <div className={s.opinionNextContainer} style={{ margin: '0 -20px' }}>
               {issue.opinions.map(opinion => (
                 <div key={opinion.id} className={s.opinionContainer}>
@@ -246,8 +248,8 @@ const Issue: any = () => {
             </div>
           </div>
         </div>
-        {!hasMyOpinion && (
-          <FloatingNewOpinionBtn userId={userId} issueId={issueId} stancesId={undefined} /> //stancesId 나중에 수정
+        {!hasMyOpinion && !!userId && (
+          <FloatingNewOpinionBtn userId={userId} issueId={issueId} stancesId={myStanceId} />
         )}
       </main>
     </Layout>

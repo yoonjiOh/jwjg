@@ -201,7 +201,7 @@ const IssueDetail = props => {
 
   return (
     <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }}>
-      <main className={style.main} style={{ background: '#fff' }}>
+      <main className={style.main} style={{ background: '#fff', position: 'relative' }}>
         <div className={style.wrapper}>
           <button
             className={style.btn_submit}
