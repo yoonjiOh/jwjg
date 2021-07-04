@@ -66,8 +66,6 @@ export const config = {
 
 // export default apolloServer;
 
-export default cors({ origin: '*', allowMethods: ['PUT', 'GET', 'POST', 'OPTIONS'] })(
-  apolloServer.createHandler({ path: '/api' }),
-);
+export default cors()(apolloServer.createHandler({ path: '/api' }));
 // export default apolloServer.createHandler({ path: '/api' });
 // module.exports = apolloServer.start().then(() => apolloServer.createHandler({ path: '/api' }));
