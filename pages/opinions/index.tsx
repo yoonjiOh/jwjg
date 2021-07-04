@@ -2,6 +2,8 @@ import React, { useState, useReducer } from 'react';
 
 import { initializeApollo } from '../../apollo/apolloClient';
 import { gql, useMutation, useQuery } from '@apollo/client';
+import { withAuthUser, useAuthUser } from 'next-firebase-auth';
+
 import Layout from '../../components/Layout';
 import CommentBox from '../../components/CommentBox';
 import { useRouter } from 'next/router';
@@ -14,7 +16,6 @@ import _ from 'lodash';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
-
 
 const GET_OPINIONS_COMMENTS_DATA = gql`
   query opinions($issuesId: Int!) {
@@ -65,19 +66,28 @@ const GET_OPINIONS_COMMENTS_DATA = gql`
 `;
 
 const DO_LIKE_ACTION_TO_OPINION = gql`
-  mutation doLikeActionToOpinion(
-    $usersId: Int!
-    $opinionsId: Int!
-    $like: Boolean!
-  ) {
-    doLikeActionToOpinion(
-      usersId: $usersId
-      opinionsId: $opinionsId
-      like: $like
-    ) {
+  mutation doLikeActionToOpinion($usersId: Int!, $opinionsId: Int!, $like: Boolean!) {
+    doLikeActionToOpinion(usersId: $usersId, opinionsId: $opinionsId, like: $like) {
       usersId
       opinionsId
       like
+    }
+  }
+`;
+
+const GET_USER = gql`
+  query userByFirebase($firebaseUID: String) {
+    userByFirebase(firebaseUID: $firebaseUID) {
+      id
+      firebaseUID
+      name
+      intro
+      profileImageUrl
+      userStance {
+        issuesId
+        usersId
+        stancesId
+      }
     }
   }
 `;
@@ -86,7 +96,7 @@ export const getServerSideProps = async context => {
   const apolloClient = initializeApollo(null);
   const { data } = await apolloClient.query({
     query: GET_OPINIONS_COMMENTS_DATA,
-    variables: { issuesId: Number(context.query.issue_id) },
+    variables: { issuesId: Number(context.query.issueId) },
   });
 
   return {
@@ -97,13 +107,16 @@ export const getServerSideProps = async context => {
 };
 
 const Opinions = props => {
-  console.log('Opinions 여기 아냐?', props.data.opinionsWithIssuesId);
   const [selectedFilter, setFilter] = useState('opinionReactsSum');
   const [isOpenFilter, setOpenFilter] = useState(false);
   const [doLikeActionToOpinion] = useMutation(DO_LIKE_ACTION_TO_OPINION);
-
   const router = useRouter();
-  const { usersId } = router.query;
+
+  const AuthUser = useAuthUser();
+  const { data: userData } = useQuery(GET_USER, {
+    variables: { firebaseUID: AuthUser.id },
+  });
+  const userId = userData?.userByFirebase?.id;
 
   const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
   const sortedData =
@@ -116,20 +129,17 @@ const Opinions = props => {
           (a, b) => b[selectedFilter] - a[selectedFilter],
         );
 
-  console.log('sortedData', selectedFilter, sortedData);
-
   const filterMap = {
     opinionReactsSum: '좋아요',
     opinionCommentsSum: '댓글 많은',
-    createdAt: '최신'
+    createdAt: '최신',
   };
 
   const handleOpenFilter = () => {
     setOpenFilter(!isOpenFilter);
   };
 
-  const handleChangeFilter = (filter) => {
-    console.log('handleChangeFilter', filter);
+  const handleChangeFilter = filter => {
     setFilter(filter);
     setOpenFilter(false);
   };
@@ -138,131 +148,128 @@ const Opinions = props => {
     try {
       await doLikeActionToOpinion({
         variables: {
-          usersId: Number(usersId),
-          opinionsId: Number(opinionId),
+          usersId: +userId,
+          opinionsId: +opinionId,
           like: isLikedByMe ? false : true,
         },
-      }).then((result) => {
+      }).then(() => {
         router.reload();
       });
     } catch (e) {
       console.error(e);
     }
-  }
-
+  };
 
   return (
     <Layout title={'코멘트'} headerInfo={{ headerType: 'common' }}>
       <main className={s.main}>
         <div className={s.filter} onClick={handleOpenFilter}>
-          { isOpenFilter ? '▼' : '▲' } {filterMap[selectedFilter]} 순
+          {isOpenFilter ? '▼' : '▲'} {filterMap[selectedFilter]} 순
         </div>
-        {
-          sortedData.map((opinion) => {
-            const myReact =
-            opinion.opinionReacts.filter(react => react.usersId === Number(usersId));
-            const isLikedByMe = !_.isEmpty(myReact) && _.head(myReact).like;
+        {sortedData.map(opinion => {
+          const myReact = opinion.opinionReacts.filter(react => react.usersId === Number(userId));
+          const isLikedByMe = !_.isEmpty(myReact) && _.head(myReact).like;
 
-            return (
-              <div className={s.opinionWrapper} key={opinion.id}>
-                <div className={util_s.commentBox}>
-                  <div className={util_s[`stanceMark-${opinion.stance.orderNum}`]} />
+          return (
+            <div className={s.opinionWrapper} key={opinion.id}>
+              <div className={util_s.commentBox}>
+                <div className={util_s[`stanceMark-${opinion.stance.orderNum}`]} />
 
-                  <div className={util_s.commentWrapper}>
-                    <div className={user_s.smallProfileWrapper}>
-                      <div>
-                        <img src={opinion.user.profileImageUrl} />
-                      </div>
-                      <div className={user_s.profileInfo}>
-                        <p className={user_s.name}>{opinion.user.name}</p>
-                        <p className={user_s.ago}>{dayjs(opinion.createdAt).fromNow()}</p>
-                      </div>
+                <div className={util_s.commentWrapper}>
+                  <div className={user_s.smallProfileWrapper}>
+                    <div>
+                      <img src={opinion.user.profileImageUrl} />
                     </div>
-
-                    <div className={util_s.commentContentWrapper}>
-                      <span style={{ display: 'block' }}>
-                        {fruitsForStanceTitle[opinion.stance.orderNum] + ' ' + opinion.stance.title}
-                      </span>
-                      <span>{opinion.content}</span>
+                    <div className={user_s.profileInfo}>
+                      <p className={user_s.name}>{opinion.user.name}</p>
+                      <p className={user_s.ago}>{dayjs(opinion.createdAt).fromNow()}</p>
                     </div>
+                  </div>
 
-                    <div className={s.actionsWrapper}>
-                      <div
-                        className={s.action}
-                        onClick={() => handleClickLike(opinion.id, isLikedByMe)}
-                      >
-                        {isLikedByMe ? (
-                          <label
-                            style={{
-                              display: 'flex',
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              padding: '18px 0 18px 0',
-                              color: '#4494FF',
-                              cursor: 'pointer',
-                            }}
-                          >
-                            <img
-                              src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/blue_like.svg"
-                              alt="좋아요 버튼"
-                            />{' '}
-                          </label>
-                        ) : (
-                          <label
-                            style={{
-                              display: 'flex',
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              padding: '18px 0 18px 0',
-                              cursor: 'pointer',
-                            }}
-                          >
-                            <img
-                              src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
-                              alt="좋아요 버튼"
-                              style={{ marginRight: '5px' }}
-                            />{' '}
-                          </label>
-                        )}
-                        <span style={{ marginLeft: '5px' }}>{opinion.opinionReactsSum}</span>
-                      </div>
-                      <div
-                        className={util_s.likeWrapper}
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <img
-                          src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/bubble.svg"
-                          alt="코멘트 버튼"
-                        />
-                        <span style={{ marginLeft: '5px' }}>{opinion.opinionCommentsSum}</span>
-                      </div>
+                  <div className={util_s.commentContentWrapper}>
+                    <span style={{ display: 'block' }}>
+                      {fruitsForStanceTitle[opinion.stance.orderNum] + ' ' + opinion.stance.title}
+                    </span>
+                    <span>{opinion.content}</span>
+                  </div>
+
+                  <div className={s.actionsWrapper}>
+                    <div
+                      className={s.action}
+                      onClick={() => handleClickLike(opinion.id, isLikedByMe)}
+                    >
+                      {isLikedByMe ? (
+                        <label
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            padding: '18px 0 18px 0',
+                            color: '#4494FF',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          <img
+                            src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/blue_like.svg"
+                            alt="좋아요 버튼"
+                          />{' '}
+                        </label>
+                      ) : (
+                        <label
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            padding: '18px 0 18px 0',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          <img
+                            src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
+                            alt="좋아요 버튼"
+                            style={{ marginRight: '5px' }}
+                          />{' '}
+                        </label>
+                      )}
+                      <span style={{ marginLeft: '5px' }}>{opinion.opinionReactsSum}</span>
+                    </div>
+                    <div
+                      className={util_s.likeWrapper}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <img
+                        src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/bubble.svg"
+                        alt="코멘트 버튼"
+                      />
+                      <span style={{ marginLeft: '5px' }}>{opinion.opinionCommentsSum}</span>
                     </div>
                   </div>
                 </div>
-
-                <div>
-                  {opinion.opinionComments &&
-                    opinion.opinionComments.map(comment => (
-                      <CommentBox comment={comment} me={{ id: usersId }} />
-                    ))}
-                </div>
               </div>
-            );
-        })
-      }
 
-      {
-        isOpenFilter && <div className={s.filterSelector}>
-          <div className={s.filterSelectorRow}>
-            <span className={s.cancelBtn} onClick={handleOpenFilter}>취소</span>
-            <span className={s.header}>정렬 기준</span>
-          </div>
-          {
-            _.keys(filterMap).map((key) => {
+              <div>
+                {opinion.opinionComments &&
+                  opinion.opinionComments.map(comment => (
+                    <CommentBox comment={comment} me={{ id: Number(userId) }} />
+                  ))}
+              </div>
+            </div>
+          );
+        })}
+
+        {isOpenFilter && (
+          <div className={s.filterSelector}>
+            <div className={s.filterSelectorRow}>
+              <span className={s.cancelBtn} onClick={handleOpenFilter}>
+                취소
+              </span>
+              <span className={s.header}>정렬 기준</span>
+            </div>
+            {_.keys(filterMap).map(key => {
               return (
                 <div key={key} className={s.filterRow} onClick={() => handleChangeFilter(key)}>
                   <span>{filterMap[key]} 순</span>
@@ -271,13 +278,11 @@ const Opinions = props => {
                   )}
                 </div>
               );
-            })
-          }
-
-        </div>
-      }
+            })}
+          </div>
+        )}
       </main>
     </Layout>
   );
-};;
-export default Opinions;
+};
+export default withAuthUser()(Opinions);

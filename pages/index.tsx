@@ -2,6 +2,8 @@ import React from 'react';
 import s from './index.module.scss';
 import { initializeApollo } from '../apollo/apolloClient';
 import { gql } from '@apollo/client';
+import { useRouter } from 'next/router';
+
 import Link from 'next/link';
 import _ from 'lodash';
 import Layout from '../components/Layout';
@@ -96,6 +98,8 @@ const Main = props => {
   const { issues, me } = props.data;
   const hotIssue = _.maxBy(issues, i => i.opinions.length);
   const other_issues = issues.filter(i => i.id !== hotIssue.id);
+  const router = useRouter();
+
   return (
     <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }}>
       <main className={s.main}>
@@ -115,7 +119,13 @@ const Main = props => {
                       <img src={hotIssue.imageUrl} />
                     </Link>
                   </div>
-                  <div>
+                  <div
+                    onClick={() =>
+                      router.push({
+                        pathname: `/issues/${hotIssue.id}`,
+                      })
+                    }
+                  >
                     <div className={s.issueCardTop}>
                       <div className={s.responseSum}>🔥 참여 {hotIssue.userStancesSum}</div>
                       <CurrentStances
@@ -124,19 +134,18 @@ const Main = props => {
                         withStats={false}
                       />
                       <div className={s.barchart}>
-                        {_.map(hotIssue.newStances, (userStance, idx) => {
-                          const ratio =
-                            ((userStance.sum / hotIssue.userStancesSum) * 100).toFixed(0) + '%';
+                        {_.map(hotIssue.newStances, userStance => {
+                          const ratio = (userStance.sum / hotIssue.userStancesSum) * 100;
                           return (
                             <div
                               key={userStance.title}
                               className={`${s.stanceItemBarChart} ${s[userStance.fruit]}`}
                               style={{
                                 display: 'inline-block',
-                                width: ratio,
+                                width: ratio + '%',
                               }}
                             >
-                              <span>{ratio}</span>
+                              <span>{ratio.toFixed(0)} %</span>
                             </div>
                           );
                         })}

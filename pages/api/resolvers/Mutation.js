@@ -1,7 +1,7 @@
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { APP_SECRET } from "../utils";
-import { AuthenticationError } from "apollo-server";
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { APP_SECRET } from '../utils';
+import { AuthenticationError } from 'apollo-server';
 import { AWSS3Uploader } from '../s3';
 
 const s3Uploader = new AWSS3Uploader({
@@ -11,12 +11,6 @@ const s3Uploader = new AWSS3Uploader({
 });
 
 async function createIssue(parent, args, context) {
-  // 일단 이 코드 주석
-  // const { userId } = context;
-  // if (!userId) {
-  //   throw new AuthenticationError('you must be logged in');
-  // }
-
   const new_issue = await context.prisma.issues.create({
     data: {
       title: args.title,
@@ -34,8 +28,7 @@ async function updateIssue(parent, args, context) {
     data: {
       title: args.title,
       content: args.content,
-      img_url: args.img_url,
-      option_list_json: args.option_list_json,
+      imageUrl: args.imageUrl,
     },
   });
 

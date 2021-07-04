@@ -4,6 +4,7 @@
   margin-top: 56px;
   background-color: #fff;
   height: 100vh;
+  position: relative;
 }
 .image {
   height: 140px;
@@ -141,14 +142,27 @@
   background-color: $orange;
 }
 .opinionTitleContainer {
-  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   cursor: pointer;
-  @include borderBottom;
   .title,
   .opinionSum,
   .opinionNext {
     display: inline-block;
   }
+}
+.opinionsContainer {
+  cursor: pointer;
+  .title,
+  .opinionSum,
+  .opinionNext {
+    display: inline-block;
+  }
+}
+.opinionSum {
+  color: #c4c4c4;
+  margin-left: 3px;
 }
 .opinionNextContainer {
   @include borderBottom;

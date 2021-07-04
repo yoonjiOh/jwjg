@@ -188,8 +188,10 @@ const EditProfile = (props: Props) => {
             </div>
           )}
 
-          <label style={{ color: '#4494ff', textAlign: 'center', display: 'block' }}>
-            <input type="file" required onChange={handleFileChange} />
+          <label
+            style={{ color: '#4494ff', textAlign: 'center', display: 'block', marginTop: '5px' }}
+          >
+            <input type="file" style={{ display: 'none' }} required onChange={handleFileChange} />
             프로필 사진 바꾸기
           </label>
 

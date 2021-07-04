@@ -6,8 +6,10 @@ import HashTag from '../../components/HashTag';
 import s from './users.module.scss';
 
 import { gql } from '@apollo/client';
+import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
 import { initializeApollo } from '../../apollo/apolloClient';
 import _ from 'lodash';
+import { GET_USERS } from '../../lib/queries';
 
 const GET_MYPAGE_DATA = gql`
   query user($id: Int!) {
@@ -52,9 +54,16 @@ const GET_ISSUES = gql`
   }
 `;
 
-export const getServerSideProps = async context => {
+export const getServerSideProps = withAuthUserTokenSSR({
+  whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
+  authPageURL: '/users',
+})(async ({ AuthUser }) => {
   const apolloClient = initializeApollo(null);
-  const { userId } = context.query;
+  const meData = await apolloClient.query({
+    query: GET_USERS,
+    variables: { firebaseUID: AuthUser.id },
+  });
+  const userId = meData?.data?.userByFirebase?.id;
 
   const { data } = await apolloClient.query({
     query: GET_MYPAGE_DATA,
@@ -71,7 +80,7 @@ export const getServerSideProps = async context => {
       issues_data: issues.data,
     },
   };
-};
+});
 
 const MyHashTags = props => {
   const headerInfo = {
@@ -88,7 +97,7 @@ const MyHashTags = props => {
 
   relatedIssueIds.map(issueId => {
     const matchIssue = _.find(props.issues_data.issues, issue => issue.id === issueId);
-    
+
     if (matchIssue.issueHashTags.length) {
       matchIssue.issueHashTags.forEach(issueHashTag => {
         const targetTag = issueHashTag.hashTags[0].name;

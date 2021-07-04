@@ -7,8 +7,11 @@ import { useRouter } from 'next/router';
 import config from '../../config';
 import s from './index.module.scss';
 import style from '../issues/[id].module.scss';
+import { GET_USERS } from '../../lib/queries';
+
+import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
+
 import _ from 'lodash';
-import { route } from 'next/dist/next-server/server/router';
 
 const GET_STANCE = gql`
   query stances($id: Int!) {
@@ -30,20 +33,45 @@ const GET_STANCES_BY_ISSUE = gql`
   }
 `;
 
-export const getServerSideProps = async context => {
+// export const getServerSideProps = async context => {
+//   const apolloClient = initializeApollo(null);
+//   const { issueId } = context.query;
+//   const { data } = await apolloClient.query({
+//     query: GET_STANCES_BY_ISSUE,
+//     variables: { issuesId: Number(issueId) },
+//   });
+
+//   return {
+//     props: {
+//       stances: data,
+//     },
+//   };
+// };withAuthUserTokenSSR({})(async ({ AuthUser, query }) =>
+
+export const getServerSideProps = withAuthUserTokenSSR({
+  whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
+  authPageURL: '/users',
+})(async ({ AuthUser, query }) => {
   const apolloClient = initializeApollo(null);
-  const { issueId } = context.query;
+  const meData = await apolloClient.query({
+    query: GET_USERS,
+    variables: { firebaseUID: AuthUser.id },
+  });
+  const userId = meData?.data?.userByFirebase?.id;
+
+  const { issueId } = query;
   const { data } = await apolloClient.query({
     query: GET_STANCES_BY_ISSUE,
-    variables: { issuesId: Number(issueId) },
+    variables: { issuesId: +issueId },
   });
 
   return {
     props: {
       stances: data,
+      userId,
     },
   };
-};
+});
 
 const CREATE_OPINION = gql`
   mutation createOpinion($content: String!, $usersId: Int!, $issuesId: Int!, $stancesId: Int!) {
@@ -74,7 +102,9 @@ const New = props => {
   const [createUserStance] = useMutation(CREATE_USER_STANCE);
 
   const router = useRouter();
-  const { userId, issueId, stancesId } = router.query;
+  const { issueId, stancesId } = router.query;
+  const { userId } = props;
+
   const hasStance = !!stancesId;
 
   const { data } = useQuery(GET_STANCE, { variables: { id: Number(stancesId) } });
@@ -96,11 +126,7 @@ const New = props => {
         },
       }).then(result => {
         if (result.data.createOpinion.id) {
-          if (window.confirm('의견이 등록되었습니다. 이전 이슈로 돌아가시겠습니까?')) {
-            window.location.href = `${config.host}/issues`;
-          } else {
-            window.location.href = `${config.host}`;
-          }
+          window.location.href = `${config.host}/issues`;
         }
       });
     } catch (e) {

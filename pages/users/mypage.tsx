@@ -160,7 +160,6 @@ const MyPage = props => {
             onClick={() => {
               router.push({
                 pathname: 'edit_profile',
-                query: { id: user && user.id },
               });
             }}
           >
@@ -174,7 +173,6 @@ const MyPage = props => {
             onClick={() => {
               router.push({
                 pathname: '/users/myhashtags',
-                query: { userId: user && user.id },
               });
             }}
           >
