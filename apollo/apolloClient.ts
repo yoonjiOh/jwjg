@@ -14,7 +14,7 @@ function createApolloClient() {
       uri: prod
         ? 'http://jwjg-dev.ap-northeast-2.elasticbeanstalk.com/api'
         : 'http://localhost:3000/api',
-      credentials: 'same-origin',
+      // credentials: 'same-origin',
     }),
     cache: new InMemoryCache(),
   });
