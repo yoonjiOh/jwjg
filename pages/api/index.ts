@@ -36,35 +36,11 @@ const apolloServer = new ApolloServer({
   },
 });
 
-// export default cors((req, res) => {
-//   return apolloServer.createHandler({
-//     path: '/api',
-//   })(req, res);
-// });
-
-// const server_handlers = apolloServer.start().then(() => {
-//   console.log('starting server.');
-//   const handler = apolloServer.createHandler({ path: '/api' }); // highlight-line
-//   return Cors((req, res) => handler(req, res)); // highlight-line
-// });
-
 export const config = {
   api: {
     bodyParser: false,
   },
 };
-
-// const server_handlers = apolloServer.createHandler({ path: '/api' });
-
-// console.log(server_handlers);
-// export default server_handlers;
-
-// export default apolloServer.start().then(() => {
-//   const handler = apolloServer.createHandler({ path: '/api' }); // highlight-line
-//   return Cors((req, res) => handler(req, res)); // highlight-line
-// });
-
-// export default apolloServer;
 
 const optionsHandler = (req, res) => {
   if (req.method === 'OPTIONS') {
@@ -75,5 +51,3 @@ const optionsHandler = (req, res) => {
 };
 
 export default cors()(optionsHandler);
-// export default apolloServer.createHandler({ path: '/api' });
-// module.exports = apolloServer.start().then(() => apolloServer.createHandler({ path: '/api' }));
