@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NODE_OPTIONS='--inspect' next dev --hostname 0.0.0.0",
+    "dev": "NODE_OPTIONS='--inspect' next dev -H 0.0.0.0",
     "build": "next build",
-    "start": "next start -p 8080",
+    "start": "next start -p 8080 -H 0.0.0.0",
     "deploy-dev": "npm install && npm run build && npm run generate && eb deploy jwjg-dev",
     "generate": "prisma generate",
     "lint": "eslint --ext .js, .jsx, .ts, .tsx . --no-error-on-unmatched-pattern",
