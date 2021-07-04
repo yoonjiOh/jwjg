@@ -11,6 +11,7 @@ import fs from 'fs';
 import path from 'path';
 import { getUserId } from './utils';
 import prisma from '../../lib/db';
+import cors from 'micro-cors';
 
 const resolvers = {
   Query,
@@ -35,16 +36,36 @@ const apolloServer = new ApolloServer({
   },
 });
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
 // export default cors((req, res) => {
 //   return apolloServer.createHandler({
 //     path: '/api',
 //   })(req, res);
 // });
 
-export default apolloServer.createHandler({ path: '/api' });
+// const server_handlers = apolloServer.start().then(() => {
+//   console.log('starting server.');
+//   const handler = apolloServer.createHandler({ path: '/api' }); // highlight-line
+//   return Cors((req, res) => handler(req, res)); // highlight-line
+// });
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
+// const server_handlers = apolloServer.createHandler({ path: '/api' });
+
+// console.log(server_handlers);
+// export default server_handlers;
+
+// export default apolloServer.start().then(() => {
+//   const handler = apolloServer.createHandler({ path: '/api' }); // highlight-line
+//   return Cors((req, res) => handler(req, res)); // highlight-line
+// });
+
+// export default apolloServer;
+
+export default cors()(apolloServer.createHandler({ path: '/api' }));
+// export default apolloServer.createHandler({ path: '/api' });
+// module.exports = apolloServer.start().then(() => apolloServer.createHandler({ path: '/api' }));
