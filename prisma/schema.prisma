@@ -23,6 +23,7 @@ model Users {
   updatedAt       DateTime @default(now())
 
   UserStances          UserStances[]
+  UserInfo             UserInfo[]
   Opinions             Opinions[]
   OpinionComments      OpinionComments[]
   OpinionReacts        OpinionReacts[]
@@ -68,6 +69,15 @@ model UserStances {
   stancesId Int
 
   @@id([usersId, issuesId])
+}
+
+model UserInfo {
+  user    Users   @relation(fields: [usersId], references: [id])
+  id          Int @id @default(autoincrement())
+  usersId     Int
+  age         Int?
+  gender      String?
+  residence   String?
 }
 
 model HashTags {

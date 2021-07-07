@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import Layout from '../../components/Layout';
-import { Prisma, Users } from '@prisma/client';
+import { Users } from '@prisma/client';
 import s from './users.module.scss';
 import { useRouter } from 'next/router';
 
@@ -118,7 +118,7 @@ const EditProfile = (props: Props) => {
     }).then(result => {
       if (result.data) {
         // @ts-ignore
-        router.push('/users/mypage');
+        router.push(isFirst ? '/users/user_info' : '/users/mypage');
       } else {
         console.error('프로필 편집에 문제가 생겼습니다.');
       }
@@ -152,7 +152,7 @@ const EditProfile = (props: Props) => {
   };
 
   return (
-    <Layout title={'프로필 편집'} headerInfo={headerInfo}>
+    <Layout title={isFirst ? '프로필 만들기' : '프로필 편집'} headerInfo={headerInfo}>
       <main className={s.main}>
         <div style={{ padding: '20px' }}>
           {!profileImageUrl ? (
@@ -192,7 +192,7 @@ const EditProfile = (props: Props) => {
             style={{ color: '#4494ff', textAlign: 'center', display: 'block', marginTop: '5px' }}
           >
             <input type="file" style={{ display: 'none' }} required onChange={handleFileChange} />
-            프로필 사진 바꾸기
+            {isFirst ? '프로필 사진 등록하기' : '프로필 사진 바꾸기'}
           </label>
 
           <form onSubmit={handleSubmit} className={s.profileFormWrapper}>

@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { withAuthUserTokenSSR, AuthAction, AuthUser } from 'next-firebase-auth';
-import { Users } from '@prisma/client';
 import Layout from '../../components/Layout';
 import common_style from '../index.module.scss';
 import u_style from './users.module.scss';
 import { GET_USERS } from '../../lib/queries';
 
 import { UPDATE_PROFILE } from './edit_profile';
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { initializeApollo } from '../../apollo/apolloClient';
 import { createUserFromFirebaseUser } from '../../lib/users';
 

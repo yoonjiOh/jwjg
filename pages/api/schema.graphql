@@ -15,6 +15,14 @@ type User {
   opinionComments: [OpinionComment]
 }
 
+type UserInfo {
+  id: Int!
+  usersId: Int
+  age: Int
+  gender: String
+  residence: String
+}
+
 type UserStance {
   usersId: Int
   issuesId: Int
@@ -186,6 +194,7 @@ type Mutation {
     intro: String
     profileImageUrl: String
   ): User
+  createUserInfo(usersId: Int!, gender: String, age: Int, residence: String): UserInfo
 }
 
 scalar DateTime

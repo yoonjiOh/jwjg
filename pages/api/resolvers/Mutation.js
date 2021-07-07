@@ -208,6 +208,17 @@ async function updateUserProfile(parent, args, context) {
   });
 }
 
+async function createUserInfo(parent, args, context) {
+  await context.prisma.userInfo.create({
+    data: {
+      usersId: args.usersId,
+      gender: args.gender,
+      age: args.age,
+      residence: args.residence,
+    },
+  });
+}
+
 export default {
   createIssue,
   updateIssue,
@@ -222,4 +233,5 @@ export default {
   doLikeActionToOpinion,
   doLikeActionToOpinionComment,
   updateUserProfile,
+  createUserInfo,
 };
