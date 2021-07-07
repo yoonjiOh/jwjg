@@ -11,6 +11,7 @@ import fs from 'fs';
 import path from 'path';
 import { getUserId } from './utils';
 import prisma from '../../lib/db';
+import cors from 'micro-cors';
 
 const resolvers = {
   Query,
@@ -41,4 +42,12 @@ export const config = {
   },
 };
 
-export default apolloServer.createHandler({ path: '/api' });
+const optionsHandler = (req, res) => {
+  if (req.method === 'OPTIONS') {
+    res.end();
+    return;
+  }
+  return apolloServer.createHandler({ path: '/api' })(req, res);
+};
+
+export default cors()(optionsHandler);
