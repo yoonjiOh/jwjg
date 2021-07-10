@@ -29,7 +29,6 @@ const residenceChoices = [
 const CREATE_USER_INFO = gql`
   mutation createUserInfo($usersId: Int!, $age: Int, $gender: String, $residence: String) {
     createUserInfo(usersId: $usersId, age: $age, gender: $gender, residence: $residence) {
-      id
       age
       gender
       residence
@@ -91,69 +90,73 @@ const userInfo = () => {
   };
 
   return (
-    <div className={s.userInfoWrapper}>
-      <div className={s.userInfoWrapper} style={{ padding: '20px 20px 30px' }}>
-        <h1>당신이 궁금해요</h1>
-        <p>저희는 이제 시작하는 단계랍니다.</p>
-        <p>그래서 당신이 어떤 사람인지 알고 싶어요.</p>
-        <p>당신과 더 잘 맞는 좌우지간이 되기 위해 노력할게요! 😊</p>
-      </div>
+    <div className={s.container}>
+      <main style={{ marginTop: '0', height: '100vh' }}>
+        <div className={s.userInfoWrapper}>
+          <div className={s.userInfoWrapper} style={{ padding: '20px 20px 30px' }}>
+            <h1>당신이 궁금해요</h1>
+            <p>저희는 이제 시작하는 단계랍니다.</p>
+            <p>그래서 당신이 어떤 사람인지 알고 싶어요.</p>
+            <p>당신과 더 잘 맞는 좌우지간이 되기 위해 노력할게요! 😊</p>
+          </div>
 
-      <div className={s.selectorWrapper}>
-        <div className={s.selectorTitle}>연령대</div>
-        <div className={s.choicesWrapper}>
-          {ageChoices.map(age => (
-            <div
-              key={age}
-              className={`${s.choice} ${choiceObj.age === age && s.selected}`}
-              style={{ width: age < 60 ? '70px' : '100px' }}
-              onClick={() => handleSelectChoice('age', age)}
-            >
-              {age < 60 ? `${age}대` : `${age}대 이상`}
+          <div className={s.selectorWrapper}>
+            <div className={s.selectorTitle}>연령대</div>
+            <div className={s.choicesWrapper}>
+              {ageChoices.map(age => (
+                <div
+                  key={age}
+                  className={`${s.choice} ${choiceObj.age === age && s.selected}`}
+                  style={{ width: age < 60 ? '70px' : '100px' }}
+                  onClick={() => handleSelectChoice('age', age)}
+                >
+                  {age < 60 ? `${age}대` : `${age}대 이상`}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        <div className={s.selectorTitle}>성별</div>
-        <div className={s.choicesWrapper}>
-          {genderChoices.map(gender => (
-            <div
-              key={gender}
-              className={`${s.choice} ${choiceObj.gender === gender && s.selected}`}
-              onClick={() => handleSelectChoice('gender', gender)}
-            >
-              {gender}
+            <div className={s.selectorTitle}>성별</div>
+            <div className={s.choicesWrapper}>
+              {genderChoices.map(gender => (
+                <div
+                  key={gender}
+                  className={`${s.choice} ${choiceObj.gender === gender && s.selected}`}
+                  onClick={() => handleSelectChoice('gender', gender)}
+                >
+                  {gender}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        <div className={s.selectorTitle}>거주 지역</div>
-        <div className={s.choicesWrapper}>
-          {residenceChoices.map(residence => (
-            <div
-              key={residence}
-              className={`${s.choice} ${choiceObj.residence === residence && s.selected}`}
-              onClick={() => handleSelectChoice('residence', residence)}
-            >
-              {residence}
+            <div className={s.selectorTitle}>거주 지역</div>
+            <div className={s.choicesWrapper}>
+              {residenceChoices.map(residence => (
+                <div
+                  key={residence}
+                  className={`${s.choice} ${choiceObj.residence === residence && s.selected}`}
+                  onClick={() => handleSelectChoice('residence', residence)}
+                >
+                  {residence}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
 
-      <div className={s.buttonsWrapper}>
-        <button className={s.primary} onClick={handleSubmitUserInfo}>
-          등록하기
-        </button>
-        <button
-          className={s.default}
-          onClick={() => {
-            router.push('/users/welcome');
-          }}
-        >
-          건너뛰기
-        </button>
-      </div>
+          <div className={s.buttonsWrapper}>
+            <button className={s.primary} onClick={handleSubmitUserInfo}>
+              등록하기
+            </button>
+            <button
+              className={s.default}
+              onClick={() => {
+                router.push('/users/welcome');
+              }}
+            >
+              건너뛰기
+            </button>
+          </div>
+        </div>
+      </main>
     </div>
   );
 };

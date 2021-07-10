@@ -6,6 +6,13 @@
   margin-top: 56px;
 }
 
+.container {
+  min-width: 240px;
+  max-width: 480px;
+  margin: 0 auto;
+  position: relative;
+}
+
 .label_default {
   display: inline-block;
   margin: 10px;
@@ -433,4 +440,22 @@
   color: #4494ff;
   background: transparent;
   border: 0;
+}
+.welcomeMessage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 65px;
+}
+.welcomeProfileWrapper {
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+  width: 90%;
+  padding: 20px;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }

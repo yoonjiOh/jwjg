@@ -5,7 +5,7 @@ import { Users } from '@prisma/client';
 import s from './users.module.scss';
 import { useRouter } from 'next/router';
 
-import { gql, useMutation, useQuery } from '@apollo/client';
+import { gql, useMutation } from '@apollo/client';
 import { initializeApollo } from '../../apollo/apolloClient';
 import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
 import _ from 'lodash';
@@ -13,7 +13,7 @@ import { empty_string_if_null } from '../../utils/string_utils';
 import { GET_USERS } from '../../lib/queries';
 
 const SINGLE_UPLOAD_IMG = gql`
-  mutation($file: Upload!) {
+  mutation ($file: Upload!) {
     singleUpload(file: $file) {
       filename
       mimetype

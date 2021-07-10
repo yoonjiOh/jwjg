@@ -47,11 +47,20 @@ async function opinionComments(parent, _args, context) {
   });
 }
 
+async function userInfo(parent, _args, context) {
+  const result = await context.prisma.userInfo.findUnique({
+    where: { usersId: parseInt(parent.id) },
+  });
+
+  return result.userInfo;
+}
+
 export default {
   name,
   user,
   userStance,
   userStances,
+  userInfo,
   opinions,
   opinionComments,
 };

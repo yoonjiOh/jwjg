@@ -72,11 +72,13 @@ model UserStances {
 
 model UserInfo {
   user    Users   @relation(fields: [usersId], references: [id])
-  id          Int @id @default(autoincrement())
+  
   usersId     Int
   age         Int?
   gender      String?
   residence   String?
+
+  @@id([usersId])
 }
 
 model HashTags {

@@ -10,13 +10,13 @@ type User {
   updatedAt: DateTime
   userStance(issuesId: Int): UserStance
   userStances: [UserStance]
+  userInfo: UserInfo
   user: User
   opinions: [Opinion]
   opinionComments: [OpinionComment]
 }
 
 type UserInfo {
-  id: Int!
   usersId: Int
   age: Int
   gender: String
