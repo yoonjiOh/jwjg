@@ -4,7 +4,6 @@ import { initializeApollo } from '../../apollo/apolloClient';
 
 import Layout from '../../components/Layout';
 import { useRouter } from 'next/router';
-import config from '../../config';
 import s from './index.module.scss';
 import style from '../issues/[id].module.scss';
 import { GET_USERS } from '../../lib/queries';
@@ -126,7 +125,9 @@ const New = props => {
         },
       }).then(result => {
         if (result.data.createOpinion.id) {
-          window.location.href = `${config.host}/issues`;
+          router.push({
+            pathname: '/issues',
+          });
         }
       });
     } catch (e) {
@@ -185,7 +186,7 @@ const New = props => {
               </div>
             </div>
           ) : (
-            <div>
+            <div className={s.opinionHasStanceWrapper}>
               <div className={s.stanceNoti}>
                 {fruitsForStanceTitle[stance && stance.orderNum]} {stance && stance.title} 입장을
                 표하셨어요.
