@@ -39,6 +39,7 @@ type Opinion {
   stancesId: Int
   user: User
   stance: Stance
+  stances: [Stance]
   opinionComments: [OpinionComment]
   opinionCommentReacts: [OpinionCommentReact]
   opinionReacts: [OpinionReact]
@@ -156,6 +157,7 @@ type Query {
   opinionCommentReacts(id: Int!): [OpinionCommentReact]
   issueHashTags(id: Int): [IssueHashTag]
   hashTags(id: Int): [HashTag]
+  myStance(issuesId: Int, usersId: Int): UserStance
 }
 
 type Mutation {

@@ -4,6 +4,10 @@ import s from './Utils.module.scss';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { useRouter } from 'next/router';
+import { withAuthUser, useAuthUser } from 'next-firebase-auth';
+
+import { GET_USERS } from '../lib/queries';
+
 import _ from 'lodash';
 
 dayjs.extend(relativeTime);
@@ -32,7 +36,7 @@ const DO_LIKE_ACTION_TO_OPINION_COMMENT = gql`
   }
 `;
 
-const OpinionBox = ({ opinion, userId }) => {
+const OpinionBox = ({ opinion }) => {
   const { data } = useQuery(GET_OPINION_COMMENT_REACTS, { variables: { id: opinion.id } });
   const router = useRouter();
   const likeCount =
@@ -40,6 +44,13 @@ const OpinionBox = ({ opinion, userId }) => {
     data.opinionCommentReacts.length &&
     data.opinionCommentReacts.filter(react => !!react.like).length;
   const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
+
+  const AuthUser = useAuthUser();
+  const { data: userData } = useQuery(GET_USERS, {
+    variables: { firebaseUID: AuthUser.id },
+  });
+
+  const userId = userData?.userByFirebase?.id;
 
   return (
     <div
@@ -49,7 +60,7 @@ const OpinionBox = ({ opinion, userId }) => {
         if (userId) {
           router.push({
             pathname: '/opinions/[id]',
-            query: { id: opinion.id, userId: userId },
+            query: { id: opinion.id },
           });
         }
       }}
@@ -82,4 +93,4 @@ const OpinionBox = ({ opinion, userId }) => {
   );
 };
 
-export default OpinionBox;
+export default withAuthUser()(OpinionBox);

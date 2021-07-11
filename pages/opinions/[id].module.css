@@ -89,15 +89,15 @@
   background: #f3f3f3;
   padding: 13px;
   cursor: pointer;
+  width: 100%;
 }
 .commentWrapper {
   position: fixed;
   bottom: 0;
-  min-width: 240px;
-  max-width: 480px;
+  width: 100%;
 }
 .commentInputWrapper textarea {
-  width: 280px;
+  width: 85%;
   border: none;
   background: #f3f3f3;
 }
@@ -109,6 +109,7 @@
   border: none;
   background: none;
   cursor: pointer;
+  width: 15%;
 }
 .likeWrapper {
   padding: 0 20px;
@@ -132,4 +133,28 @@
 }
 .action span {
   padding-left: 5px;
+}
+.stanceSelectorWrapper {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+.stanceSelectorWrapper .guide {
+  color: #bdbdbd;
+  height: 35px;
+  padding: 3px 10px;
+}
+.stanceSelectorWrapper .stanceWrapper {
+  display: flex;
+  flex-direction: row;
+  background-color: #f3f3f3;
+  padding: 10px;
+  flex-flow: wrap;
+}
+.stanceSelectorWrapper .stance {
+  border: 1px solid #777777;
+  padding: 9px;
+  border-radius: 50px;
+  margin-right: 5px;
+  margin-bottom: 5px;
 }

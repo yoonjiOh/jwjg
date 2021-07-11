@@ -3,14 +3,11 @@ import s from './[id].module.scss';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { withAuthUserTokenSSR, withAuthUser, useAuthUser } from 'next-firebase-auth';
-
-import { initializeApollo } from '../../apollo/apolloClient';
+import { withAuthUser, useAuthUser } from 'next-firebase-auth';
 
 import Layout from '../../components/Layout';
 import FloatingNewOpinionBtn from '../../components/opinion/FloatingNewOpinionBtn';
 
-import Link from 'next/link';
 import _ from 'lodash';
 import CurrentStances from '../../components/issue/CurrentStances';
 
@@ -126,20 +123,26 @@ const CREATE_USER_STANCE = gql`
 const Issue: any = () => {
   const router = useRouter();
   const issueId = Number(router.query.id);
-  const { loading, error, data: issueData, refetch: refetchIssue } = useQuery(GET_ISSUE, {
+  const {
+    loading,
+    error,
+    data: issueData,
+    refetch: refetchIssue,
+  } = useQuery(GET_ISSUE, {
     variables: { id: issueId },
   });
   const AuthUser = useAuthUser();
-  const { loading: userLoading, error: userError, data: userData, refetch: refetchUser } = useQuery(
-    GET_USER,
-    {
-      variables: { firebaseUID: AuthUser.id, issuesId: issueId },
-    },
-  );
+  const {
+    loading: userLoading,
+    error: userError,
+    data: userData,
+    refetch: refetchUser,
+  } = useQuery(GET_USER, {
+    variables: { firebaseUID: AuthUser.id, issuesId: issueId },
+  });
 
-  const [createUserStance, { loading: mutationLoading, error: mutationError }] = useMutation(
-    CREATE_USER_STANCE,
-  );
+  const [createUserStance, { loading: mutationLoading, error: mutationError }] =
+    useMutation(CREATE_USER_STANCE);
   if (loading || userLoading) return 'Loading...';
   if (error || userError) return `Error! ${error.message}`;
   const issue = issueData.issue;
@@ -239,12 +242,23 @@ const Issue: any = () => {
             <div className={s.opinionNextContainer} style={{ margin: '0 -20px' }}>
               {issue.opinions.map(opinion => (
                 <div key={opinion.id} className={s.opinionContainer}>
-                  <OpinionBox opinion={opinion} userId={userId} />
+                  <OpinionBox opinion={opinion} />
                 </div>
               ))}
             </div>
             <div className={s.opinionAll}>
-              <Link href={`/issues/${issueId}/opinions`}>모두 보기</Link>
+              <div
+                onClick={() => {
+                  router.push({
+                    pathname: '/opinions',
+                    query: {
+                      issueId: issue.id,
+                    },
+                  });
+                }}
+              >
+                모두 보기
+              </div>
             </div>
           </div>
         </div>

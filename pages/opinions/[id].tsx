@@ -5,11 +5,13 @@ import Layout from '../../components/Layout';
 import CommentBox from '../../components/CommentBox';
 
 import { useRouter } from 'next/router';
+import { withAuthUser, useAuthUser } from 'next-firebase-auth';
 
 import common_style from './index.module.scss';
 import s from './[id].module.css';
-import util_s from '../../components/Utils.module.scss'
-import user_s from '../users/users.module.scss'
+import util_s from '../../components/Utils.module.scss';
+import user_s from '../users/users.module.scss';
+import { GET_USERS } from '../../lib/queries';
 
 import _ from 'lodash';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -24,6 +26,13 @@ const GET_DATA = gql`
     opinions(id: $id) {
       id
       content
+      issuesId
+      stances {
+        id
+        title
+        orderNum
+        issuesId
+      }
       stancesId
       stance {
         id
@@ -98,19 +107,31 @@ const CREATE_OPINION_COMMENT = gql`
 `;
 
 const DO_LIKE_ACTION_TO_OPINION = gql`
-  mutation doLikeActionToOpinion(
-    $usersId: Int!
-    $opinionsId: Int!
-    $like: Boolean!
-  ) {
-    doLikeActionToOpinion(
-      usersId: $usersId
-      opinionsId: $opinionsId
-      like: $like
-    ) {
+  mutation doLikeActionToOpinion($usersId: Int!, $opinionsId: Int!, $like: Boolean!) {
+    doLikeActionToOpinion(usersId: $usersId, opinionsId: $opinionsId, like: $like) {
       usersId
       opinionsId
       like
+    }
+  }
+`;
+
+const GET_MY_STANCE = gql`
+  query myStance($issuesId: Int, $usersId: Int) {
+    myStance(issuesId: $issuesId, usersId: $usersId) {
+      usersId
+      issuesId
+      stancesId
+    }
+  }
+`;
+
+const CREATE_USER_STANCE = gql`
+  mutation createUserStance($usersId: Int, $issuesId: Int, $stancesId: Int) {
+    createUserStance(usersId: $usersId, issuesId: $issuesId, stancesId: $stancesId) {
+      usersId
+      issuesId
+      stancesId
     }
   }
 `;
@@ -120,11 +141,26 @@ const Opinion = props => {
 
   const [createOpinionComment] = useMutation(CREATE_OPINION_COMMENT);
   const [doLikeActionToOpinion] = useMutation(DO_LIKE_ACTION_TO_OPINION);
+  const [createUserStance] = useMutation(CREATE_USER_STANCE);
 
   const router = useRouter();
-  const { id: opinionId, userId } = router.query;
-
+  const { id: opinionId } = router.query;
+  const issueId = _.head(props.data.opinions).issuesId;
   const opinion = _.head(props.data.opinions);
+
+  const AuthUser = useAuthUser();
+  const { data: myData, refetch: refetchUser } = useQuery(GET_USERS, {
+    variables: { firebaseUID: AuthUser.id },
+  });
+
+  const userId = myData?.userByFirebase?.id;
+
+  const { data: myStanceData } = useQuery(GET_MY_STANCE, {
+    variables: {
+      issuesId: issueId,
+      usersId: userId,
+    },
+  });
 
   const myReact =
     opinion && opinion.opinionReacts.filter(react => react.usersId === Number(userId));
@@ -141,7 +177,7 @@ const Opinion = props => {
           content: opinionComment,
           usersId: Number(userId),
           opinionsId: Number(opinionId),
-          stancesId: 1, // 댓글을 달 때도, issue 에 대한 나의 Stance 가 있어야 하는데, 이 부분 UI 에서 어떻게 풀 지 논의 필요
+          stancesId: myStanceData.myStance.stancesId,
         },
       }).then(() => router.reload());
     } catch (e) {
@@ -168,8 +204,19 @@ const Opinion = props => {
     document.getElementById('input_comment').select();
   };
 
+  const onStanceClick = async stancesId => {
+    await createUserStance({
+      variables: {
+        usersId: Number(userId),
+        issuesId: Number(issueId),
+        stancesId,
+      },
+    })
+      .then(() => router.reload())
+      .catch(err => console.error(err));
+  };
+
   const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
-  console.log('props', props);
 
   return (
     <Layout title={'개별 오피니언 페이지'} headerInfo={{ headerType: 'common' }}>
@@ -259,19 +306,34 @@ const Opinion = props => {
             ))}
         </div>
 
-        <div className={s.commentWrapper}>
-          <div className={s.commentInputWrapper}>
-            <textarea
-              id="input_comment"
-              onChange={handleChangeCommentInput}
-              value={opinionComment}
-              placeholder="댓글을 입력하세요.."
-            />
-            <button onClick={handleRegisterOpinionComment}>등록</button>
+        {myStanceData && myStanceData.myStance ? (
+          <div className={s.commentWrapper}>
+            <div className={s.commentInputWrapper}>
+              <textarea
+                id="input_comment"
+                onChange={handleChangeCommentInput}
+                value={opinionComment}
+                placeholder="댓글을 입력하세요.."
+              />
+              <button onClick={handleRegisterOpinionComment}>등록</button>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className={s.stanceSelectorWrapper}>
+            <div className={s.guide}>댓글을 남기기 전, 입장을 선택하세요..</div>
+            <div className={s.stanceWrapper}>
+              {_.head(props.data.opinions).stances.map(stance => (
+                <div className={s.stance} key={stance.id} onClick={() => onStanceClick(stance.id)}>
+                  {fruitsForStanceTitle[stance.orderNum]}
+                  {stance.title}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </main>
     </Layout>
   );
 };
-export default Opinion;
+
+export default withAuthUser()(Opinion);

@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import React, { useReducer, useEffect } from 'react';
-import { gql, useMutation, useQuery } from '@apollo/client';
+import { gql, useMutation } from '@apollo/client';
 import _ from 'lodash';
 import Layout from '../../../components/Layout';
 import style from './new.module.css';

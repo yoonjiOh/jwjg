@@ -32,21 +32,6 @@ const GET_STANCES_BY_ISSUE = gql`
   }
 `;
 
-// export const getServerSideProps = async context => {
-//   const apolloClient = initializeApollo(null);
-//   const { issueId } = context.query;
-//   const { data } = await apolloClient.query({
-//     query: GET_STANCES_BY_ISSUE,
-//     variables: { issuesId: Number(issueId) },
-//   });
-
-//   return {
-//     props: {
-//       stances: data,
-//     },
-//   };
-// };withAuthUserTokenSSR({})(async ({ AuthUser, query }) =>
-
 export const getServerSideProps = withAuthUserTokenSSR({
   whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
   authPageURL: '/users',
@@ -159,7 +144,7 @@ const New = props => {
     }).then(result =>
       router.push({
         pathname: '/opinions/new',
-        query: { userId, issueId, stancesId },
+        query: { issueId, stancesId },
       }),
     );
   };

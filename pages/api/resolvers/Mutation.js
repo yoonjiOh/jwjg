@@ -76,6 +76,7 @@ async function createUserStance(parent, args, context) {
         issuesId: args.issuesId,
       },
     });
+
     return result;
   } catch (e) {
     console.error(e);

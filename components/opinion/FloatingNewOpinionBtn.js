@@ -29,7 +29,7 @@ const FloatingNewOpinionBtn = ({ userId, issueId, stancesId }) => {
         onClick={() => {
           router.push({
             pathname: '/opinions/new',
-            query: { userId, issueId, stancesId },
+            query: { issueId, stancesId },
           });
         }}
       />
