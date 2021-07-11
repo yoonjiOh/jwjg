@@ -52,7 +52,7 @@ async function userInfo(parent, _args, context) {
     where: { usersId: parseInt(parent.id) },
   });
 
-  return result.userInfo;
+  return result;
 }
 
 export default {

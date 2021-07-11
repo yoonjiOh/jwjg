@@ -58,8 +58,13 @@ const welcomePage = () => {
           >
             <img src={user.profileImageUrl} style={{ width: '50%', height: '50%' }} />
           </div>
-          <span>{user.name}</span>
+
           <span>{user.nickname}</span>
+          <span>@{user.name}</span>
+          <span>
+            {user.userInfo.age}대 {user.userInfo.gender},{' '}
+            {user.userInfo.residence && `${user.userInfo.residence} 거주`}
+          </span>
 
           <div style={{ marginTop: '15px' }}>
             <div>{user.intro}</div>
