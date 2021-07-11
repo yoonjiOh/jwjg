@@ -242,6 +242,7 @@ const Issue: any = () => {
             <div className={s.opinionNextContainer} style={{ margin: '0 -20px' }}>
               {issue.opinions.map(opinion => (
                 <div key={opinion.id} className={s.opinionContainer}>
+                  {/* @ts-ignore */}
                   <OpinionBox opinion={opinion} />
                 </div>
               ))}
