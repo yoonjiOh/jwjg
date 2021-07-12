@@ -15,6 +15,8 @@ import _ from 'lodash';
 
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { DO_LIKE_ACTION_TO_OPINION } from '../../lib/queries';
+
 dayjs.extend(relativeTime);
 
 const GET_OPINIONS_COMMENTS_DATA = gql`
@@ -61,16 +63,6 @@ const GET_OPINIONS_COMMENTS_DATA = gql`
         }
         opinionCommentReactsSum
       }
-    }
-  }
-`;
-
-const DO_LIKE_ACTION_TO_OPINION = gql`
-  mutation doLikeActionToOpinion($usersId: Int!, $opinionsId: Int!, $like: Boolean!) {
-    doLikeActionToOpinion(usersId: $usersId, opinionsId: $opinionsId, like: $like) {
-      usersId
-      opinionsId
-      like
     }
   }
 `;
@@ -213,6 +205,9 @@ const Opinions = props => {
                             src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/blue_like.svg"
                             alt="좋아요 버튼"
                           />{' '}
+                          <span style={{ marginLeft: '5px', color: '#4494FF' }}>
+                            {opinion.opinionReactsSum}
+                          </span>
                         </label>
                       ) : (
                         <label
@@ -229,9 +224,9 @@ const Opinions = props => {
                             alt="좋아요 버튼"
                             style={{ marginRight: '5px' }}
                           />{' '}
+                          <span style={{ marginLeft: '5px' }}>{opinion.opinionReactsSum}</span>
                         </label>
                       )}
-                      <span style={{ marginLeft: '5px' }}>{opinion.opinionReactsSum}</span>
                     </div>
                     <div
                       className={util_s.likeWrapper}

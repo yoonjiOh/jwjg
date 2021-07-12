@@ -1,17 +1,8 @@
 import s from '../pages/users/users.module.scss';
 import _ from 'lodash';
 
-import { gql, useQuery } from '@apollo/client';
-
-const GET_OPINION_REACTS_AND_COMMENTS = gql`
-  query opinion($id: Int!) {
-    opinions(id: $id) {
-      id
-      opinionReactsSum
-      opinionCommentsSum
-    }
-  }
-`;
+import { useQuery } from '@apollo/client';
+import { GET_OPINION_REACTS_AND_COMMENTS } from '../lib/queries';
 
 const OpinionSummaryBox = ({ opinion, issues, stances }) => {
   const { data } = useQuery(GET_OPINION_REACTS_AND_COMMENTS, { variables: { id: opinion.id } });

@@ -11,7 +11,7 @@ import common_style from './index.module.scss';
 import s from './[id].module.css';
 import util_s from '../../components/Utils.module.scss';
 import user_s from '../users/users.module.scss';
-import { GET_USERS } from '../../lib/queries';
+import { GET_USERS, DO_LIKE_ACTION_TO_OPINION } from '../../lib/queries';
 
 import _ from 'lodash';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -102,16 +102,6 @@ const CREATE_OPINION_COMMENT = gql`
       stancesId: $stancesId
     ) {
       id
-    }
-  }
-`;
-
-const DO_LIKE_ACTION_TO_OPINION = gql`
-  mutation doLikeActionToOpinion($usersId: Int!, $opinionsId: Int!, $like: Boolean!) {
-    doLikeActionToOpinion(usersId: $usersId, opinionsId: $opinionsId, like: $like) {
-      usersId
-      opinionsId
-      like
     }
   }
 `;

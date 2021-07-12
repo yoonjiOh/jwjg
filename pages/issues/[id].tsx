@@ -49,6 +49,7 @@ const GET_ISSUE = gql`
           profileImageUrl
         }
         opinionReacts {
+          usersId
           like
         }
         opinionComments {
@@ -123,6 +124,7 @@ const CREATE_USER_STANCE = gql`
 const Issue: any = () => {
   const router = useRouter();
   const issueId = Number(router.query.id);
+
   const {
     loading,
     error,

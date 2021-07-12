@@ -6,6 +6,8 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { useRouter } from 'next/router';
 import _ from 'lodash';
 
+import { DO_LIKE_ACTION_TO_OPINION_COMMENT } from '../lib/queries';
+
 dayjs.extend(relativeTime);
 
 const GET_OPINION_COMMENT_REACTS = gql`
@@ -14,24 +16,6 @@ const GET_OPINION_COMMENT_REACTS = gql`
       like
       usersId
       opinionCommentsId
-    }
-  }
-`;
-
-const DO_LIKE_ACTION_TO_OPINION_COMMENT = gql`
-  mutation doLikeActionToOpinionComment(
-    $usersId: Int!
-    $opinionCommentsId: Int!
-    $like: Boolean!
-  ) {
-    doLikeActionToOpinionComment(
-      usersId: $usersId
-      opinionCommentsId: $opinionCommentsId
-      like: $like
-    ) {
-      usersId
-      opinionCommentsId
-      like
     }
   }
 `;
@@ -47,7 +31,8 @@ const CommentBox = ({ comment, me }) => {
     data.opinionCommentReacts.filter(react => !!react.like).length;
   const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
 
-  const myReact = data && data.opinionCommentReacts.filter(react => react.usersId === Number(me && me.id));
+  const myReact =
+    data && data.opinionCommentReacts.filter(react => react.usersId === Number(me && me.id));
   const isLikedByMe = !_.isEmpty(myReact) && _.head(myReact).like;
 
   const handleClickLike = async (opinionCommentsId, isLikedByMe) => {
@@ -58,13 +43,13 @@ const CommentBox = ({ comment, me }) => {
           opinionCommentsId: Number(opinionCommentsId),
           like: isLikedByMe ? false : true,
         },
-      }).then((result) => {
+      }).then(() => {
         router.reload();
       });
     } catch (e) {
       console.error(e);
     }
-  }
+  };
 
   return (
     <div className={s.commentBox} key={comment.id}>
@@ -82,18 +67,21 @@ const CommentBox = ({ comment, me }) => {
           <span style={{ marginLeft: '5px' }}>{comment.content}</span>
         </div>
         <div className={s.likeWrapper} onClick={() => handleClickLike(comment.id, isLikedByMe)}>
-          { isLikedByMe ?
-          <label style={{ color: '#4494FF' }}>
-          <img
-            src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/blue_like.svg"
-            alt="좋아요 버튼"
-          /></label> :
-          <label>
-          <img
-            src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
-            alt="좋아요 버튼"
-          /></label>
-        }
+          {isLikedByMe ? (
+            <label style={{ color: '#4494FF' }}>
+              <img
+                src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/blue_like.svg"
+                alt="좋아요 버튼"
+              />
+            </label>
+          ) : (
+            <label>
+              <img
+                src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
+                alt="좋아요 버튼"
+              />
+            </label>
+          )}
           <span style={{ marginLeft: '5px' }}>{likeCount}</span>
         </div>
       </div>
