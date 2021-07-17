@@ -12,7 +12,7 @@ function createApolloClient() {
     ssrMode: typeof window === 'undefined',
     link: createUploadLink({
       uri: prod
-        ? 'http://jwjg-dev.ap-northeast-2.elasticbeanstalk.com/api'
+        ? 'https://jwjg-dev.ap-northeast-2.elasticbeanstalk.com/api'
         : 'http://localhost:3000/api',
       // credentials: 'same-origin',
     }),
