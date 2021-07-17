@@ -123,7 +123,9 @@ export async function createUserFromFirebaseUser(
 export function startFacebookSigninFlow() {
   const provider = new firebase.auth.FacebookAuthProvider();
   // TODO: updates scopes
-  provider.addScope('user_birthday');
+  // Every permission below requires App Review except for email and public_profile.
+  // https://developers.facebook.com/docs/app-review
+  provider.addScope('email');
   // To localize the provider's OAuth flow to the user's preferred language
   firebase.auth().useDeviceLanguage();
   provider.setCustomParameters({
