@@ -11,9 +11,7 @@ function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === 'undefined',
     link: createUploadLink({
-      uri: prod
-        ? 'https://jwjg-dev.ap-northeast-2.elasticbeanstalk.com/api'
-        : 'http://localhost:3000/api',
+      uri: prod ? 'https://jwjg.kr/api' : 'http://localhost:3000/api',
       // credentials: 'same-origin',
     }),
     cache: new InMemoryCache(),
