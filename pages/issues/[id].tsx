@@ -81,7 +81,7 @@ const GET_USER = gql`
       name
       intro
       profileImageUrl
-      userStance {
+      userStance(issuesId: $issuesId) {
         issuesId
         usersId
         stancesId
@@ -265,9 +265,7 @@ const Issue: any = () => {
             </div>
           </div>
         </div>
-        {!hasMyOpinion && !!userId && (
-          <FloatingNewOpinionBtn userId={userId} issueId={issueId} stancesId={myStanceId} />
-        )}
+        {!!userId && <FloatingNewOpinionBtn issueId={issueId} stancesId={myStanceId} />}
       </main>
     </Layout>
   );

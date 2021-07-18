@@ -17,7 +17,7 @@ const icon_style = {
   cursor: 'pointer',
 };
 
-const FloatingNewOpinionBtn = ({ userId, issueId, stancesId }) => {
+const FloatingNewOpinionBtn = ({ issueId, stancesId }) => {
   const router = useRouter();
 
   return (
