@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { WrongEmailError, EmailAlreadyExistError, WrongPasswordFormatError } from './errors';
 import { AuthUser } from 'next-firebase-auth';
 import { SerializedAuthUser } from '../pages/users/additional_information';
+import { ConfigurationServicePlaceholders } from 'aws-sdk/lib/config_service_placeholders';
 
 const EMAIL_REGEX = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const MINIMUM_PASSWORD_LENGTH = 8;
@@ -63,9 +64,7 @@ export async function doEmailLogin(email, password) {
     .auth()
     .signInWithEmailAndPassword(email, password)
     // .then(userCredential => {
-    //   // Signed in
-    //   const user = userCredential.user;
-    //   return user;
+    //   console.log(userCredential);
     // })
     .catch(error => {
       const errorCode = error.code;
@@ -135,28 +134,26 @@ export function startFacebookSigninFlow() {
   firebase
     .auth()
     .signInWithPopup(provider)
-    .then(result => {
-      /** @type {firebase.auth.OAuthCredential} */
-      const credential = result.credential;
+    // .then(result => {
+    //   console.log(result);
+    //   /** @type {firebase.auth.OAuthCredential} */
+    //   const credential = result.credential;
 
-      // The signed-in user info.
-      const user = result.user;
+    //   // The signed-in user info.
+    //   const user = result.user;
 
-      // This gives you a Facebook Access Token. You can use it to access the Facebook API.
-      // @ts-ignore
-      const accessToken = credential.accessToken;
+    //   // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+    //   // @ts-ignore
+    //   const accessToken = credential.accessToken;
 
-      // ...
-    })
+    //   // ...
+    // })
     .catch(error => {
-      // Handle Errors here.
       const errorCode = error.code;
       const errorMessage = error.message;
-      // The email of the user's account used.
-      const email = error.email;
-      // The firebase.auth.AuthCredential type that was used.
-      const credential = error.credential;
+      console.log(errorCode);
+      console.log(errorMessage);
 
-      // ...
+      alert(`Failed to login via facebook, errorCode(${errorCode}) errorMessage(${errorMessage})`);
     });
 }
