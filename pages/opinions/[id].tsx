@@ -112,6 +112,11 @@ const GET_MY_STANCE = gql`
       usersId
       issuesId
       stancesId
+      stances {
+        id
+        title
+        orderNum
+      }
     }
   }
 `;
@@ -212,7 +217,7 @@ const Opinion = props => {
     <Layout title={'개별 오피니언 페이지'} headerInfo={{ headerType: 'common' }}>
       <main className={common_style.main} style={{ background: '#fff' }}>
         <div className={s.opinionWrapper}>
-          <div className={util_s[`stanceMark-${opinion.stancesId}`]} />
+          <div className={util_s[`stanceMark-${myStanceData?.myStance?.stances?.[0].orderNum}`]} />
           <div className={s.opinionContent} style={{ position: 'relative' }}>
             <div
               className={user_s.smallProfileWrapper}
@@ -228,7 +233,8 @@ const Opinion = props => {
             </div>
 
             <div className={s.stancesWrapper}>
-              {fruitsForStanceTitle[opinion.stance.orderNum]} {opinion.stance.title}
+              {fruitsForStanceTitle[myStanceData?.myStance?.stances?.[0].orderNum]}{' '}
+              {myStanceData?.myStance?.stances?.[0].title}
             </div>
             <div>{opinion.content}</div>
             <div

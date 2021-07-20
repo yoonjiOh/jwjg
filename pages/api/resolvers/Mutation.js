@@ -1,7 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { APP_SECRET } from '../utils';
-import { AuthenticationError } from 'apollo-server';
 import { AWSS3Uploader } from '../s3';
 
 const s3Uploader = new AWSS3Uploader({
@@ -143,6 +142,17 @@ async function createOpinion(parent, args, context) {
   return newOpinion;
 }
 
+async function updateOpinion(parent, args, context) {
+  const updatedOpinion = await context.prisma.opinions.update({
+    where: { id: args.id },
+    data: {
+      content: args.content,
+    },
+  });
+
+  return updatedOpinion;
+}
+
 async function createOpinionComment(parent, args, context) {
   const newOpinionComment = await context.prisma.opinionComments.create({
     data: {
@@ -230,6 +240,7 @@ export default {
   login,
   singleUpload: s3Uploader.singleFileUploadResolver.bind(s3Uploader),
   createOpinion,
+  updateOpinion,
   createOpinionComment,
   doLikeActionToOpinion,
   doLikeActionToOpinionComment,

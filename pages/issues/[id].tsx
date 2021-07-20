@@ -85,6 +85,11 @@ const GET_USER = gql`
         issuesId
         usersId
         stancesId
+        stances {
+          id
+          title
+          orderNum
+        }
       }
     }
   }
@@ -150,6 +155,7 @@ const Issue: any = () => {
   const issue = issueData.issue;
   const tags = issue.issueHashTags.map(issueHashTag => issueHashTag.hashTags[0].name);
   const userId = userData?.userByFirebaseWithIssuesId?.id;
+  const userStance = userData?.userByFirebaseWithIssuesId?.userStance;
   const myStanceId = userData?.userByFirebaseWithIssuesId?.userStance?.stancesId;
 
   const onStanceClick = async stancesId => {
@@ -167,8 +173,6 @@ const Issue: any = () => {
     refetchIssue({ id: issueId });
     refetchUser({ issuesId: issueId, firebaseUID: AuthUser.id });
   };
-
-  const hasMyOpinion = !!issue.opinions.filter(opinion => opinion.usersId === userId).length;
 
   return (
     <Layout title={'개별 이슈'} headerInfo={{ headerType: 'common' }}>
@@ -245,7 +249,7 @@ const Issue: any = () => {
               {issue.opinions.map(opinion => (
                 <div key={opinion.id} className={s.opinionContainer}>
                   {/* @ts-ignore */}
-                  <OpinionBox opinion={opinion} />
+                  <OpinionBox opinion={opinion} userStance={userStance} />
                 </div>
               ))}
             </div>

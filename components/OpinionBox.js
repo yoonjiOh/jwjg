@@ -16,7 +16,7 @@ import _ from 'lodash';
 
 dayjs.extend(relativeTime);
 
-const OpinionBox = ({ opinion }) => {
+const OpinionBox = ({ opinion, userStance }) => {
   const { data } = useQuery(GET_OPINION_REACTS_AND_COMMENTS, { variables: { id: opinion.id } });
   const [doLikeActionToOpinion] = useMutation(DO_LIKE_ACTION_TO_OPINION);
 
@@ -79,7 +79,9 @@ const OpinionBox = ({ opinion }) => {
         </div>
         <div className={s.commentContentWrapper}>
           <span className={s.commentStance}>
-            {fruitsForStanceTitle[opinion.stance.orderNum] + ' ' + opinion.stance.title}
+            {fruitsForStanceTitle[userStance?.stances[0].orderNum] +
+              ' ' +
+              userStance?.stances[0].title}
           </span>
           <span style={{ marginLeft: '5px' }}>{opinion.content}</span>
         </div>

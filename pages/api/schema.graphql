@@ -149,6 +149,7 @@ type Query {
   issue(id: Int!): Issue
   issues(id: Int): [Issue]
   opinions(id: Int): [Opinion]
+  myOpinion(usersId: Int, issuesId: Int): Opinion
   opinionsWithIssuesId(issuesId: Int): [Opinion]
   stances(id: Int): [Stance]
   stancesByIssueId(issuesId: Int): [Stance]
@@ -177,6 +178,7 @@ type Mutation {
   login(email: String!, password: String!): AuthPayload
   singleUpload(file: Upload!): UploadedFileResponse!
   createOpinion(content: String, usersId: Int!, issuesId: Int!, stancesId: Int!): Opinion
+  updateOpinion(id: Int, content: String): Opinion
   createOpinionComment(
     content: String
     usersId: Int!

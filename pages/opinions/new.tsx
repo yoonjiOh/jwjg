@@ -32,6 +32,15 @@ const GET_STANCES_BY_ISSUE = gql`
   }
 `;
 
+const GET_MY_OPINION = gql`
+  query myOpinion($usersId: Int, $issuesId: Int) {
+    myOpinion(usersId: $usersId, issuesId: $issuesId) {
+      id
+      content
+    }
+  }
+`;
+
 export const getServerSideProps = withAuthUserTokenSSR({
   whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
   authPageURL: '/users',
@@ -49,10 +58,19 @@ export const getServerSideProps = withAuthUserTokenSSR({
     variables: { issuesId: +issueId },
   });
 
+  const { data: opinionData } = await apolloClient.query({
+    query: GET_MY_OPINION,
+    variables: {
+      usersId: +userId,
+      issuesId: +issueId,
+    },
+  });
+
   return {
     props: {
       stances: data,
       userId,
+      myOpinion: opinionData.myOpinion,
     },
   };
 });
@@ -70,6 +88,14 @@ const CREATE_OPINION = gql`
   }
 `;
 
+const UPDATE_OPINION = gql`
+  mutation updateOpinion($id: Int!, $content: String) {
+    updateOpinion(id: $id, content: $content) {
+      id
+    }
+  }
+`;
+
 const CREATE_USER_STANCE = gql`
   mutation createUserStance($usersId: Int, $issuesId: Int, $stancesId: Int) {
     createUserStance(usersId: $usersId, issuesId: $issuesId, stancesId: $stancesId) {
@@ -81,13 +107,15 @@ const CREATE_USER_STANCE = gql`
 `;
 
 const New = props => {
-  const [opinionBody, setOpinionBody] = useState('');
-  const [createOpinion] = useMutation(CREATE_OPINION);
-  const [createUserStance] = useMutation(CREATE_USER_STANCE);
-
   const router = useRouter();
   const { issueId, stancesId } = router.query;
-  const { userId } = props;
+  const { userId, myOpinion } = props;
+
+  const initState = myOpinion ? myOpinion.content : '';
+  const [opinionBody, setOpinionBody] = useState(initState);
+  const [createOpinion] = useMutation(CREATE_OPINION);
+  const [updateOpinion] = useMutation(UPDATE_OPINION);
+  const [createUserStance] = useMutation(CREATE_USER_STANCE);
 
   const hasStance = !!stancesId;
 
@@ -101,19 +129,26 @@ const New = props => {
 
   const handleRegisterOpinion = async () => {
     try {
-      await createOpinion({
-        variables: {
-          content: opinionBody,
-          usersId: Number(userId),
-          issuesId: Number(issueId),
-          stancesId: Number(stancesId),
-        },
-      }).then(result => {
-        if (result.data.createOpinion.id) {
-          router.push({
-            pathname: '/issues',
-          });
-        }
+      if (myOpinion) {
+        await updateOpinion({
+          variables: {
+            id: myOpinion.id,
+            content: opinionBody,
+          },
+        });
+      } else {
+        await createOpinion({
+          variables: {
+            content: opinionBody,
+            usersId: Number(userId),
+            issuesId: Number(issueId),
+            stancesId: Number(stancesId),
+          },
+        });
+      }
+
+      router.push({
+        pathname: '/issues',
       });
     } catch (e) {
       console.error(e);

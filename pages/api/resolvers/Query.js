@@ -116,6 +116,15 @@ async function myStance(parent, args, context) {
   });
 }
 
+async function myOpinion(parent, args, context) {
+  return await context.prisma.opinions.findFirst({
+    where: {
+      usersId: args.usersId,
+      issuesId: args.issuesId,
+    },
+  });
+}
+
 export default {
   user,
   userByFirebase,
@@ -132,4 +141,5 @@ export default {
   opinionCommentReacts,
   userByFirebaseWithIssuesId,
   myStance,
+  myOpinion,
 };
