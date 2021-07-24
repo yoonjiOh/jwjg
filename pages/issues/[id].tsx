@@ -155,8 +155,20 @@ const Issue: any = () => {
   const userStance = userData?.userByFirebaseWithIssuesId?.userStance;
   const myStanceId = userData?.userByFirebaseWithIssuesId?.userStance?.stancesId;
 
-  console.log('issueData', issueData);
-  console.log('userData', userData);
+  const newStances = issue?.stances.reduce((acc, stance) => {
+    const { id, title, fruit } = stance;
+    const result = { title: '', sum: 0, fruit };
+    for (const userStance of issue.userStances) {
+      if (id === userStance.stancesId) {
+        result.title = fruit + ' ' + title;
+        result.sum += 1;
+      }
+    }
+    if (result.sum !== 0) {
+      acc.push(result);
+    }
+    return acc;
+  }, []);
 
   const onStanceClick = async stancesId => {
     if (!userId) {
@@ -218,11 +230,7 @@ const Issue: any = () => {
             </div>
           )}
           <h3 className={s.title}>지금 여론</h3>
-          <CurrentStances
-            userStances={issue.userStances}
-            stances={issue.stances}
-            withStats={true}
-          />
+          <CurrentStances userStances={issue.userStances} stances={newStances} withStats={true} />
           <div>
             <h3 className={s.title}>내 입장</h3>
             <ul className={s.stancePickItems}>
