@@ -5,7 +5,7 @@ import Layout from '../../components/Layout';
 import CommentBox from '../../components/CommentBox';
 
 import { useRouter } from 'next/router';
-import { withAuthUser, useAuthUser } from 'next-firebase-auth';
+import { withAuthUser, AuthAction, useAuthUser, withAuthUserTokenSSR } from 'next-firebase-auth';
 
 import common_style from './index.module.scss';
 import s from './[id].module.css';
@@ -73,9 +73,12 @@ const GET_DATA = gql`
   }
 `;
 
-export const getServerSideProps = async context => {
+export const getServerSideProps = withAuthUserTokenSSR({
+  whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
+  authPageURL: '/users',
+})(async ({ query }) => {
   const apolloClient = initializeApollo(null);
-  const { id } = context.query;
+  const { id } = query;
   const { data } = await apolloClient.query({
     query: GET_DATA,
     variables: { id: parseInt(id) },
@@ -86,7 +89,7 @@ export const getServerSideProps = async context => {
       data: data,
     },
   };
-};
+});
 
 const CREATE_OPINION_COMMENT = gql`
   mutation createOpinionComment(

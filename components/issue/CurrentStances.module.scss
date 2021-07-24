@@ -7,6 +7,7 @@
   display: flex;
   justify-content: space-between;
   margin-bottom: 8px;
+  cursor: pointer;
 }
 .stanceItemBarChart{
   position: absolute;
@@ -31,6 +32,7 @@
   font-size: $font-lg;
 }
 .comment {
+  font-size: 12px;
   min-height: 2.5em;
 }
 .stanceCount{

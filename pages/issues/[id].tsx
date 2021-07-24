@@ -203,6 +203,7 @@ const Issue: any = () => {
             userStances={issue.userStances}
             stances={issue.stances}
             withStats={true}
+            onStanceClick={onStanceClick}
           />
           <div>
             <h3 className={s.title}>내 입장</h3>
@@ -212,7 +213,7 @@ const Issue: any = () => {
                   className={
                     `${s.stancePickItem}` +
                     ' ' +
-                    `${stance.id === myStanceId ? s[stance.fruit] : ''}`
+                    `${stance.id === myStanceId ? s[stance.fruit] : s.border}`
                   }
                   key={stance.id}
                   onClick={() => onStanceClick(stance.id)}
