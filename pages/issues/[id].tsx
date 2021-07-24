@@ -244,7 +244,7 @@ const Issue: any = () => {
                   key={stance.id}
                   onClick={() => onStanceClick(stance.id)}
                 >
-                  {stance.title}
+                  {stance.fruit}&nbsp;&nbsp;{stance.title}
                 </li>
               ))}
             </ul>
