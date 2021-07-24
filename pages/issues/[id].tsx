@@ -12,6 +12,7 @@ import _ from 'lodash';
 import CurrentStances from '../../components/issue/CurrentStances';
 
 import OpinionBox from '../../components/OpinionBox';
+import Loading from '../../components/Loading';
 
 const GET_ISSUE = gql`
   query issue($id: Int!) {
@@ -120,33 +121,27 @@ const Issue: any = () => {
   const router = useRouter();
   const issueId = Number(router.query.id);
 
-  const {
-    loading,
-    error,
-    data: issueData,
-    refetch: refetchIssue,
-  } = useQuery(GET_ISSUE, {
+  const { loading, error, data: issueData, refetch: refetchIssue } = useQuery(GET_ISSUE, {
     variables: { id: issueId },
   });
   const AuthUser = useAuthUser();
-  const {
-    loading: userLoading,
-    error: userError,
-    data: userData,
-    refetch: refetchUser,
-  } = useQuery(GET_USER, {
-    variables: { firebaseUID: AuthUser.id, issuesId: issueId },
-  });
+  const { loading: userLoading, error: userError, data: userData, refetch: refetchUser } = useQuery(
+    GET_USER,
+    {
+      variables: { firebaseUID: AuthUser.id, issuesId: issueId },
+    },
+  );
 
-  const [createUserStance, { loading: mutationLoading, error: mutationError }] =
-    useMutation(CREATE_USER_STANCE);
+  const [createUserStance, { loading: mutationLoading, error: mutationError }] = useMutation(
+    CREATE_USER_STANCE,
+  );
   const [updateOpinion] = useMutation(UPDATE_OPINION);
 
   useEffect(() => {
     refetchIssue({ id: issueId });
   }, []);
 
-  if (loading || userLoading) return 'Loading...';
+  if (loading || userLoading) return <Loading />;
   if (error || userError) return `Error! ${error && error.message}`;
 
   const issue = issueData.issue;
@@ -230,7 +225,12 @@ const Issue: any = () => {
             </div>
           )}
           <h3 className={s.title}>지금 여론</h3>
-          <CurrentStances userStances={issue.userStances} stances={newStances} withStats={true} />
+          <CurrentStances
+            userStances={issue.userStances}
+            stances={newStances}
+            withStats={true}
+            onStanceClick={onStanceClick}
+          />
           <div>
             <h3 className={s.title}>내 입장</h3>
             <ul className={s.stancePickItems}>
@@ -239,7 +239,7 @@ const Issue: any = () => {
                   className={
                     `${s.stancePickItem}` +
                     ' ' +
-                    `${stance.id === myStanceId ? s[stance.fruit] : ''}`
+                    `${stance.id === myStanceId ? s[stance.fruit] : s.border}`
                   }
                   key={stance.id}
                   onClick={() => onStanceClick(stance.id)}

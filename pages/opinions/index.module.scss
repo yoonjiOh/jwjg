@@ -207,16 +207,19 @@
   position: fixed;
   bottom: 0;
   height: 212px;
+  width: 100%;
   min-width: 240px;
   max-width: 480px;
 }
 .filterSelector .cancelBtn {
   color: #4494ff;
-  margin-right: 100px;
   cursor: pointer;
+  position: absolute;
+  left: 0;
 }
 .filterSelector .header {
   font-weight: 700;
+  margin: 0 auto;
 }
 .filterRow {
   font-size: 13px;
@@ -234,6 +237,8 @@
   padding-left: 10px;
 }
 .filterSelectorRow {
+  position: relative;
+  text-align: center;
   padding-bottom: 32px;
 }
 .opinionHasStanceWrapper {

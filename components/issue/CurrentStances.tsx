@@ -1,7 +1,7 @@
 import s from './CurrentStances.module.scss';
 import _ from 'lodash';
 
-const CurrentStances = ({ userStances, stances, withStats }) => {
+const CurrentStances = ({ userStances, stances, withStats, onStanceClick }) => {
   // const userStancesByStanceId = userStances.reduce((acc, userStance) => {
   //   if (acc[userStance.stancesId]) {
   //     acc[userStance.stancesId] += 1;
@@ -80,7 +80,11 @@ const CurrentStances = ({ userStances, stances, withStats }) => {
         <>
           <ul className={s.stanceItems}>
             {sortedUserStances.map(stance => (
-              <li className={s.stanceItem} key={stance.title}>
+              <li
+                onClick={() => onStanceClick(stance.id)}
+                className={s.stanceItem}
+                key={stance.title}
+              >
                 <div
                   className={`${s.stanceItemBarChart} ${s[stance.fruit]}`}
                   style={{

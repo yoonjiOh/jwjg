@@ -52,6 +52,7 @@
   margin: -20px 0 0 0;
   padding: 16px 20px;
   z-index: 100;
+  cursor: pointer;
 }
 .issueTitle {
   font-size: 24px;
@@ -76,15 +77,18 @@
   display: flex;
 }
 .issueCardComment {
+  cursor: pointer;
   width: 50%;
   background-color: #ffffff;
   margin-right: 16px;
   line-height: 1.6;
   font-size: 12px;
 }
+.issueCardComment p {
+  margin-bottom: 3px;
+}
 .responseSum,
 .commentSum {
-  margin: 0 0 8px 0;
   font-size: 12px;
   font-weight: bold;
 }

@@ -27,6 +27,10 @@ const GET_ISSUES_AND_OPINIONS = gql`
         id
         usersId
         content
+        stancesId
+        stance {
+          title
+        }
         user {
           id
           name
@@ -119,14 +123,15 @@ const Main = props => {
                       <img src={hotIssue.imageUrl} />
                     </Link>
                   </div>
-                  <div
-                    onClick={() =>
-                      router.push({
-                        pathname: `/issues/${hotIssue.id}`,
-                      })
-                    }
-                  >
-                    <div className={s.issueCardTop}>
+                  <div>
+                    <div
+                      onClick={() =>
+                        router.push({
+                          pathname: `/issues/${hotIssue.id}`,
+                        })
+                      }
+                      className={s.issueCardTop}
+                    >
                       <div className={s.responseSum}>🔥 참여 {hotIssue.userStancesSum}</div>
                       <CurrentStances
                         userStances={hotIssue.userStances}
@@ -156,12 +161,31 @@ const Main = props => {
                     <div className={s.issueCardCommentWrap}>
                       <p className={s.commentSum}>💬 의견 {hotIssue.opinionsSum}</p>
                       <div className={s.issueCardComments}>
-                        <div className={s.issueCardComment}>
-                          <p>{hotIssue.opinions[0]?.usersId}</p>
+                        <div
+                          onClick={() => {
+                            const path = `/opinions/${hotIssue.opinions[0]?.id}`;
+                            if (!me) {
+                              router.push(`/users`);
+                              return;
+                            }
+                            router.push({
+                              pathname: path,
+                            });
+                          }}
+                          className={s.issueCardComment}
+                        >
+                          <p>{hotIssue.opinions[0]?.stance?.title}</p>
                           <p>{hotIssue.opinions[0]?.content}</p>
                         </div>
-                        <div className={s.issueCardComment}>
-                          <p>{hotIssue.opinions[1]?.usersId}</p>
+                        <div
+                          onClick={() =>
+                            router.push({
+                              pathname: `/opinions/${hotIssue.opinions[0]?.id}`,
+                            })
+                          }
+                          className={s.issueCardComment}
+                        >
+                          <p>{hotIssue.opinions[1]?.stance?.title}</p>
                           <p>{hotIssue.opinions[1]?.content}</p>
                         </div>
                       </div>
