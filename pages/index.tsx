@@ -176,7 +176,7 @@ const Main = props => {
           <h2 className={s.issue}>📫 가장 최근 이슈</h2>
           <article className={s.article}>
             {other_issues.map(issue => (
-              <IssueCard issue={issue} key={issue.id} userId={me && me.id} />
+              <IssueCard issue={issue} key={issue.id} />
             ))}
           </article>
         </div>
