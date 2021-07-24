@@ -8,6 +8,7 @@ import Layout from '../../../components/Layout';
 // import common_style from '../index.module.css';
 import style from './new.module.css';
 import { initializeApollo } from '../../../apollo/apolloClient';
+import Loading from '../../../components/Loading';
 interface Stance {
   title: String;
   orderNum: Number;
@@ -272,7 +273,7 @@ const NewIssue = props => {
     }
   };
 
-  if (loading) return 'Loading...';
+  if (loading) return <Loading />;
   if (error) return `Error! ${error.message}`;
 
   return (

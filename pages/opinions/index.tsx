@@ -153,7 +153,7 @@ const Opinions = props => {
   };
 
   return (
-    <Layout title={'코멘트'} headerInfo={{ headerType: 'common' }}>
+    <Layout title={'코멘트'} headerInfo={{ headerType: 'common' }} isDimmed={isOpenFilter}>
       <main className={s.main}>
         <div className={s.filter} onClick={handleOpenFilter}>
           {isOpenFilter ? '▼' : '▲'} {filterMap[selectedFilter]} 순

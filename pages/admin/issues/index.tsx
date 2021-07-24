@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Layout from '../../../components/Layout';
 // import common_style from '../index.module.css';
 import style from './index.module.css';
+import Loading from '../../../components/Loading';
 
 const GET_ISSUES = gql`
   query FetchIssues {
@@ -17,7 +18,7 @@ const GET_ISSUES = gql`
 const IssueList = () => {
   const { loading, error, data } = useQuery(GET_ISSUES);
 
-  if (loading) return 'Loading...';
+  if (loading) return <Loading />;
   if (error) return `Error! ${error.message}`;
 
   return (

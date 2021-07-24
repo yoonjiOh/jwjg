@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { withAuthUser, useAuthUser } from 'next-firebase-auth';
 
 import { gql, useQuery } from '@apollo/client';
+import Loading from '../../components/Loading';
 
 const GET_USER = gql`
   query userByFirebase($firebaseUID: String) {
@@ -34,7 +35,7 @@ const welcomePage = () => {
   const user = userData?.userByFirebase;
 
   if (!user) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   return (

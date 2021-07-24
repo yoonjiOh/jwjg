@@ -12,6 +12,7 @@ import _ from 'lodash';
 import CurrentStances from '../../components/issue/CurrentStances';
 
 import OpinionBox from '../../components/OpinionBox';
+import Loading from '../../components/Loading';
 
 const GET_ISSUE = gql`
   query issue($id: Int!) {
@@ -130,27 +131,21 @@ const Issue: any = () => {
   const router = useRouter();
   const issueId = Number(router.query.id);
 
-  const {
-    loading,
-    error,
-    data: issueData,
-    refetch: refetchIssue,
-  } = useQuery(GET_ISSUE, {
+  const { loading, error, data: issueData, refetch: refetchIssue } = useQuery(GET_ISSUE, {
     variables: { id: issueId },
   });
   const AuthUser = useAuthUser();
-  const {
-    loading: userLoading,
-    error: userError,
-    data: userData,
-    refetch: refetchUser,
-  } = useQuery(GET_USER, {
-    variables: { firebaseUID: AuthUser.id, issuesId: issueId },
-  });
+  const { loading: userLoading, error: userError, data: userData, refetch: refetchUser } = useQuery(
+    GET_USER,
+    {
+      variables: { firebaseUID: AuthUser.id, issuesId: issueId },
+    },
+  );
 
-  const [createUserStance, { loading: mutationLoading, error: mutationError }] =
-    useMutation(CREATE_USER_STANCE);
-  if (loading || userLoading) return 'Loading...';
+  const [createUserStance, { loading: mutationLoading, error: mutationError }] = useMutation(
+    CREATE_USER_STANCE,
+  );
+  if (loading || userLoading) return <Loading />;
   if (error || userError) return `Error! ${error.message}`;
   const issue = issueData.issue;
   const tags = issue.issueHashTags.map(issueHashTag => issueHashTag.hashTags[0].name);

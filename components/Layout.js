@@ -3,7 +3,7 @@ import s from './Layout.module.css';
 import CommonHeader from './CommonHeader';
 import EditModeHeader from './EditModeHeader';
 
-const Layout = ({ title, headerInfo, children }) => {
+const Layout = ({ title, headerInfo, children, isDimmed }) => {
   const isCommonHeader = headerInfo.headerType === 'common';
   const isEditModeHeader = headerInfo.headerType === 'editMode';
 
@@ -12,9 +12,15 @@ const Layout = ({ title, headerInfo, children }) => {
       <Head>
         <title>{title}</title>
       </Head>
-      <div className={s.container}>
-        {isCommonHeader && <CommonHeader />}
-        {isEditModeHeader && <EditModeHeader subTitle={headerInfo.subTitle} action={headerInfo.action} />}
+      <div className={isDimmed ? s.container + ' loading-transparent-overlay' : s.container}>
+        {isCommonHeader && <CommonHeader isDimmed={isDimmed} />}
+        {isEditModeHeader && (
+          <EditModeHeader
+            subTitle={headerInfo.subTitle}
+            action={headerInfo.action}
+            isDimmed={isDimmed}
+          />
+        )}
         {children}
       </div>
     </>

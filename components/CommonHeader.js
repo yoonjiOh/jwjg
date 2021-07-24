@@ -5,12 +5,12 @@ import { useRouter } from 'next/router';
 import { gql, useQuery } from '@apollo/client';
 import { useAuthUser, withAuthUser } from 'next-firebase-auth';
 
-const CommonHeader = () => {
+const CommonHeader = ({ isDimmed }) => {
   const AuthUser = useAuthUser();
   const router = useRouter();
 
   return (
-    <header className={s.header}>
+    <header className={isDimmed ? s.header + ' loading-transparent-overlay' : s.header}>
       <h1 className={s.logo}>
         <Link href="/">
           <img
