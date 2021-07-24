@@ -51,7 +51,7 @@ const CREATE_STANCES_BY_ISSUE = gql`
 `;
 
 const SINGLE_UPLOAD = gql`
-  mutation($file: Upload!) {
+  mutation ($file: Upload!) {
     singleUpload(file: $file) {
       filename
       mimetype
@@ -168,7 +168,7 @@ const NewIssue = props => {
   };
 
   const handleAddStanceBtn = () => {
-    const stanceIdx = _.isEmpty(stances) ? 1 : _.size(stances) + 1;
+    const stanceIdx = _.isEmpty(stances) ? 0 : _.size(stances);
     const payload: Stance = {
       ...newStance,
       orderNum: stanceIdx,
@@ -181,19 +181,11 @@ const NewIssue = props => {
   };
 
   const handleSelectTag = e => {
-    console.log('handleSelectTag', e.target);
     dispatch({
       type: 'SET_HASHTAGS',
       tag: { id: e.target.id, value: +e.target.value },
     });
   };
-
-  // const handleRemoveTag = removedHashTag => {
-  //   dispatch({
-  //     type: 'SET_HASHTAGS',
-  //     data: selected_tags.filter(tag => tag.id !== removedHashTag.name),
-  //   });
-  // };
 
   const handleFileChange = async ({
     target: {
@@ -333,7 +325,7 @@ const NewIssue = props => {
             태그 선택
           </div>
 
-          <select name="tag" multiple id="tag-select">
+          <select name="tag" multiple id="tag-select" className={style.select}>
             {tags &&
               tags.map(tag => {
                 const isSelected = selected_tags.filter(t => t.value === tag.id).length;

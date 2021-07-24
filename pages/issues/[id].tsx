@@ -1,7 +1,7 @@
 import s from './[id].module.scss';
 
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { withAuthUser, useAuthUser } from 'next-firebase-auth';
 
@@ -81,6 +81,9 @@ const GET_USER = gql`
       name
       intro
       profileImageUrl
+      myOpinion(issuesId: $issuesId) {
+        id
+      }
       userStance(issuesId: $issuesId) {
         issuesId
         usersId
@@ -95,33 +98,20 @@ const GET_USER = gql`
   }
 `;
 
-// export const getServerSideProps = withAuthUserTokenSSR({})(async ({ AuthUser, query }) => {
-//   const apolloClient = initializeApollo(null);
-//   const issueId = Number(query.id);
-//   const { data } = await apolloClient.query({
-//     query: GET_ISSUE,
-//     variables: { id: issueId },
-//   });
-
-//   const meData = await apolloClient.query({
-//     query: GET_USER,
-//     variables: { firebaseUID: AuthUser.id, issuesId: issueId },
-//   });
-
-//   return {
-//     props: {
-//       data: data,
-//       me: meData.data.userByFirebaseWithIssuesId || null,
-//     },
-//   };
-// });
-
 const CREATE_USER_STANCE = gql`
   mutation createUserStance($usersId: Int, $issuesId: Int, $stancesId: Int) {
     createUserStance(usersId: $usersId, issuesId: $issuesId, stancesId: $stancesId) {
       usersId
       issuesId
       stancesId
+    }
+  }
+`;
+
+const UPDATE_OPINION = gql`
+  mutation updateOpinion($id: Int!, $stancesId: Int) {
+    updateOpinion(id: $id, stancesId: $stancesId) {
+      id
     }
   }
 `;
@@ -150,26 +140,50 @@ const Issue: any = () => {
 
   const [createUserStance, { loading: mutationLoading, error: mutationError }] =
     useMutation(CREATE_USER_STANCE);
+  const [updateOpinion] = useMutation(UPDATE_OPINION);
+
+  useEffect(() => {
+    refetchIssue({ id: issueId });
+  }, []);
+
   if (loading || userLoading) return 'Loading...';
-  if (error || userError) return `Error! ${error.message}`;
+  if (error || userError) return `Error! ${error && error.message}`;
+
   const issue = issueData.issue;
   const tags = issue.issueHashTags.map(issueHashTag => issueHashTag.hashTags[0].name);
   const userId = userData?.userByFirebaseWithIssuesId?.id;
   const userStance = userData?.userByFirebaseWithIssuesId?.userStance;
   const myStanceId = userData?.userByFirebaseWithIssuesId?.userStance?.stancesId;
 
+  console.log('issueData', issueData);
+  console.log('userData', userData);
+
   const onStanceClick = async stancesId => {
     if (!userId) {
       router.push('/users');
       return;
     }
-    await createUserStance({
-      variables: {
-        usersId: userId,
-        issuesId: issue.id,
-        stancesId,
-      },
-    });
+    try {
+      if (userData.userByFirebaseWithIssuesId.myOpinion) {
+        await updateOpinion({
+          variables: {
+            id: userData.userByFirebaseWithIssuesId.myOpinion.id,
+            stancesId: stancesId,
+          },
+        });
+      }
+      await createUserStance({
+        variables: {
+          usersId: userId,
+          issuesId: issue.id,
+          stancesId,
+        },
+      });
+    } catch (err) {
+      console.error('[UPDATE STANCE FAILED: ]', err);
+      alert('입장 선택에 오류가 생겼어요! 조금 있다 다시 선택해 주세요');
+    }
+
     refetchIssue({ id: issueId });
     refetchUser({ issuesId: issueId, firebaseUID: AuthUser.id });
   };
@@ -192,8 +206,8 @@ const Issue: any = () => {
           </div>
           <h2 className={s.issueTitle}>{issue.title}</h2>
           <div className={s.issueSum}>
-            <p>🔥 참여 {issue.stances.length}</p>
-            <p>💬 의견 {issue.opinions.length}</p>
+            <p>🔥&nbsp;&nbsp;{'참여 ' + issue.userStances.length}</p>
+            <p>💬&nbsp;&nbsp;{'의견 ' + issue.opinions.length}</p>
           </div>
           <hr />
           {issue.content && (

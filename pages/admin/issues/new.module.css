@@ -73,7 +73,7 @@
 }
 
 .img_wrapper img {
-    max-height: 200px;
+  max-height: 200px;
 }
 
 .title_sm {
@@ -108,4 +108,13 @@
 
 .option {
   margin: 5px;
+}
+
+.select {
+  width: 100%;
+  text-align: center;
+  border: 1px solid #d9d9d9;
+}
+.select option {
+  border: 1px solid #d9d9d9;
 }

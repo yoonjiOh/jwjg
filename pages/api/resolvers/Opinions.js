@@ -45,6 +45,16 @@ const stances = async (parent, _args, context) => {
   return stances;
 };
 
+const issueStances = async (parent, args, context) => {
+  const result = await context.prisma.stances.findMany({
+    where: {
+      issuesId: parent.issuesId,
+    },
+  });
+
+  return result;
+};
+
 async function opinionComments(parent, _args, context) {
   return await context.prisma.opinionComments.findMany({
     where: { opinionsId: parent.id },
@@ -59,4 +69,5 @@ export default {
   opinionComments,
   stance,
   stances,
+  issueStances,
 };

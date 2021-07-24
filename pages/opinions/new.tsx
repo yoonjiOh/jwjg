@@ -148,10 +148,10 @@ const New = props => {
       }
 
       router.push({
-        pathname: '/issues',
+        pathname: `/issues`,
       });
     } catch (e) {
-      console.error(e);
+      window.alert('의견 등록에 실패하였습니다. 다시 시도해 주세요');
     }
   };
 
@@ -208,8 +208,9 @@ const New = props => {
           ) : (
             <div className={s.opinionHasStanceWrapper}>
               <div className={s.stanceNoti}>
-                {fruitsForStanceTitle[stance && stance.orderNum]} {stance && stance.title} 입장을
-                표하셨어요.
+                {fruitsForStanceTitle[stance && stance.orderNum] + ' '}
+                <span className={s.title}>{stance && stance.title}</span>
+                입장을 표하셨어요.
               </div>
               <div className="stancesWrapper">
                 <textarea

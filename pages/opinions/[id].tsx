@@ -27,7 +27,7 @@ const GET_DATA = gql`
       id
       content
       issuesId
-      stances {
+      issueStances {
         id
         title
         orderNum
@@ -217,7 +217,7 @@ const Opinion = props => {
     <Layout title={'개별 오피니언 페이지'} headerInfo={{ headerType: 'common' }}>
       <main className={common_style.main} style={{ background: '#fff' }}>
         <div className={s.opinionWrapper}>
-          <div className={util_s[`stanceMark-${myStanceData?.myStance?.stances?.[0].orderNum}`]} />
+          <div className={util_s[`stanceMark-${opinion.stance.orderNum}`]} />
           <div className={s.opinionContent} style={{ position: 'relative' }}>
             <div
               className={user_s.smallProfileWrapper}
@@ -233,20 +233,32 @@ const Opinion = props => {
             </div>
 
             <div className={s.stancesWrapper}>
-              {fruitsForStanceTitle[myStanceData?.myStance?.stances?.[0].orderNum]}{' '}
-              {myStanceData?.myStance?.stances?.[0].title}
+              {fruitsForStanceTitle[opinion.stance.orderNum]}&nbsp;&nbsp;{opinion.stance.title}
             </div>
             <div>{opinion.content}</div>
             <div
               className={s.likeWrapper}
               style={{ position: 'absolute', bottom: '5px', paddingLeft: '0' }}
             >
-              <img
-                src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
-                alt="좋아요 버튼"
-                style={{ marginRight: '5px' }}
-              />
-              {opinion.opinionReactsSum}
+              {isLikedByMe ? (
+                <div style={{ color: '#4494FF', cursor: 'pointer', display: 'inline-flex' }}>
+                  <img
+                    src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/blue_like.svg"
+                    alt="좋아요 버튼"
+                    style={{ marginRight: '3px' }}
+                  />{' '}
+                  {opinion.opinionReactsSum}
+                </div>
+              ) : (
+                <label style={{ cursor: 'pointer' }}>
+                  <img
+                    src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
+                    alt="좋아요 버튼"
+                    style={{ marginRight: '5px' }}
+                  />{' '}
+                  {opinion.opinionReactsSum}
+                </label>
+              )}
 
               <img
                 src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/bubble.svg"
@@ -318,9 +330,9 @@ const Opinion = props => {
           <div className={s.stanceSelectorWrapper}>
             <div className={s.guide}>댓글을 남기기 전, 입장을 선택하세요..</div>
             <div className={s.stanceWrapper}>
-              {_.head(props.data.opinions).stances.map(stance => (
+              {opinion.issueStances.map(stance => (
                 <div className={s.stance} key={stance.id} onClick={() => onStanceClick(stance.id)}>
-                  {fruitsForStanceTitle[stance.orderNum]}
+                  {fruitsForStanceTitle[stance.orderNum]}&nbsp;&nbsp;
                   {stance.title}
                 </div>
               ))}

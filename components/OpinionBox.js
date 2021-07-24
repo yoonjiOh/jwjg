@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
 
 import s from './Utils.module.scss';
@@ -40,6 +41,11 @@ const OpinionBox = ({ opinion, userStance }) => {
     opinion.opinionReacts.filter(react => react.usersId === Number(userId));
 
   const isLikedByMe = !_.isEmpty(myReact) && _.head(myReact).like;
+  const [likeState, setLikeState] = useState(!!isLikedByMe);
+
+  useEffect(() => {
+    setLikeState(!!isLikedByMe);
+  }, [likeCount]);
 
   const handleClickLike = async () => {
     try {
@@ -49,7 +55,10 @@ const OpinionBox = ({ opinion, userStance }) => {
           opinionsId: Number(opinion.id),
           like: isLikedByMe ? false : true,
         },
-      }).then(() => router.reload());
+      }).then(() => {
+        // router.reload();
+        setLikeState(!isLikedByMe);
+      });
     } catch (e) {
       console.error(e);
     }
@@ -79,31 +88,27 @@ const OpinionBox = ({ opinion, userStance }) => {
         </div>
         <div className={s.commentContentWrapper}>
           <span className={s.commentStance}>
-            {fruitsForStanceTitle[userStance?.stances[0].orderNum] +
-              ' ' +
-              userStance?.stances[0].title}
+            {fruitsForStanceTitle[opinion.stance.orderNum] + ' ' + opinion.stance.title}
           </span>
           <span style={{ marginLeft: '5px' }}>{opinion.content}</span>
         </div>
         <div className={s.likeWrapper}>
-          <span style={{ marginRight: '10px' }}></span>
-
-          {isLikedByMe ? (
-            <label style={{ color: '#4494FF', cursor: 'pointer' }}>
+          {!!likeState ? (
+            <label style={{ color: '#4494FF', cursor: 'pointer', display: 'inline-flex' }}>
               <img
                 src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/blue_like.svg"
                 alt="좋아요 버튼"
                 onClick={() => handleClickLike()}
-                style={{ marginTop: '2px', marginRight: '3px' }}
+                style={{ marginRight: '4px' }}
               />{' '}
-              <span style={{ marginRight: '7px', color: '#4494FF' }}>{likeCount}</span>
+              <span style={{ marginRight: '7px', color: '#4494FF' }}>{likeCount + 1}</span>
             </label>
           ) : (
-            <label style={{ cursor: 'pointer' }}>
+            <label style={{ cursor: 'pointer', display: 'inline-flex' }}>
               <img
                 src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
                 alt="좋아요 버튼"
-                style={{ marginTop: '2px', marginRight: '3px' }}
+                style={{ marginRight: '4px' }}
                 onClick={() => handleClickLike()}
               />{' '}
               <span style={{ marginRight: '7px' }}>{likeCount}</span>

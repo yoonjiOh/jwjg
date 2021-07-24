@@ -56,7 +56,7 @@ const CommentBox = ({ comment, me }) => {
       <div className={s[`stanceMark-${comment.stance.orderNum}`]} />
       <div className={s.commentWrapper}>
         <div className={s.profileWrapper}>
-          <div className={s.profilePlaceholder} />
+          <img className={s.profilePlaceholder} src={comment.user.profileImageUrl} />
           <div className={s.profileName}>{comment.user.name}</div>
           <div className={s.ago}>{dayjs(comment.createdAt).fromNow()}</div>
         </div>

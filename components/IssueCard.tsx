@@ -4,7 +4,7 @@ import Link from 'next/link';
 import _ from 'lodash';
 import CurrentStances from './issue/CurrentStances';
 
-function IssueCard({ issue, userId }) {
+function IssueCard({ issue }) {
   return (
     <section key={issue.id} className={s.issueCard}>
       <div className={s.image}>
@@ -28,7 +28,11 @@ function IssueCard({ issue, userId }) {
             {issue.title}
           </Link>
         </h3>
-        <CurrentStances userStances={issue.userStances} stances={issue.stances} withStats={false} />
+        <CurrentStances
+          userStances={issue.userStances}
+          stances={issue.newStances}
+          withStats={false}
+        />
         <span className={s.responseSum}>🔥 참여 {issue.userStancesSum}</span>
         <span className={s.commentSum}>💬 의견 {issue.opinionsSum}</span>
       </div>

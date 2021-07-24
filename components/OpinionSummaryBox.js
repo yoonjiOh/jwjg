@@ -35,12 +35,12 @@ const OpinionSummaryBox = ({ opinion, issues, stances }) => {
             src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
             alt="좋아요 버튼"
           />
-          <span style={{ marginLeft: '10px' }}>
+          <span style={{ marginLeft: '5px', marginRight: '10px' }}>
             {data && data.opinions && data.opinions[0].opinionReactsSum}
           </span>
 
           <img src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/bubble.svg" alt="코멘트" />
-          <span style={{ marginLeft: '10px' }}>
+          <span style={{ marginLeft: '5px' }}>
             {data && data.opinions && data.opinions[0].opinionCommentsSum}
           </span>
         </div>

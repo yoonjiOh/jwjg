@@ -153,7 +153,7 @@ const EditProfile = (props: Props) => {
 
   return (
     <Layout title={isFirst ? '프로필 만들기' : '프로필 편집'} headerInfo={headerInfo}>
-      <main className={s.main}>
+      <main className={s.main} style={{ height: '100vh' }}>
         <div style={{ padding: '20px' }}>
           {!profileImageUrl ? (
             <div

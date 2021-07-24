@@ -12,6 +12,7 @@ type User {
   userStances: [UserStance]
   userInfo: UserInfo
   user: User
+  myOpinion(issuesId: Int): Opinion
   opinions: [Opinion]
   opinionComments: [OpinionComment]
 }
@@ -45,6 +46,7 @@ type Opinion {
   opinionReacts: [OpinionReact]
   opinionReactsSum: Int
   opinionCommentsSum: Int
+  issueStances: [Stance]
 }
 
 type OpinionComment {
@@ -178,7 +180,7 @@ type Mutation {
   login(email: String!, password: String!): AuthPayload
   singleUpload(file: Upload!): UploadedFileResponse!
   createOpinion(content: String, usersId: Int!, issuesId: Int!, stancesId: Int!): Opinion
-  updateOpinion(id: Int, content: String): Opinion
+  updateOpinion(id: Int, content: String, stancesId: Int): Opinion
   createOpinionComment(
     content: String
     usersId: Int!

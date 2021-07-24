@@ -55,12 +55,19 @@ async function userInfo(parent, _args, context) {
   return result;
 }
 
+async function myOpinion(parent, args, context) {
+  return await context.prisma.opinions.findFirst({
+    where: { issuesId: args.issuesId, usersId: parent.id },
+  });
+}
+
 export default {
   name,
   user,
   userStance,
   userStances,
   userInfo,
+  myOpinion,
   opinions,
   opinionComments,
 };

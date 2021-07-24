@@ -2,19 +2,19 @@ import s from './CurrentStances.module.scss';
 import _ from 'lodash';
 
 const CurrentStances = ({ userStances, stances, withStats }) => {
-  const userStancesByStanceId = userStances.reduce((acc, userStance) => {
-    if (acc[userStance.stancesId]) {
-      acc[userStance.stancesId] += 1;
-    } else {
-      acc[userStance.stancesId] = 1;
-    }
-    return acc;
-  }, {});
+  // const userStancesByStanceId = userStances.reduce((acc, userStance) => {
+  //   if (acc[userStance.stancesId]) {
+  //     acc[userStance.stancesId] += 1;
+  //   } else {
+  //     acc[userStance.stancesId] = 1;
+  //   }
+  //   return acc;
+  // }, {});
   const newStances = stances.map(stance => {
     return {
       ...stance,
-      title: stance.fruit + ' ' + stance.title,
-      count: userStancesByStanceId[stance.id] ? userStancesByStanceId[stance.id] : 0,
+      title: stance.title,
+      count: stance.sum,
     };
   });
   const userStancesSum = userStances?.length || 0;
@@ -39,7 +39,9 @@ const CurrentStances = ({ userStances, stances, withStats }) => {
       {userStancesSum < 1 ? (
         <div>
           <p>아직 참여한 사람이 없어요 😣 이 이슈에 제일 먼저 참여해 보세요!</p>
-          <div>내 입장 남기기</div>
+          <div style={{ marginTop: '10px', marginBottom: '10px', fontWeight: 'bold' }}>
+            내 입장 남기기
+          </div>
         </div>
       ) : isStanceTied ? (
         <p className={s.comment}>
@@ -49,7 +51,7 @@ const CurrentStances = ({ userStances, stances, withStats }) => {
               if (i < isStanceTied) {
                 return (
                   <span key={stance.title}>
-                    <span className={s.blueMain}>{stance.title}</span> 입장과{' '}
+                    <span className={s.blueMain}>{stance.title}</span> 입장,{' '}
                   </span>
                 );
               } else {

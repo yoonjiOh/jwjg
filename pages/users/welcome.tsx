@@ -38,7 +38,7 @@ const welcomePage = () => {
   }
 
   return (
-    <div className={s.main} style={{ marginTop: '0' }}>
+    <div className={s.main} style={{ marginTop: '0', height: '100vh' }}>
       <div className={s.welcomeMessage}>
         <div style={{ fontSize: '5rem', width: '100%', textAlign: 'center', marginBottom: '30px' }}>
           🎉

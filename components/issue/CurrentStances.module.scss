@@ -8,7 +8,7 @@
   justify-content: space-between;
   margin-bottom: 8px;
 }
-.stanceItemBarChart{
+.stanceItemBarChart {
   position: absolute;
   border-radius: 10px;
   height: 100%;
@@ -16,14 +16,14 @@
   top: 0;
   left: 0;
 }
-.stanceItemTitle{
+.stanceItemTitle {
   font-size: $font-sm;
   color: #333;
   padding: 8px 0 9px 16px;
   z-index: 1;
   background: transparent;
 }
-.stanceItemPercentage{
+.stanceItemPercentage {
   padding: 8px 6px 9px 0;
   font-size: $font-sm;
 }
@@ -33,7 +33,7 @@
 .comment {
   min-height: 2.5em;
 }
-.stanceCount{
+.stanceCount {
   text-align: right;
   font-size: $font-sm;
   color: $gray_900;
@@ -44,16 +44,19 @@
 .🍋 {
   background-color: $lemon;
 }
-.🍇{
+.🍇 {
   background-color: $grape;
 }
-.🍈{
+.🍈 {
   background-color: $melon;
 }
-.🍊{
+.🍊 {
   background-color: $orange;
 }
-.blueMain{
+.blueMain {
   font-weight: bold;
   color: $blue_main;
+}
+.stanceItems {
+  margin-top: 5px;
 }

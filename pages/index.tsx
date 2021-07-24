@@ -130,12 +130,13 @@ const Main = props => {
                       <div className={s.responseSum}>🔥 참여 {hotIssue.userStancesSum}</div>
                       <CurrentStances
                         userStances={hotIssue.userStances}
-                        stances={hotIssue.stances}
+                        stances={hotIssue.newStances}
                         withStats={false}
                       />
                       <div className={s.barchart}>
                         {_.map(hotIssue.newStances, userStance => {
                           const ratio = (userStance.sum / hotIssue.userStancesSum) * 100;
+
                           return (
                             <div
                               key={userStance.title}

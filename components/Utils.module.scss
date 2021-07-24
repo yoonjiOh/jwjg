@@ -1,15 +1,21 @@
 @use "../styles/_variables" as *;
-$stance1: $apple;
-$stance2: $lemon;
-$stance3: $grape;
-$stance4: $melon;
-$stance5: $orange;
+$stance0: $apple;
+$stance1: $lemon;
+$stance2: $grape;
+$stance3: $melon;
+$stance4: $orange;
 
 .commentBox {
   display: flex;
   min-width: 240px;
   max-width: 480px;
   border-bottom: 1px solid #e5e5e5;
+}
+.stanceMark-0 {
+  width: 4px;
+  left: 0px;
+  top: 0px;
+  background: $stance0;
 }
 .stanceMark-1 {
   width: 4px;
@@ -35,14 +41,9 @@ $stance5: $orange;
   top: 0px;
   background: $stance4;
 }
-.stanceMark-5 {
-  width: 4px;
-  left: 0px;
-  top: 0px;
-  background: $stance5;
-}
 .commentWrapper {
   width: 100%;
+  padding-bottom: 5px;
 }
 .profileWrapper {
   height: 15px;
@@ -81,7 +82,6 @@ $stance5: $orange;
   font-size: 12px;
   font-weight: 700;
   line-height: 19.5px;
-  margin-left: 10px;
 }
 .likeWrapper {
   padding: 0 20px;
