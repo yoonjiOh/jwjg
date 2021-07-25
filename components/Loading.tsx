@@ -1,11 +1,8 @@
 const Loading = props => {
   const loadingStyle = {
     height: (props.height || '40') + 'px',
+    width: (props.width || '40') + 'px',
   };
-
-  if (props.width) {
-    loadingStyle.width = props.width + 'px';
-  }
 
   return (
     <div className="spinner" style={loadingStyle}>
