@@ -355,5 +355,5 @@ const NewIssue = props => {
     </Layout>
   );
 };
-
+/* @ts-ignore */
 export default withAuthUser()(NewIssue);
