@@ -123,7 +123,7 @@ const MyPage = props => {
   });
 
   return (
-    <Layout title={'마이페이지'} headerInfo={{ headerType: 'common' }}>
+    <Layout title={'마이페이지'} headerInfo={{ headerType: 'common' }} isDimmed={false}>
       <main className={s.main}>
         <div className={s.profileWrapper}>
           <div className={s.profileImgContainer}>

@@ -112,7 +112,7 @@ const MyHashTags = props => {
   });
 
   return (
-    <Layout title={'해시태그'} headerInfo={headerInfo}>
+    <Layout title={'해시태그'} headerInfo={headerInfo} isDimmed={false}>
       <main className={s.main}>
         {!_.isEmpty(tagsMap) && (
           <div className={s.tags} style={{ padding: '10px' }}>

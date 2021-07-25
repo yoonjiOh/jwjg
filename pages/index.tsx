@@ -105,7 +105,7 @@ const Main = props => {
   const router = useRouter();
 
   return (
-    <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }}>
+    <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }} isDimmed={false}>
       <main className={s.main}>
         <div className={s.issueWrap}>
           <h2 className={s.issue}>🔥 지금 핫한 이슈</h2>
@@ -136,7 +136,8 @@ const Main = props => {
                       <CurrentStances
                         userStances={hotIssue.userStances}
                         stances={hotIssue.newStances}
-                        withStats={false}
+                        withStats={false} // @ts-ignore
+                        onStanceClick={null}
                       />
                       <div className={s.barchart}>
                         {_.map(hotIssue.newStances, userStance => {

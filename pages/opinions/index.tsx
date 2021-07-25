@@ -105,7 +105,7 @@ const Opinions = props => {
   const router = useRouter();
 
   const AuthUser = useAuthUser();
-  const { data: userData } = useQuery(GET_USER, {
+  const { data: userData, refetch } = useQuery(GET_USER, {
     variables: { firebaseUID: AuthUser.id },
   });
   const userId = userData?.userByFirebase?.id;

@@ -73,7 +73,7 @@ const MyComments = props => {
   const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
 
   return (
-    <Layout title={'작성한 댓글'} headerInfo={headerInfo}>
+    <Layout title={'작성한 댓글'} headerInfo={headerInfo} isDimmed={false}>
       <main className={s.main}>
         {user &&
           user.opinionComments &&

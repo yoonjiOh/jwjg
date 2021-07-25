@@ -186,7 +186,7 @@ const New = props => {
 
   return (
     <>
-      <Layout title={'New Opinion'} headerInfo={headerInfo}>
+      <Layout title={'New Opinion'} headerInfo={headerInfo} isDimmed={false}>
         <main className={s.main} style={{ background: '#fff' }}>
           {!hasStance ? (
             <div>
