@@ -139,6 +139,7 @@ const userInfo = () => {
                   {residence}
                 </div>
               ))}
+              <div style={{ height: '80px', width: '100%' }}></div>
             </div>
           </div>
 

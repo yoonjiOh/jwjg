@@ -5,6 +5,7 @@ import HashTag from '../../components/HashTag';
 
 import s from './users.module.scss';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 import { gql } from '@apollo/client';
 import { initializeApollo } from '../../apollo/apolloClient';
@@ -19,6 +20,7 @@ const GET_MYPAGE_DATA = gql`
       name
       intro
       profileImageUrl
+      isAdmin
       opinions {
         id
         content
@@ -167,6 +169,15 @@ const MyPage = props => {
           </button>
         </div>
         <Divider />
+
+        {user.isAdmin && (
+          <Link href={`/admin/issues`}>
+            <button className={s.btnDefault} style={{ marginLeft: '20px' }}>
+              이슈 발제하기
+            </button>
+          </Link>
+        )}
+
         <div>
           <div
             className={s.hashTagsContainer}
