@@ -99,10 +99,12 @@ export const getServerSideProps = withAuthUserTokenSSR({})(async ({ AuthUser }) 
 });
 
 function HotIssueCard(props) {
+  const router = useRouter();
   if (!props.issue) {
     return null;
   }
   const hotIssue = props.issue;
+  const me = props.me;
 
   return (
     <div key={hotIssue.id}>
@@ -193,7 +195,6 @@ const Main = props => {
   const { issues, me } = props.data;
   const hotIssue = _.maxBy(issues, i => i.opinions.length);
   const other_issues = issues.filter(i => i.id !== hotIssue.id);
-  const router = useRouter();
 
   return (
     <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }} isDimmed={false}>
@@ -202,7 +203,7 @@ const Main = props => {
           <h2 className={s.issue}>🔥 지금 핫한 이슈</h2>
           <article className={s.issueCardWrap}>
             <section className={s.issueCard}>
-              <HotIssueCard issue={hotIssue} />
+              <HotIssueCard issue={hotIssue} me={me} />
             </section>
           </article>
         </div>

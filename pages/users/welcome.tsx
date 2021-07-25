@@ -24,6 +24,20 @@ const GET_USER = gql`
   }
 `;
 
+function UserInfo(props) {
+  if (!props.userInfo) {
+    return null;
+  }
+
+  const userInfo = props.userInfo;
+
+  return (
+    <span>
+      {userInfo.age}대 {userInfo.gender}, {userInfo.residence && `${userInfo.residence} 거주`}
+    </span>
+  );
+}
+
 const welcomePage = () => {
   const router = useRouter();
   const AuthUser = useAuthUser();
@@ -62,10 +76,7 @@ const welcomePage = () => {
 
           <span>{user.nickname}</span>
           <span>@{user.name}</span>
-          <span>
-            {user.userInfo.age}대 {user.userInfo.gender},{' '}
-            {user.userInfo.residence && `${user.userInfo.residence} 거주`}
-          </span>
+          <UserInfo userInfo={user.userInfo} />
 
           <div style={{ marginTop: '15px' }}>
             <div>{user.intro}</div>
