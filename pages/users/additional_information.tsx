@@ -94,7 +94,7 @@ const AdditionalInformation = (props: Props) => {
   };
 
   return (
-    <Layout title={'유저 상세 정보 입력'} headerInfo={headerInfo}>
+    <Layout title={'유저 상세 정보 입력'} headerInfo={headerInfo} isDimmed={false}>
       <main className={common_style.main} style={{ display: 'inline-block' }}>
         <div className={u_style.wrapper}>
           <div className={u_style.bigHeader}>사용자 이름을 정해 주세요</div>

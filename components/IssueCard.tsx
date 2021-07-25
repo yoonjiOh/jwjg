@@ -31,7 +31,8 @@ function IssueCard({ issue }) {
         <CurrentStances
           userStances={issue.userStances}
           stances={issue.newStances}
-          withStats={false}
+          withStats={false} // @ts-ignore
+          onStanceClick={null}
         />
         <span className={s.responseSum}>🔥 참여 {issue.userStancesSum}</span>
         <span className={s.commentSum}>💬 의견 {issue.opinionsSum}</span>

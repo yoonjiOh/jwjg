@@ -22,7 +22,7 @@ const IssueList = () => {
   if (error) return `Error! ${error.message}`;
 
   return (
-    <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }}>
+    <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }} isDimmed={false}>
       <main className={style.main}>
         <div className={style.wrapper}>
           <button className={style.btn_add_issue}>

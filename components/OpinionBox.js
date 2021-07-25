@@ -18,7 +18,9 @@ import _ from 'lodash';
 dayjs.extend(relativeTime);
 
 const OpinionBox = ({ opinion, userStance }) => {
-  const { data } = useQuery(GET_OPINION_REACTS_AND_COMMENTS, { variables: { id: opinion.id } });
+  const { data, refetch: refetchOpinion } = useQuery(GET_OPINION_REACTS_AND_COMMENTS, {
+    variables: { id: opinion.id },
+  });
   const [doLikeActionToOpinion] = useMutation(DO_LIKE_ACTION_TO_OPINION);
 
   const router = useRouter();
@@ -41,11 +43,10 @@ const OpinionBox = ({ opinion, userStance }) => {
     opinion.opinionReacts.filter(react => react.usersId === Number(userId));
 
   const isLikedByMe = !_.isEmpty(myReact) && _.head(myReact).like;
-  const [likeState, setLikeState] = useState(!!isLikedByMe);
 
   useEffect(() => {
-    setLikeState(!!isLikedByMe);
-  }, [likeCount]);
+    refetchOpinion({ id: opinion.id });
+  }, []);
 
   const handleClickLike = async () => {
     try {
@@ -56,8 +57,7 @@ const OpinionBox = ({ opinion, userStance }) => {
           like: isLikedByMe ? false : true,
         },
       }).then(() => {
-        // router.reload();
-        setLikeState(!isLikedByMe);
+        refetchOpinion({ id: opinion.id });
       });
     } catch (e) {
       console.error(e);
@@ -93,7 +93,7 @@ const OpinionBox = ({ opinion, userStance }) => {
           <span style={{ marginLeft: '5px' }}>{opinion.content}</span>
         </div>
         <div className={s.likeWrapper}>
-          {!!likeState ? (
+          {!!isLikedByMe ? (
             <label style={{ color: '#4494FF', cursor: 'pointer', display: 'inline-flex' }}>
               <img
                 src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/blue_like.svg"
@@ -101,7 +101,7 @@ const OpinionBox = ({ opinion, userStance }) => {
                 onClick={() => handleClickLike()}
                 style={{ marginRight: '4px' }}
               />{' '}
-              <span style={{ marginRight: '7px', color: '#4494FF' }}>{likeCount + 1}</span>
+              <span style={{ marginRight: '7px', color: '#4494FF' }}>{likeCount}</span>
             </label>
           ) : (
             <label style={{ cursor: 'pointer', display: 'inline-flex' }}>

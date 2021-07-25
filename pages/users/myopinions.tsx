@@ -95,7 +95,7 @@ const MyOpinions = props => {
   };
 
   return (
-    <Layout title={'작성한 의견'} headerInfo={headerInfo}>
+    <Layout title={'작성한 의견'} headerInfo={headerInfo} isDimmed={false}>
       <main className={s.main}>
         {user &&
           user.opinions &&

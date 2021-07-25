@@ -269,7 +269,7 @@ const NewIssue = props => {
   if (error) return `Error! ${error.message}`;
 
   return (
-    <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }}>
+    <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }} isDimmed={false}>
       <main className={style.main} style={{ background: '#fff' }}>
         <div className={style.button_wrapper}>
           <button className={style.btn_submit} style={{ marginTop: '30px' }} onClick={handleSubmit}>

@@ -47,7 +47,8 @@ const CommentBox = ({ comment, me }) => {
         router.reload();
       });
     } catch (e) {
-      console.error(e);
+      console.error('[ERROR: LIKE COMMENT FAILED]', e);
+      alert('좋아요 기능에 문제가 생겼습니다. 조금 있다 다시 시도해 주세요');
     }
   };
 

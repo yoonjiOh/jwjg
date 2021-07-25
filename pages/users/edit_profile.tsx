@@ -152,7 +152,11 @@ const EditProfile = (props: Props) => {
   };
 
   return (
-    <Layout title={isFirst ? '프로필 만들기' : '프로필 편집'} headerInfo={headerInfo}>
+    <Layout
+      title={isFirst ? '프로필 만들기' : '프로필 편집'}
+      headerInfo={headerInfo}
+      isDimmed={false}
+    >
       <main className={s.main} style={{ height: '100vh' }}>
         <div style={{ padding: '20px' }}>
           {!profileImageUrl ? (

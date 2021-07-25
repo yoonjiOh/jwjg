@@ -200,7 +200,7 @@ const IssueDetail = props => {
   };
 
   return (
-    <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }}>
+    <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }} isDimmed={false}>
       <main className={style.main} style={{ background: '#fff', position: 'relative' }}>
         <div className={style.wrapper}>
           <button

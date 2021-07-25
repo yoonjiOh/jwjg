@@ -67,7 +67,7 @@ function EmailRegistration() {
   };
 
   return (
-    <Layout title={'registration'} headerInfo={headerInfo}>
+    <Layout title={'registration'} headerInfo={headerInfo} isDimmed={false}>
       <main className={common_style.main}>
         <form onSubmit={handleSubmit} className={s.formWrapper}>
           <label>

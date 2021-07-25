@@ -121,20 +121,26 @@ const Issue: any = () => {
   const router = useRouter();
   const issueId = Number(router.query.id);
 
-  const { loading, error, data: issueData, refetch: refetchIssue } = useQuery(GET_ISSUE, {
+  const {
+    loading,
+    error,
+    data: issueData,
+    refetch: refetchIssue,
+  } = useQuery(GET_ISSUE, {
     variables: { id: issueId },
   });
   const AuthUser = useAuthUser();
-  const { loading: userLoading, error: userError, data: userData, refetch: refetchUser } = useQuery(
-    GET_USER,
-    {
-      variables: { firebaseUID: AuthUser.id, issuesId: issueId },
-    },
-  );
+  const {
+    loading: userLoading,
+    error: userError,
+    data: userData,
+    refetch: refetchUser,
+  } = useQuery(GET_USER, {
+    variables: { firebaseUID: AuthUser.id, issuesId: issueId },
+  });
 
-  const [createUserStance, { loading: mutationLoading, error: mutationError }] = useMutation(
-    CREATE_USER_STANCE,
-  );
+  const [createUserStance, { loading: mutationLoading, error: mutationError }] =
+    useMutation(CREATE_USER_STANCE);
   const [updateOpinion] = useMutation(UPDATE_OPINION);
 
   useEffect(() => {
@@ -196,7 +202,7 @@ const Issue: any = () => {
   };
 
   return (
-    <Layout title={'개별 이슈'} headerInfo={{ headerType: 'common' }}>
+    <Layout title={'개별 이슈'} headerInfo={{ headerType: 'common' }} isDimmed={false}>
       <main className={s.main}>
         <div className={s.image}>
           <img src={issue.imageUrl} />
@@ -228,7 +234,7 @@ const Issue: any = () => {
           <CurrentStances
             userStances={issue.userStances}
             stances={newStances}
-            withStats={true}
+            withStats={true} /* @ts-ignore */
             onStanceClick={onStanceClick}
           />
           <div>

@@ -29,7 +29,7 @@ const LoginForm = () => {
   };
 
   return (
-    <Layout title={'login'} headerInfo={{ headerType: 'common' }}>
+    <Layout title={'login'} headerInfo={{ headerType: 'common' }} isDimmed={false}>
       <main className={common_style.main}>
         <div className={s.greetingWrapper}>
           <h3>좌우지간</h3>

@@ -61,7 +61,7 @@ function ResetPassword() {
   };
 
   return (
-    <Layout title={headerTitle} headerInfo={headerInfo}>
+    <Layout title={headerTitle} headerInfo={headerInfo} isDimmed={false}>
       <main className={common_style.main}>
         <form onSubmit={handleSubmit}>
           <FormGroup>

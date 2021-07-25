@@ -81,7 +81,7 @@ export const getServerSideProps = withAuthUserTokenSSR({
   const { id } = query;
   const { data } = await apolloClient.query({
     query: GET_DATA,
-    variables: { id: parseInt(id) },
+    variables: { id: Number(id) },
   });
 
   return {
@@ -217,7 +217,7 @@ const Opinion = props => {
   const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
 
   return (
-    <Layout title={'개별 오피니언 페이지'} headerInfo={{ headerType: 'common' }}>
+    <Layout title={'개별 오피니언 페이지'} headerInfo={{ headerType: 'common' }} isDimmed={false}>
       <main className={common_style.main} style={{ background: '#fff' }}>
         <div className={s.opinionWrapper}>
           <div className={util_s[`stanceMark-${opinion.stance.orderNum}`]} />
