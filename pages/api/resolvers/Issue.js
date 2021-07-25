@@ -23,9 +23,16 @@ const userStances = async (parent, _args, context) => {
   });
 };
 
+const author = async (parent, _args, context) => {
+  return await context.prisma.users.findUnique({
+    where: { id: parent.authorId },
+  });
+};
+
 export default {
   opinions,
   stances,
   issueHashTags,
   userStances,
+  author,
 };

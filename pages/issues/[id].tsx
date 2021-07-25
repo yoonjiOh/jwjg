@@ -22,6 +22,12 @@ const GET_ISSUE = gql`
       title
       content
       imageUrl
+      author {
+        id
+        name
+        nickname
+        profileImageUrl
+      }
       stances {
         id
         title
@@ -121,20 +127,26 @@ const Issue: any = () => {
   const router = useRouter();
   const issueId = Number(router.query.id);
 
-  const { loading, error, data: issueData, refetch: refetchIssue } = useQuery(GET_ISSUE, {
+  const {
+    loading,
+    error,
+    data: issueData,
+    refetch: refetchIssue,
+  } = useQuery(GET_ISSUE, {
     variables: { id: issueId },
   });
   const AuthUser = useAuthUser();
-  const { loading: userLoading, error: userError, data: userData, refetch: refetchUser } = useQuery(
-    GET_USER,
-    {
-      variables: { firebaseUID: AuthUser.id, issuesId: issueId },
-    },
-  );
+  const {
+    loading: userLoading,
+    error: userError,
+    data: userData,
+    refetch: refetchUser,
+  } = useQuery(GET_USER, {
+    variables: { firebaseUID: AuthUser.id, issuesId: issueId },
+  });
 
-  const [createUserStance, { loading: mutationLoading, error: mutationError }] = useMutation(
-    CREATE_USER_STANCE,
-  );
+  const [createUserStance, { loading: mutationLoading, error: mutationError }] =
+    useMutation(CREATE_USER_STANCE);
   const [updateOpinion] = useMutation(UPDATE_OPINION);
 
   useEffect(() => {
@@ -150,7 +162,6 @@ const Issue: any = () => {
   const userStance = userData?.userByFirebaseWithIssuesId?.userStance;
   const myStanceId = userData?.userByFirebaseWithIssuesId?.userStance?.stancesId;
 
-  console.log('issue?.stances ', issue?.stances);
   const newStances = getFruitForStanceTitle(issue?.stances).reduce((acc, stance) => {
     const { id, title, fruit } = stance;
     const result = { title: '', sum: 0, fruit };
@@ -222,7 +233,13 @@ const Issue: any = () => {
             <div>
               <h3 className={s.title}>이슈의 맥</h3>
               <p className={s.body}>{issue.content}</p>
-              {/* TODO: issue 작성자 추가 */}
+              <div className={s.authorInfoWrapper}>
+                <div className={s.text}>
+                  <span>이슈지기 | {issue.author.name}</span>
+                  <span>{issue.author.nickname}</span>
+                </div>
+                <img src={issue.author.profileImageUrl} />
+              </div>
             </div>
           )}
           <h3 className={s.title}>지금 여론</h3>

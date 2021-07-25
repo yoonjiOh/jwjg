@@ -183,3 +183,8 @@
   text-align: center;
   font-size: $font-13;
 }
+.authorInfoWrapper {
+  display: flex;
+  flex-direction: row;
+  margin-top: 5px;
+}

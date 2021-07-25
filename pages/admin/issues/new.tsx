@@ -5,10 +5,12 @@ import _ from 'lodash';
 import config from '../../../config';
 import Layout from '../../../components/Layout';
 
-// import common_style from '../index.module.css';
 import style from './new.module.css';
 import { initializeApollo } from '../../../apollo/apolloClient';
 import Loading from '../../../components/Loading';
+import { withAuthUser, withAuthUserTokenSSR } from 'next-firebase-auth';
+import { GET_USERS } from '../../../lib/queries';
+
 interface Stance {
   title: String;
   orderNum: Number;
@@ -25,12 +27,13 @@ const GET_TAGS = gql`
 `;
 
 const CREATE_ISSUE = gql`
-  mutation createIssue($title: String!, $content: String!, $imageUrl: String!) {
-    createIssue(title: $title, content: $content, imageUrl: $imageUrl) {
+  mutation createIssue($title: String!, $content: String!, $imageUrl: String!, $authorId: Int!) {
+    createIssue(title: $title, content: $content, imageUrl: $imageUrl, authorId: $authorId) {
       id
       title
       content
       imageUrl
+      authorId
     }
   }
 `;
@@ -98,8 +101,6 @@ const reducer = (state, action) => {
         tags: action.data,
       };
     case 'SET_HASHTAGS':
-      console.log(1, action.tag);
-      console.log(2, state.selected_tags);
       return {
         ...state,
         selected_tags: state.selected_tags.concat(action.tag),
@@ -117,18 +118,24 @@ const reducer = (state, action) => {
   }
 };
 
-export const getServerSideProps = async context => {
+export const getServerSideProps = withAuthUserTokenSSR({})(async ({ AuthUser }) => {
   const apolloClient = initializeApollo(null);
   const { data } = await apolloClient.query({
     query: GET_TAGS,
   });
 
+  const meData = await apolloClient.query({
+    query: GET_USERS,
+    variables: { firebaseUID: AuthUser.id },
+  });
+
   return {
     props: {
       data: data,
+      me: meData.data.userByFirebase || null,
     },
   };
-};
+});
 
 const NewIssue = props => {
   const router = useRouter();
@@ -148,7 +155,6 @@ const NewIssue = props => {
   const [state, dispatch] = useReducer(reducer, initial_state);
   const { issue, addStanceMode, newStance, stances, tags, selected_tags } = state;
 
-  console.log('state', state);
   const [createIssue] = useMutation(CREATE_ISSUE);
   const [createTagsByIssue] = useMutation(CREATE_TAGS_BY_ISSUE);
   const [createStancesByIssue] = useMutation(CREATE_STANCES_BY_ISSUE);
@@ -226,6 +232,7 @@ const NewIssue = props => {
           title: issue.title,
           content: issue.content,
           imageUrl: issue.imageUrl,
+          authorId: props.me.id,
         },
       })
         .then(result => {
@@ -348,5 +355,5 @@ const NewIssue = props => {
     </Layout>
   );
 };
-
-export default NewIssue;
+/* @ts-ignore */
+export default withAuthUser()(NewIssue);

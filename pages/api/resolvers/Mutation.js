@@ -15,6 +15,7 @@ async function createIssue(parent, args, context) {
       title: args.title,
       content: args.content,
       imageUrl: args.imageUrl,
+      authorId: args.authorId,
     },
   });
 
