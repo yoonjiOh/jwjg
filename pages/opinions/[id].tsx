@@ -18,6 +18,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { fruits } from '../../utils/getFruitForStanceTitle';
 
 dayjs.extend(relativeTime);
 
@@ -214,8 +215,6 @@ const Opinion = props => {
       .catch(err => console.error(err));
   };
 
-  const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
-
   return (
     <Layout title={'개별 오피니언 페이지'} headerInfo={{ headerType: 'common' }} isDimmed={false}>
       <main className={common_style.main} style={{ background: '#fff' }}>
@@ -236,7 +235,7 @@ const Opinion = props => {
             </div>
 
             <div className={s.stancesWrapper}>
-              {fruitsForStanceTitle[opinion.stance.orderNum]}&nbsp;&nbsp;{opinion.stance.title}
+              {fruits[opinion.stance.orderNum]}&nbsp;&nbsp;{opinion.stance.title}
             </div>
             <div>{opinion.content}</div>
             <div
@@ -335,7 +334,7 @@ const Opinion = props => {
             <div className={s.stanceWrapper}>
               {opinion.issueStances.map(stance => (
                 <div className={s.stance} key={stance.id} onClick={() => onStanceClick(stance.id)}>
-                  {fruitsForStanceTitle[stance.orderNum]}&nbsp;&nbsp;
+                  {fruits[stance.orderNum]}&nbsp;&nbsp;
                   {stance.title}
                 </div>
               ))}

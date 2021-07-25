@@ -11,6 +11,7 @@ import { GET_USERS } from '../../lib/queries';
 import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
 
 import _ from 'lodash';
+import { fruits } from '../../utils/getFruitForStanceTitle';
 
 const GET_STANCE = gql`
   query stances($id: Int!) {
@@ -168,7 +169,6 @@ const New = props => {
     ),
   };
 
-  const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
   const onStanceClick = async stancesId => {
     await createUserStance({
       variables: {
@@ -199,7 +199,7 @@ const New = props => {
                       key={stance.id}
                       onClick={() => onStanceClick(stance.id)}
                     >
-                      {fruitsForStanceTitle[stance.orderNum]} {stance.title}
+                      {fruits[stance.orderNum]} {stance.title}
                     </li>
                   ))}
                 </ul>
@@ -208,7 +208,7 @@ const New = props => {
           ) : (
             <div className={s.opinionHasStanceWrapper}>
               <div className={s.stanceNoti}>
-                {fruitsForStanceTitle[stance && stance.orderNum] + ' '}
+                {fruits[stance && stance.orderNum] + ' '}
                 <span className={s.title}>{stance && stance.title}</span>
                 입장을 표하셨어요.
               </div>
