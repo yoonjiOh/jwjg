@@ -157,46 +157,48 @@ function HotIssueCard(props) {
           </div>
         </div>
         <div className={s.line}></div>
-        <div className={s.issueCardCommentWrap}>
-          <p className={s.commentSum}>💬 의견 {hotIssue.opinionsSum}</p>
-          <div className={s.issueCardComments}>
-            <div
-              onClick={() => {
-                const path = `/opinions/${hotIssue.opinions[0]?.id}`;
-                if (!me) {
-                  router.push(`/users`);
-                  return;
+        {!!hotIssue.userStancesSum && (
+          <div className={s.issueCardCommentWrap}>
+            <p className={s.commentSum}>💬 의견 {hotIssue.opinionsSum}</p>
+            <div className={s.issueCardComments}>
+              <div
+                onClick={() => {
+                  const path = `/opinions/${hotIssue.opinions[0]?.id}`;
+                  if (!me) {
+                    router.push(`/users`);
+                    return;
+                  }
+                  router.push({
+                    pathname: path,
+                  });
+                }}
+                className={s.issueCardComment}
+              >
+                <p>
+                  {fruits[hotIssue.opinions[0]?.stance?.orderNum] +
+                    ' ' +
+                    hotIssue.opinions[0]?.stance?.title}
+                </p>
+                <p>{hotIssue.opinions[0]?.content}</p>
+              </div>
+              <div
+                onClick={() =>
+                  router.push({
+                    pathname: `/opinions/${hotIssue.opinions[0]?.id}`,
+                  })
                 }
-                router.push({
-                  pathname: path,
-                });
-              }}
-              className={s.issueCardComment}
-            >
-              <p>
-                {fruits[hotIssue.opinions[0]?.stance?.orderNum] +
-                  ' ' +
-                  hotIssue.opinions[0]?.stance?.title}
-              </p>
-              <p>{hotIssue.opinions[0]?.content}</p>
-            </div>
-            <div
-              onClick={() =>
-                router.push({
-                  pathname: `/opinions/${hotIssue.opinions[0]?.id}`,
-                })
-              }
-              className={s.issueCardComment}
-            >
-              <p>
-                {fruits[hotIssue.opinions[1]?.stance?.orderNum] +
-                  ' ' +
-                  hotIssue.opinions[1]?.stance?.title}
-              </p>
-              <p>{hotIssue.opinions[1]?.content}</p>
+                className={s.issueCardComment}
+              >
+                <p>
+                  {fruits[hotIssue.opinions[1]?.stance?.orderNum] +
+                    ' ' +
+                    hotIssue.opinions[1]?.stance?.title}
+                </p>
+                <p>{hotIssue.opinions[1]?.content}</p>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
