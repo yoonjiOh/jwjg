@@ -38,6 +38,7 @@ model Issues {
   isPublished Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
+  authorId    Int
 
   Stances       Stances[]
   UserStances   UserStances[]

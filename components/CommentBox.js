@@ -3,7 +3,6 @@ import { gql, useQuery, useMutation } from '@apollo/client';
 import s from './Utils.module.scss';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { useRouter } from 'next/router';
 import _ from 'lodash';
 
 import { DO_LIKE_ACTION_TO_OPINION_COMMENT } from '../lib/queries';
@@ -21,10 +20,9 @@ const GET_OPINION_COMMENT_REACTS = gql`
 `;
 
 const CommentBox = ({ comment, me }) => {
-  const { data } = useQuery(GET_OPINION_COMMENT_REACTS, { variables: { id: comment.id } });
+  const { data, refetch } = useQuery(GET_OPINION_COMMENT_REACTS, { variables: { id: comment.id } });
   const [doLikeActionToOpinionComment] = useMutation(DO_LIKE_ACTION_TO_OPINION_COMMENT);
 
-  const router = useRouter();
   const likeCount =
     data &&
     data.opinionCommentReacts.length &&
@@ -44,7 +42,7 @@ const CommentBox = ({ comment, me }) => {
           like: isLikedByMe ? false : true,
         },
       }).then(() => {
-        router.reload();
+        refetch({ id: comment.id });
       });
     } catch (e) {
       console.error('[ERROR: LIKE COMMENT FAILED]', e);
@@ -69,21 +67,22 @@ const CommentBox = ({ comment, me }) => {
         </div>
         <div className={s.likeWrapper} onClick={() => handleClickLike(comment.id, isLikedByMe)}>
           {isLikedByMe ? (
-            <label style={{ color: '#4494FF' }}>
-              <img
-                src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/blue_like.svg"
-                alt="좋아요 버튼"
-              />
-            </label>
+            <img
+              style={{ color: '#4494FF' }}
+              src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/blue_like.svg"
+              alt="좋아요 버튼"
+            />
           ) : (
-            <label>
-              <img
-                src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
-                alt="좋아요 버튼"
-              />
-            </label>
+            <img
+              src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
+              alt="좋아요 버튼"
+            />
           )}
-          <span style={{ marginLeft: '5px' }}>{likeCount}</span>
+          <span
+            style={isLikedByMe ? { marginLeft: '5px', color: '#4494FF' } : { marginLeft: '5px' }}
+          >
+            {likeCount}
+          </span>
         </div>
       </div>
     </div>
