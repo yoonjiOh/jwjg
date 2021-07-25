@@ -32,6 +32,7 @@ function IssueCard({ issue }) {
           userStances={issue.userStances}
           stances={issue.newStances}
           withStats={false}
+          onStanceClick={() => console.log('TODO:implement this.')}
         />
         <span className={s.responseSum}>🔥 참여 {issue.userStancesSum}</span>
         <span className={s.commentSum}>💬 의견 {issue.opinionsSum}</span>
