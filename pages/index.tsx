@@ -11,6 +11,7 @@ import IssueCard from '../components/IssueCard';
 import { withAuthUser, withAuthUserTokenSSR } from 'next-firebase-auth';
 import CurrentStances from '../components/issue/CurrentStances';
 import { GET_USERS } from '../lib/queries';
+import { fruits, getFruitForStanceTitle } from '../utils/getFruitForStanceTitle';
 
 const GET_ISSUES_AND_OPINIONS = gql`
   query {
@@ -21,7 +22,7 @@ const GET_ISSUES_AND_OPINIONS = gql`
       stances {
         id
         title
-        fruit
+        orderNum
       }
       opinions {
         id
@@ -30,6 +31,7 @@ const GET_ISSUES_AND_OPINIONS = gql`
         stancesId
         stance {
           title
+          orderNum
         }
         user {
           id
@@ -52,6 +54,7 @@ export const getServerSideProps = withAuthUserTokenSSR({})(async ({ AuthUser }) 
   });
   const issues = issuesData.data.issues.map(issue => {
     const { opinions, stances, userStances } = issue;
+    console.log('stances ', stances);
     let sortedOpinions;
     if (opinions.length <= 2) {
       sortedOpinions = opinions;
@@ -60,7 +63,7 @@ export const getServerSideProps = withAuthUserTokenSSR({})(async ({ AuthUser }) 
       .sortBy(o => o.opinionReactsSum)
       .slice(0, 2)
       .value();
-    const newStances = stances.reduce((acc, stance) => {
+    const newStances = getFruitForStanceTitle(stances).reduce((acc, stance) => {
       const { id, title, fruit } = stance;
       const result = { title: '', sum: 0, fruit };
       for (const userStance of userStances) {
@@ -175,7 +178,11 @@ const Main = props => {
                           }}
                           className={s.issueCardComment}
                         >
-                          <p>{hotIssue.opinions[0]?.stance?.title}</p>
+                          <p>
+                            {fruits[hotIssue.opinions[0]?.stance?.orderNum] +
+                              ' ' +
+                              hotIssue.opinions[0]?.stance?.title}
+                          </p>
                           <p>{hotIssue.opinions[0]?.content}</p>
                         </div>
                         <div
@@ -186,7 +193,11 @@ const Main = props => {
                           }
                           className={s.issueCardComment}
                         >
-                          <p>{hotIssue.opinions[1]?.stance?.title}</p>
+                          <p>
+                            {fruits[hotIssue.opinions[1]?.stance?.orderNum] +
+                              ' ' +
+                              hotIssue.opinions[1]?.stance?.title}
+                          </p>
                           <p>{hotIssue.opinions[1]?.content}</p>
                         </div>
                       </div>

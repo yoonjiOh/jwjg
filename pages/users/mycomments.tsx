@@ -13,6 +13,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
 import { GET_USERS } from '../../lib/queries';
+import { fruits } from '../../utils/getFruitForStanceTitle';
 
 dayjs.extend(relativeTime);
 
@@ -70,8 +71,6 @@ const MyComments = props => {
     subTitle: '작성한 댓글',
   };
 
-  const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
-
   return (
     <Layout title={'작성한 댓글'} headerInfo={headerInfo} isDimmed={false}>
       <main className={s.main}>
@@ -95,7 +94,7 @@ const MyComments = props => {
 
                 <div className={util_s.commentContentWrapper}>
                   <span style={{ display: 'block' }}>
-                    {fruitsForStanceTitle[comment.stance.orderNum] + ' ' + comment.stance.title}
+                    {fruits[comment.stance.orderNum] + ' ' + comment.stance.title}
                   </span>
                   <span>{comment.content}</span>
                 </div>

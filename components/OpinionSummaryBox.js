@@ -3,6 +3,7 @@ import _ from 'lodash';
 
 import { useQuery } from '@apollo/client';
 import { GET_OPINION_REACTS_AND_COMMENTS } from '../lib/queries';
+import { fruits } from '../utils/getFruitForStanceTitle';
 
 const OpinionSummaryBox = ({ opinion, issues, stances }) => {
   const { data } = useQuery(GET_OPINION_REACTS_AND_COMMENTS, { variables: { id: opinion.id } });
@@ -14,8 +15,6 @@ const OpinionSummaryBox = ({ opinion, issues, stances }) => {
     return stance.id === opinion.stancesId;
   });
 
-  const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
-
   return (
     <div key={opinion.id} className={s.opinionSummaryBox}>
       <div className={s.issueImgBox}>
@@ -25,7 +24,7 @@ const OpinionSummaryBox = ({ opinion, issues, stances }) => {
         <p className={s.title}>{matchIssue.title}</p>
         <p className={s.content}>
           <span className={s.stanceTitle}>
-            {fruitsForStanceTitle[matchStance.orderNum]} {matchStance.title}
+            {fruits[matchStance.orderNum]} {matchStance.title}
           </span>
           {opinion.content.substring(0, 100) + '...'}
         </p>

@@ -13,6 +13,7 @@ import CurrentStances from '../../components/issue/CurrentStances';
 
 import OpinionBox from '../../components/OpinionBox';
 import Loading from '../../components/Loading';
+import { fruits, getFruitForStanceTitle } from '../../utils/getFruitForStanceTitle';
 
 const GET_ISSUE = gql`
   query issue($id: Int!) {
@@ -24,7 +25,7 @@ const GET_ISSUE = gql`
       stances {
         id
         title
-        fruit
+        orderNum
       }
       userStances {
         usersId
@@ -41,7 +42,6 @@ const GET_ISSUE = gql`
           id
           orderNum
           title
-          orderNum
         }
         user {
           id
@@ -121,26 +121,20 @@ const Issue: any = () => {
   const router = useRouter();
   const issueId = Number(router.query.id);
 
-  const {
-    loading,
-    error,
-    data: issueData,
-    refetch: refetchIssue,
-  } = useQuery(GET_ISSUE, {
+  const { loading, error, data: issueData, refetch: refetchIssue } = useQuery(GET_ISSUE, {
     variables: { id: issueId },
   });
   const AuthUser = useAuthUser();
-  const {
-    loading: userLoading,
-    error: userError,
-    data: userData,
-    refetch: refetchUser,
-  } = useQuery(GET_USER, {
-    variables: { firebaseUID: AuthUser.id, issuesId: issueId },
-  });
+  const { loading: userLoading, error: userError, data: userData, refetch: refetchUser } = useQuery(
+    GET_USER,
+    {
+      variables: { firebaseUID: AuthUser.id, issuesId: issueId },
+    },
+  );
 
-  const [createUserStance, { loading: mutationLoading, error: mutationError }] =
-    useMutation(CREATE_USER_STANCE);
+  const [createUserStance, { loading: mutationLoading, error: mutationError }] = useMutation(
+    CREATE_USER_STANCE,
+  );
   const [updateOpinion] = useMutation(UPDATE_OPINION);
 
   useEffect(() => {
@@ -156,7 +150,8 @@ const Issue: any = () => {
   const userStance = userData?.userByFirebaseWithIssuesId?.userStance;
   const myStanceId = userData?.userByFirebaseWithIssuesId?.userStance?.stancesId;
 
-  const newStances = issue?.stances.reduce((acc, stance) => {
+  console.log('issue?.stances ', issue?.stances);
+  const newStances = getFruitForStanceTitle(issue?.stances).reduce((acc, stance) => {
     const { id, title, fruit } = stance;
     const result = { title: '', sum: 0, fruit };
     for (const userStance of issue.userStances) {
@@ -245,12 +240,12 @@ const Issue: any = () => {
                   className={
                     `${s.stancePickItem}` +
                     ' ' +
-                    `${stance.id === myStanceId ? s[stance.fruit] : s.border}`
+                    `${stance.id === myStanceId ? s[fruits[stance.orderNum]] : s.border}`
                   }
                   key={stance.id}
                   onClick={() => onStanceClick(stance.id)}
                 >
-                  {stance.fruit}&nbsp;&nbsp;{stance.title}
+                  {fruits[stance.orderNum]}&nbsp;&nbsp;{stance.title}
                 </li>
               ))}
             </ul>
