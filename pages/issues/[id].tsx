@@ -127,26 +127,20 @@ const Issue: any = () => {
   const router = useRouter();
   const issueId = Number(router.query.id);
 
-  const {
-    loading,
-    error,
-    data: issueData,
-    refetch: refetchIssue,
-  } = useQuery(GET_ISSUE, {
+  const { loading, error, data: issueData, refetch: refetchIssue } = useQuery(GET_ISSUE, {
     variables: { id: issueId },
   });
   const AuthUser = useAuthUser();
-  const {
-    loading: userLoading,
-    error: userError,
-    data: userData,
-    refetch: refetchUser,
-  } = useQuery(GET_USER, {
-    variables: { firebaseUID: AuthUser.id, issuesId: issueId },
-  });
+  const { loading: userLoading, error: userError, data: userData, refetch: refetchUser } = useQuery(
+    GET_USER,
+    {
+      variables: { firebaseUID: AuthUser.id, issuesId: issueId },
+    },
+  );
 
-  const [createUserStance, { loading: mutationLoading, error: mutationError }] =
-    useMutation(CREATE_USER_STANCE);
+  const [createUserStance, { loading: mutationLoading, error: mutationError }] = useMutation(
+    CREATE_USER_STANCE,
+  );
   const [updateOpinion] = useMutation(UPDATE_OPINION);
 
   useEffect(() => {
@@ -212,8 +206,6 @@ const Issue: any = () => {
       <main className={s.main}>
         <div className={s.image}>
           <img src={issue.imageUrl} />
-        </div>
-        <div className={s.issueBody}>
           <div className={s.tags}>
             <ol>
               {tags.map((tag, idx) => (
@@ -223,6 +215,8 @@ const Issue: any = () => {
               ))}
             </ol>
           </div>
+        </div>
+        <div className={s.issueBody}>
           <h2 className={s.issueTitle}>{issue.title}</h2>
           <div className={s.issueSum}>
             <p>🔥&nbsp;&nbsp;{'참여 ' + issue.userStances.length}</p>
@@ -232,14 +226,16 @@ const Issue: any = () => {
           {issue.content && (
             <div>
               <h3 className={s.title}>이슈의 맥</h3>
-              <p className={s.body}>{issue.content}</p>
-              <div className={s.authorInfoWrapper}>
-                <div className={s.text}>
-                  <span>이슈지기 | {issue.author.name}</span>
-                  <span>{issue.author.nickname}</span>
+              <p className={s.body}>
+                {issue.content}
+                <div className={s.authorInfoWrapper}>
+                  <div className={s.text}>
+                    <span>이슈지기 | {issue.author.name}</span>
+                    <span>{issue.author.nickname}</span>
+                  </div>
+                  <img src={issue.author.profileImageUrl} />
                 </div>
-                <img src={issue.author.profileImageUrl} />
-              </div>
+              </p>
             </div>
           )}
           <h3 className={s.title}>지금 여론</h3>

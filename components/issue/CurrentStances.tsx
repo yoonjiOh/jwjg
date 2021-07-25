@@ -24,7 +24,7 @@ const CurrentStances = ({ userStances, stances, withStats, onStanceClick }) => {
     .value();
   const getIsStanceTied = () => {
     if (userStancesSum < 1) return false;
-    if (sortedUserStances[0].count !== sortedUserStances[1].count) return false;
+    if (sortedUserStances[0]?.count !== sortedUserStances[1]?.count) return false;
     let tiedStanceSum = 0;
     for (let i = 1; i < sortedUserStances.length; i++) {
       if (sortedUserStances[i - 1].count === sortedUserStances[i].count) {
@@ -37,11 +37,10 @@ const CurrentStances = ({ userStances, stances, withStats, onStanceClick }) => {
   return (
     <div>
       {userStancesSum < 1 ? (
-        <div>
-          <p>아직 참여한 사람이 없어요 😣 이 이슈에 제일 먼저 참여해 보세요!</p>
-          <div style={{ marginTop: '10px', marginBottom: '10px', fontWeight: 'bold' }}>
-            내 입장 남기기
-          </div>
+        <div className={s.comment}>
+          <p>아직 참여한 사람이 없어요 😣</p>
+          <p>이 이슈에 제일 먼저 참여해 보세요!</p>
+          <p className={s.commentToOpinion}>내 입장 남기기</p>
         </div>
       ) : isStanceTied ? (
         <p className={s.comment}>

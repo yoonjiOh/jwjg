@@ -35,6 +35,14 @@
   font-size: 12px;
   min-height: 2.5em;
 }
+.comment p {
+  margin: 0;
+  padding: 0;
+}
+.commentToOpinion {
+  color: #4494FF;
+  font-weight: bold;
+}
 .stanceCount {
   text-align: right;
   font-size: $font-sm;
