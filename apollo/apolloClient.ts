@@ -11,10 +11,8 @@ function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === 'undefined',
     link: createUploadLink({
+      fetch: fetch,
       uri: prod ? 'https://jwjg.kr/api' : 'http://localhost:3000/api',
-      fetchOptions: {
-        mode: 'no-cors',
-      },
       // credentials: 'same-origin',
     }),
     cache: new InMemoryCache(),
