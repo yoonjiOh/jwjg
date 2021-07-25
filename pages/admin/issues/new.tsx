@@ -344,6 +344,7 @@ const NewIssue = props => {
                     disabled={!!isSelected}
                     id={tag.name}
                     value={tag.id}
+                    key={tag.id}
                   >
                     {tag.name}
                   </option>

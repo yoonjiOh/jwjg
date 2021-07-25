@@ -54,7 +54,6 @@ export const getServerSideProps = withAuthUserTokenSSR({})(async ({ AuthUser }) 
   });
   const issues = issuesData.data.issues.map(issue => {
     const { opinions, stances, userStances } = issue;
-    console.log('stances ', stances);
     let sortedOpinions;
     if (opinions.length <= 2) {
       sortedOpinions = opinions;
