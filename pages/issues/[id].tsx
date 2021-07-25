@@ -232,14 +232,16 @@ const Issue: any = () => {
           {issue.content && (
             <div>
               <h3 className={s.title}>이슈의 맥</h3>
-              <p className={s.body}>{issue.content}</p>
-              <div className={s.authorInfoWrapper}>
-                <div className={s.text}>
-                  <span>이슈지기 | {issue.author.name}</span>
-                  <span>{issue.author.nickname}</span>
+              <p className={s.body}>
+                {issue.content}
+                <div className={s.authorInfoWrapper}>
+                  <div className={s.text}>
+                    <span>이슈지기 | {issue.author.name}</span>
+                    <span>{issue.author.nickname}</span>
+                  </div>
+                  <img src={issue.author.profileImageUrl} />
                 </div>
-                <img src={issue.author.profileImageUrl} />
-              </div>
+              </p>
             </div>
           )}
           <h3 className={s.title}>지금 여론</h3>
