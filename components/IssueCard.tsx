@@ -7,9 +7,11 @@ import CurrentStances from './issue/CurrentStances';
 function IssueCard({ issue }) {
   return (
     <section key={issue.id} className={s.issueCard}>
-      <div className={s.image}>
-        <img src={issue.imageUrl} />
-      </div>
+      <Link key={issue.title} href={`/issues/${issue.id}`}>
+        <div className={s.image}>
+          <img src={issue.imageUrl} />
+        </div>
+      </Link>
       <div className={s.barchart}>
         {_.map(issue.newStances, userStance => {
           const ratio = (userStance.sum / issue.userStancesSum) * 100 + '%';
@@ -28,12 +30,14 @@ function IssueCard({ issue }) {
             {issue.title}
           </Link>
         </h3>
-        <CurrentStances
-          userStances={issue.userStances}
-          stances={issue.newStances}
-          withStats={false} // @ts-ignore
-          onStanceClick={null}
-        />
+        <Link key={issue.title} href={`/issues/${issue.id}`}>
+          <CurrentStances
+            userStances={issue.userStances}
+            stances={issue.newStances}
+            withStats={false} // @ts-ignore
+            onStanceClick={null}
+          />
+        </Link>
         <span className={s.responseSum}>🔥 참여 {issue.userStancesSum}</span>
         <span className={s.commentSum}>💬 의견 {issue.opinionsSum}</span>
       </div>

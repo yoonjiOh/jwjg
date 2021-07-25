@@ -6,17 +6,9 @@ const opinions = async (parent, _args, context) => {
 };
 
 const stances = async (parent, _args, context) => {
-  const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
-  const result = await context.prisma.stances.findMany({
+  return await context.prisma.stances.findMany({
     where: { issuesId: parent.id },
   });
-  const stances = result.map((stance, index) => {
-    return {
-      ...stance,
-      fruit: fruitsForStanceTitle[index],
-    };
-  });
-  return stances;
 };
 
 const issueHashTags = async (parent, _args, context) => {

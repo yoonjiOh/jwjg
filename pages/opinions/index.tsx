@@ -16,6 +16,7 @@ import _ from 'lodash';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { DO_LIKE_ACTION_TO_OPINION } from '../../lib/queries';
+import { fruits } from '../../utils/getFruitForStanceTitle';
 
 dayjs.extend(relativeTime);
 
@@ -110,7 +111,6 @@ const Opinions = props => {
   });
   const userId = userData?.userByFirebase?.id;
 
-  const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
   const sortedData =
     selectedFilter === 'createdAt'
       ? _.cloneDeep(props.data.opinionsWithIssuesId).sort(
@@ -180,7 +180,7 @@ const Opinions = props => {
 
                   <div className={util_s.commentContentWrapper}>
                     <span style={{ display: 'block' }}>
-                      {fruitsForStanceTitle[opinion.stance.orderNum] + ' ' + opinion.stance.title}
+                      {fruits[opinion.stance.orderNum] + ' ' + opinion.stance.title}
                     </span>
                     <span>{opinion.content}</span>
                   </div>

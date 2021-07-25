@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 import _ from 'lodash';
 
 import { DO_LIKE_ACTION_TO_OPINION_COMMENT } from '../lib/queries';
+import { fruits } from '../utils/getFruitForStanceTitle';
 
 dayjs.extend(relativeTime);
 
@@ -29,7 +30,6 @@ const CommentBox = ({ comment, me }) => {
     data &&
     data.opinionCommentReacts.length &&
     data.opinionCommentReacts.filter(react => !!react.like).length;
-  const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
 
   const myReact =
     data && data.opinionCommentReacts.filter(react => react.usersId === Number(me && me.id));
@@ -63,7 +63,7 @@ const CommentBox = ({ comment, me }) => {
         </div>
         <div className={s.commentContentWrapper}>
           <span className={s.commentStance}>
-            {fruitsForStanceTitle[comment.stance.orderNum] + ' ' + comment.stance.title}
+            {fruits[comment.stance.orderNum] + ' ' + comment.stance.title}
           </span>
           <span style={{ marginLeft: '5px' }}>{comment.content}</span>
         </div>

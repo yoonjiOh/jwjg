@@ -14,6 +14,7 @@ import {
 } from '../lib/queries';
 
 import _ from 'lodash';
+import { fruits } from '../utils/getFruitForStanceTitle';
 
 dayjs.extend(relativeTime);
 
@@ -27,8 +28,6 @@ const OpinionBox = ({ opinion, userStance }) => {
 
   const likeCount = data && data.opinions && data.opinions[0].opinionReactsSum;
   const commentCount = data && data.opinions && data.opinions[0].opinionCommentsSum;
-
-  const fruitsForStanceTitle = ['🍎', '🍋', '🍇', '🍈', '🍊'];
 
   const AuthUser = useAuthUser();
   const { data: userData } = useQuery(GET_USERS, {
@@ -88,12 +87,12 @@ const OpinionBox = ({ opinion, userStance }) => {
         </div>
         <div className={s.commentContentWrapper}>
           <span className={s.commentStance}>
-            {fruitsForStanceTitle[opinion.stance.orderNum] + ' ' + opinion.stance.title}
+            {fruits[opinion.stance.orderNum] + ' ' + opinion.stance.title}
           </span>
           <span style={{ marginLeft: '5px' }}>{opinion.content}</span>
         </div>
         <div className={s.likeWrapper}>
-          {!!isLikedByMe ? (
+          {isLikedByMe ? (
             <label style={{ color: '#4494FF', cursor: 'pointer', display: 'inline-flex' }}>
               <img
                 src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/blue_like.svg"
