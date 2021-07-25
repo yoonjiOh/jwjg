@@ -98,6 +98,97 @@ export const getServerSideProps = withAuthUserTokenSSR({})(async ({ AuthUser }) 
   };
 });
 
+function HotIssueCard(props) {
+  if (!props.issue) {
+    return null;
+  }
+  const hotIssue = props.issue;
+
+  return (
+    <div key={hotIssue.id}>
+      <h3 className={s.issueTitle}>
+        <Link key={hotIssue.title} href={`/issues/${hotIssue.id}`}>
+          {hotIssue.title}
+        </Link>
+      </h3>
+      <div className={s.image}>
+        <Link key={hotIssue.title} href={`/issues/${hotIssue.id}`}>
+          <img src={hotIssue.imageUrl} />
+        </Link>
+      </div>
+      <div>
+        <div
+          onClick={() =>
+            router.push({
+              pathname: `/issues/${hotIssue.id}`,
+            })
+          }
+          className={s.issueCardTop}
+        >
+          <div className={s.responseSum}>🔥 참여 {hotIssue.userStancesSum}</div>
+          <CurrentStances
+            userStances={hotIssue.userStances}
+            stances={hotIssue.newStances}
+            withStats={false} // @ts-ignore
+            onStanceClick={null}
+          />
+          <div className={s.barchart}>
+            {_.map(hotIssue.newStances, userStance => {
+              const ratio = (userStance.sum / hotIssue.userStancesSum) * 100;
+
+              return (
+                <div
+                  key={userStance.title}
+                  className={`${s.stanceItemBarChart} ${s[userStance.fruit]}`}
+                  style={{
+                    display: 'inline-block',
+                    width: ratio + '%',
+                  }}
+                >
+                  <span>{ratio.toFixed(0)} %</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div className={s.line}></div>
+        <div className={s.issueCardCommentWrap}>
+          <p className={s.commentSum}>💬 의견 {hotIssue.opinionsSum}</p>
+          <div className={s.issueCardComments}>
+            <div
+              onClick={() => {
+                const path = `/opinions/${hotIssue.opinions[0]?.id}`;
+                if (!me) {
+                  router.push(`/users`);
+                  return;
+                }
+                router.push({
+                  pathname: path,
+                });
+              }}
+              className={s.issueCardComment}
+            >
+              <p>{hotIssue.opinions[0]?.stance?.title}</p>
+              <p>{hotIssue.opinions[0]?.content}</p>
+            </div>
+            <div
+              onClick={() =>
+                router.push({
+                  pathname: `/opinions/${hotIssue.opinions[0]?.id}`,
+                })
+              }
+              className={s.issueCardComment}
+            >
+              <p>{hotIssue.opinions[1]?.stance?.title}</p>
+              <p>{hotIssue.opinions[1]?.content}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const Main = props => {
   const { issues, me } = props.data;
   const hotIssue = _.maxBy(issues, i => i.opinions.length);
@@ -111,89 +202,7 @@ const Main = props => {
           <h2 className={s.issue}>🔥 지금 핫한 이슈</h2>
           <article className={s.issueCardWrap}>
             <section className={s.issueCard}>
-              {
-                <div key={hotIssue.id}>
-                  <h3 className={s.issueTitle}>
-                    <Link key={hotIssue.title} href={`/issues/${hotIssue.id}`}>
-                      {hotIssue.title}
-                    </Link>
-                  </h3>
-                  <div className={s.image}>
-                    <Link key={hotIssue.title} href={`/issues/${hotIssue.id}`}>
-                      <img src={hotIssue.imageUrl} />
-                    </Link>
-                  </div>
-                  <div>
-                    <div
-                      onClick={() =>
-                        router.push({
-                          pathname: `/issues/${hotIssue.id}`,
-                        })
-                      }
-                      className={s.issueCardTop}
-                    >
-                      <div className={s.responseSum}>🔥 참여 {hotIssue.userStancesSum}</div>
-                      <CurrentStances
-                        userStances={hotIssue.userStances}
-                        stances={hotIssue.newStances}
-                        withStats={false} // @ts-ignore
-                        onStanceClick={null}
-                      />
-                      <div className={s.barchart}>
-                        {_.map(hotIssue.newStances, userStance => {
-                          const ratio = (userStance.sum / hotIssue.userStancesSum) * 100;
-
-                          return (
-                            <div
-                              key={userStance.title}
-                              className={`${s.stanceItemBarChart} ${s[userStance.fruit]}`}
-                              style={{
-                                display: 'inline-block',
-                                width: ratio + '%',
-                              }}
-                            >
-                              <span>{ratio.toFixed(0)} %</span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                    <div className={s.line}></div>
-                    <div className={s.issueCardCommentWrap}>
-                      <p className={s.commentSum}>💬 의견 {hotIssue.opinionsSum}</p>
-                      <div className={s.issueCardComments}>
-                        <div
-                          onClick={() => {
-                            const path = `/opinions/${hotIssue.opinions[0]?.id}`;
-                            if (!me) {
-                              router.push(`/users`);
-                              return;
-                            }
-                            router.push({
-                              pathname: path,
-                            });
-                          }}
-                          className={s.issueCardComment}
-                        >
-                          <p>{hotIssue.opinions[0]?.stance?.title}</p>
-                          <p>{hotIssue.opinions[0]?.content}</p>
-                        </div>
-                        <div
-                          onClick={() =>
-                            router.push({
-                              pathname: `/opinions/${hotIssue.opinions[0]?.id}`,
-                            })
-                          }
-                          className={s.issueCardComment}
-                        >
-                          <p>{hotIssue.opinions[1]?.stance?.title}</p>
-                          <p>{hotIssue.opinions[1]?.content}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              }
+              <HotIssueCard issue={hotIssue} />
             </section>
           </article>
         </div>
