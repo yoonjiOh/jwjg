@@ -298,7 +298,7 @@ const Opinion = props => {
             />
             <span>댓글 달기</span>
           </div>
-          <CopyToClipboard text={`https://repol.vercel.app/opinions/${opinionId}`}>
+          <CopyToClipboard text={`https://jwjg.kr/opinions/${opinionId}`}>
             <div className={s.action}>
               <img
                 src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/share.svg"

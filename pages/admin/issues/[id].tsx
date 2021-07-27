@@ -5,6 +5,7 @@ import _ from 'lodash';
 import Layout from '../../../components/Layout';
 import style from './new.module.css';
 import { initializeApollo } from '../../../apollo/apolloClient';
+import { GET_STANCES_BY_ISSUE, SINGLE_UPLOAD_IMG } from '../../../lib/queries';
 
 interface Stance {
   title: String;
@@ -30,27 +31,6 @@ const UPDATE_ISSUE = gql`
       title
       content
       imageUrl
-    }
-  }
-`;
-
-const GET_STANCES = gql`
-  query stancesByIssueId($issuesId: Int!) {
-    stancesByIssueId(issuesId: $issuesId) {
-      id
-      title
-      orderNum
-    }
-  }
-`;
-
-const UPDATE_STANCES_BY_ISSUE = gql`
-  mutation updateStancesByIssue($id: Int, $title: String!, $orderNum: Int!, $issuesId: Int!) {
-    updateStancesByIssue(id: $id, title: $title, orderNum: $orderNum, issuesId: $issuesId) {
-      id
-      title
-      orderNum
-      issuesId
     }
   }
 `;
@@ -100,6 +80,14 @@ const reducer = (state, action) => {
         stances: state.stances.concat(action.value),
         addStanceMode: false,
       };
+    case 'SET_IMAGE_URL':
+      return {
+        ...state,
+        issue: {
+          ...state.issue,
+          imageUrl: action.value,
+        },
+      };
     default:
       return;
   }
@@ -114,7 +102,7 @@ export const getServerSideProps = async context => {
   });
 
   const { data: stances } = await apolloClient.query({
-    query: GET_STANCES,
+    query: GET_STANCES_BY_ISSUE,
     variables: { issuesId: parseInt(id) },
   });
 
@@ -132,7 +120,6 @@ const IssueDetail = props => {
 
   const issue_data = props.issue_data;
   const stances_data = props.stances_data;
-  console.log('props', props);
 
   const initial_state = {
     issue: {
@@ -151,6 +138,7 @@ const IssueDetail = props => {
 
   const [updateIssue, { data }] = useMutation(UPDATE_ISSUE);
   const [createStancesByIssue] = useMutation(CREATE_STANCES_BY_ISSUE);
+  const [mutate, { loading, error }] = useMutation(SINGLE_UPLOAD_IMG);
 
   useEffect(() => {
     dispatch({
@@ -199,6 +187,28 @@ const IssueDetail = props => {
     });
   };
 
+  const handleFileChange = async ({
+    target: {
+      validity,
+      files: [file],
+    },
+  }: any) => {
+    let uploadedS3Url;
+    validity.valid &&
+      (await mutate({
+        variables: { file },
+      })
+        .then(result => {
+          uploadedS3Url = result.data.singleUpload.url;
+        })
+        .then(() => {
+          dispatch({
+            type: 'SET_IMAGE_URL',
+            value: uploadedS3Url,
+          });
+        }));
+  };
+
   return (
     <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }} isDimmed={false}>
       <main className={style.main} style={{ background: '#fff', position: 'relative' }}>
@@ -233,6 +243,13 @@ const IssueDetail = props => {
           <div className={style.img_wrapper}>
             <p className={style.title_sm}>대표 이미지</p>
             <img alt="issue_img" src={issue.imageUrl} />
+
+            <div className={style.img_wrapper}>
+              <p className={style.title_sm}>대표 이미지</p>
+              <p>이미지를 업로드 해주세요</p>
+
+              <input type="file" required onChange={handleFileChange} />
+            </div>
           </div>
           <div className={style.title}>
             <p className={style.title_sm}>이슈 제목</p>

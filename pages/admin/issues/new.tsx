@@ -9,7 +9,7 @@ import style from './new.module.css';
 import { initializeApollo } from '../../../apollo/apolloClient';
 import Loading from '../../../components/Loading';
 import { withAuthUser, withAuthUserTokenSSR } from 'next-firebase-auth';
-import { GET_USERS } from '../../../lib/queries';
+import { GET_USERS, SINGLE_UPLOAD_IMG } from '../../../lib/queries';
 
 interface Stance {
   title: String;
@@ -50,17 +50,6 @@ const CREATE_STANCES_BY_ISSUE = gql`
   mutation createStancesByIssue($data: [IssueStancesInput]) {
     createStancesByIssue(data: $data) {
       count
-    }
-  }
-`;
-
-const SINGLE_UPLOAD = gql`
-  mutation ($file: Upload!) {
-    singleUpload(file: $file) {
-      filename
-      mimetype
-      encoding
-      url
     }
   }
 `;
@@ -159,7 +148,7 @@ const NewIssue = props => {
   const [createTagsByIssue] = useMutation(CREATE_TAGS_BY_ISSUE);
   const [createStancesByIssue] = useMutation(CREATE_STANCES_BY_ISSUE);
 
-  const [mutate, { loading, error }] = useMutation(SINGLE_UPLOAD);
+  const [mutate, { loading, error }] = useMutation(SINGLE_UPLOAD_IMG);
 
   const handleSetStanceMode = () => {
     dispatch({
@@ -269,6 +258,7 @@ const NewIssue = props => {
         });
     } catch (e) {
       console.error(e);
+      alert('이슈 발제에 실패했습니다. 개발팀에 문의해주세요', e);
     }
   };
 

@@ -9,7 +9,7 @@ import { gql } from '@apollo/client';
 import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
 import { initializeApollo } from '../../apollo/apolloClient';
 import _ from 'lodash';
-import { GET_USERS } from '../../lib/queries';
+import { GET_USERS, GET_ISSUES } from '../../lib/queries';
 
 const GET_MYPAGE_DATA = gql`
   query user($id: Int!) {
@@ -34,21 +34,6 @@ const GET_MYPAGE_DATA = gql`
       }
       userStances {
         issuesId
-      }
-    }
-  }
-`;
-
-const GET_ISSUES = gql`
-  query {
-    issues {
-      id
-      title
-      imageUrl
-      issueHashTags {
-        hashTags {
-          name
-        }
       }
     }
   }
@@ -113,7 +98,7 @@ const MyHashTags = props => {
 
   return (
     <Layout title={'해시태그'} headerInfo={headerInfo} isDimmed={false}>
-      <main className={s.main}>
+      <main className={s.main} style={{ height: '100vh' }}>
         {!_.isEmpty(tagsMap) && (
           <div className={s.tags} style={{ padding: '10px' }}>
             {_.map(tagsMap, (value, key) => {

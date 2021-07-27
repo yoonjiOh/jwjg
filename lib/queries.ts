@@ -46,3 +46,49 @@ export const DO_LIKE_ACTION_TO_OPINION = gql`
     }
   }
 `;
+
+export const GET_STANCES = gql`
+  query {
+    stances {
+      id
+      orderNum
+      title
+    }
+  }
+`;
+
+export const GET_STANCES_BY_ISSUE = gql`
+  query stancesByIssueId($issuesId: Int!) {
+    stancesByIssueId(issuesId: $issuesId) {
+      id
+      title
+      orderNum
+    }
+  }
+`;
+
+export const GET_ISSUES = gql`
+  query {
+    issues {
+      id
+      title
+      imageUrl
+      issueHashTags {
+        hashTags {
+          name
+        }
+      }
+    }
+  }
+`;
+
+export const SINGLE_UPLOAD_IMG = gql`
+  mutation ($file: Upload!) {
+    singleUpload(file: $file) {
+      filename
+      mimetype
+      encoding
+      url
+    }
+  }
+`;

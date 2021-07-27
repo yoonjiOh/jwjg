@@ -6,7 +6,7 @@ import Layout from '../../components/Layout';
 import { useRouter } from 'next/router';
 import s from './index.module.scss';
 import style from '../issues/[id].module.scss';
-import { GET_USERS } from '../../lib/queries';
+import { GET_USERS, GET_STANCES_BY_ISSUE } from '../../lib/queries';
 
 import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
 
@@ -19,16 +19,6 @@ const GET_STANCE = gql`
       id
       orderNum
       title
-    }
-  }
-`;
-
-const GET_STANCES_BY_ISSUE = gql`
-  query stancesByIssueId($issuesId: Int!) {
-    stancesByIssueId(issuesId: $issuesId) {
-      id
-      title
-      orderNum
     }
   }
 `;

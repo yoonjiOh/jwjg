@@ -11,7 +11,7 @@ import { gql } from '@apollo/client';
 import { initializeApollo } from '../../apollo/apolloClient';
 import _ from 'lodash';
 import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
-import { GET_USERS } from '../../lib/queries';
+import { GET_USERS, GET_STANCES, GET_ISSUES } from '../../lib/queries';
 
 const GET_MYPAGE_DATA = gql`
   query user($id: Int!) {
@@ -38,31 +38,6 @@ const GET_MYPAGE_DATA = gql`
       userStances {
         issuesId
       }
-    }
-  }
-`;
-
-const GET_ISSUES = gql`
-  query {
-    issues {
-      id
-      title
-      imageUrl
-      issueHashTags {
-        hashTags {
-          name
-        }
-      }
-    }
-  }
-`;
-
-const GET_STANCES = gql`
-  query {
-    stances {
-      id
-      orderNum
-      title
     }
   }
 `;
@@ -170,13 +145,13 @@ const MyPage = props => {
         </div>
         <Divider />
 
-        {user.isAdmin && (
+        {user.isAdmin ? (
           <Link href={`/admin/issues`}>
             <button className={s.btnDefault} style={{ marginLeft: '20px' }}>
               이슈 발제하기
             </button>
           </Link>
-        )}
+        ) : null}
 
         <div>
           <div
@@ -193,7 +168,7 @@ const MyPage = props => {
             {!_.isEmpty(tagsMap) && (
               <div className={s.tags}>
                 {_.map(tagsMap, (value, key) => {
-                  return <HashTag tag={key} count={value} />;
+                  return <HashTag tag={key} key={key} count={value} />;
                 })}
               </div>
             )}
@@ -218,6 +193,7 @@ const MyPage = props => {
                 opinion={opinion}
                 issues={props.issues_data.issues}
                 stances={props.stances_data.stances}
+                key={opinion.id}
               />
             ))
           ) : (

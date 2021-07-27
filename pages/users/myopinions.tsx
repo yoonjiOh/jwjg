@@ -3,6 +3,7 @@ import React from 'react';
 import Layout from '../../components/Layout';
 import OpinionSummaryBox from '../../components/OpinionSummaryBox';
 import Divider from '../../components/Divider';
+import { useRouter } from 'next/router';
 
 import s from './users.module.scss';
 
@@ -12,7 +13,7 @@ import _ from 'lodash';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
-import { GET_USERS } from '../../lib/queries';
+import { GET_USERS, GET_STANCES, GET_ISSUES } from '../../lib/queries';
 
 dayjs.extend(relativeTime);
 
@@ -30,26 +31,6 @@ const GET_MY_OPINIONS_DATA = gql`
         issuesId
         stancesId
       }
-    }
-  }
-`;
-
-const GET_ISSUES = gql`
-  query {
-    issues {
-      id
-      title
-      imageUrl
-    }
-  }
-`;
-
-const GET_STANCES = gql`
-  query {
-    stances {
-      id
-      orderNum
-      title
     }
   }
 `;
@@ -94,6 +75,8 @@ const MyOpinions = props => {
     subTitle: '작성한 의견',
   };
 
+  const router = useRouter();
+
   return (
     <Layout title={'작성한 의견'} headerInfo={headerInfo} isDimmed={false}>
       <main className={s.main}>
@@ -101,7 +84,15 @@ const MyOpinions = props => {
           user.opinions &&
           user.opinions.length &&
           user.opinions.map(opinion => (
-            <div>
+            <div
+              key={opinion.id}
+              onClick={() => {
+                router.push({
+                  pathname: '/opinions/[id]',
+                  query: { id: opinion.id },
+                });
+              }}
+            >
               <div className={s.smallProfileWrapper}>
                 <div>
                   <img src={user.profileImageUrl} />
@@ -115,6 +106,7 @@ const MyOpinions = props => {
                 opinion={opinion}
                 issues={props.issues_data.issues}
                 stances={props.stances_data.stances}
+                key={opinion.id}
               />
               <Divider />
             </div>
