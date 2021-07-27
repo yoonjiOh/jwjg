@@ -258,7 +258,7 @@ const NewIssue = props => {
         });
     } catch (e) {
       console.error(e);
-      alert('이슈 발제에 실패했습니다. 개발팀에 문의해주세요', e);
+      alert('이슈 발제에 실패했습니다. 개발팀에 문의해주세요');
     }
   };
 
