@@ -161,6 +161,10 @@ const Opinions = props => {
         {sortedData.map(opinion => {
           const myReact = opinion.opinionReacts.filter(react => react.usersId === Number(userId));
           const isLikedByMe = !_.isEmpty(myReact) && _.head(myReact).like;
+          const isContentOver = opinion?.content?.length > 128;
+          const cutContent = isContentOver
+            ? opinion?.content?.slice(0, 128) + '···'
+            : opinion.content;
 
           return (
             <div className={s.opinionWrapper} key={opinion.id}>
@@ -182,7 +186,21 @@ const Opinions = props => {
                     <span style={{ display: 'block' }}>
                       {fruits[opinion.stance.orderNum] + ' ' + opinion.stance.title}
                     </span>
-                    <span>{opinion.content}</span>
+                    <p className={s.commentContent}>
+                      {cutContent}{' '}
+                      {isContentOver && (
+                        <span
+                          onClick={() =>
+                            router.push({
+                              pathname: `/opinions/${opinion.id}`,
+                            })
+                          }
+                          className={s.commentSeeMore}
+                        >
+                          더보기
+                        </span>
+                      )}
+                    </p>
                   </div>
 
                   <div className={s.actionsWrapper}>

@@ -63,6 +63,9 @@ const OpinionBox = ({ opinion, userStance }) => {
     }
   };
 
+  const isContentOver = opinion?.content?.length > 128;
+  const cutContent = isContentOver ? opinion?.content?.slice(0, 128) + '···' : opinion.content;
+
   return (
     <div
       className={s.commentBox}
@@ -89,7 +92,10 @@ const OpinionBox = ({ opinion, userStance }) => {
           <span className={s.commentStance}>
             {fruits[opinion.stance.orderNum] + ' ' + opinion.stance.title}
           </span>
-          <span style={{ marginLeft: '5px' }}>{opinion.content}</span>
+          <p className={s.commentContent} style={{ marginLeft: '5px' }}>
+            {cutContent}
+            {isContentOver && <span className={s.commentSeeMore}>더보기</span>}
+          </p>
         </div>
         <div className={s.likeWrapper}>
           {isLikedByMe ? (

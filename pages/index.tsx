@@ -178,7 +178,7 @@ function HotIssueCard(props) {
                     ' ' +
                     hotIssue.opinions[0]?.stance?.title}
                 </p>
-                <p>{hotIssue.opinions[0]?.content}</p>
+                <p className={s.commentContent}>{hotIssue.opinions[0]?.content}</p>
               </div>
               <div
                 onClick={() =>
@@ -193,7 +193,7 @@ function HotIssueCard(props) {
                     ' ' +
                     hotIssue.opinions[1]?.stance?.title}
                 </p>
-                <p>{hotIssue.opinions[1]?.content}</p>
+                <p className={s.commentContent}>{hotIssue.opinions[1]?.content}</p>
               </div>
             </div>
           </div>

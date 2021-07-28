@@ -116,3 +116,6 @@
 .🍊 {
   background-color: $orange;
 }
+.commentContent {
+  @include ellipsis(3, 1.6)
+}
