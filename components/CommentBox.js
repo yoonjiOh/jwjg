@@ -1,14 +1,11 @@
 import { gql, useQuery, useMutation } from '@apollo/client';
 
 import s from './Utils.module.scss';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
 import _ from 'lodash';
 
 import { DO_LIKE_ACTION_TO_OPINION_COMMENT } from '../lib/queries';
+import { getPubDate } from '../lib/util';
 import { fruits } from '../utils/getFruitForStanceTitle';
-
-dayjs.extend(relativeTime);
 
 const GET_OPINION_COMMENT_REACTS = gql`
   query opinionComment($id: Int!) {
@@ -57,7 +54,7 @@ const CommentBox = ({ comment, me }) => {
         <div className={s.profileWrapper}>
           <img className={s.profilePlaceholder} src={comment.user.profileImageUrl} />
           <div className={s.profileName}>{comment.user.name}</div>
-          <div className={s.ago}>{dayjs(comment.createdAt).fromNow()}</div>
+          <div className={s.ago}>{getPubDate(comment.createdAt)}</div>
         </div>
         <div className={s.commentContentWrapper}>
           <span className={s.commentStance}>

@@ -13,12 +13,9 @@ import user_s from '../users/users.module.scss';
 import util_s from '../../components/Utils.module.scss';
 import _ from 'lodash';
 
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
 import { DO_LIKE_ACTION_TO_OPINION } from '../../lib/queries';
 import { fruits } from '../../utils/getFruitForStanceTitle';
-
-dayjs.extend(relativeTime);
+import { getPubDate } from '../../lib/util';
 
 const GET_OPINIONS_COMMENTS_DATA = gql`
   query opinions($issuesId: Int!) {
@@ -178,7 +175,7 @@ const Opinions = props => {
                     </div>
                     <div className={user_s.profileInfo}>
                       <p className={user_s.name}>{opinion.user.name}</p>
-                      <p className={user_s.ago}>{dayjs(opinion.createdAt).fromNow()}</p>
+                      <p className={user_s.ago}>{getPubDate(opinion.createdAt)}</p>
                     </div>
                   </div>
 

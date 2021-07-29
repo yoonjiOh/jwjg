@@ -127,20 +127,26 @@ const Issue: any = () => {
   const router = useRouter();
   const issueId = Number(router.query.id);
 
-  const { loading, error, data: issueData, refetch: refetchIssue } = useQuery(GET_ISSUE, {
+  const {
+    loading,
+    error,
+    data: issueData,
+    refetch: refetchIssue,
+  } = useQuery(GET_ISSUE, {
     variables: { id: issueId },
   });
   const AuthUser = useAuthUser();
-  const { loading: userLoading, error: userError, data: userData, refetch: refetchUser } = useQuery(
-    GET_USER,
-    {
-      variables: { firebaseUID: AuthUser.id, issuesId: issueId },
-    },
-  );
+  const {
+    loading: userLoading,
+    error: userError,
+    data: userData,
+    refetch: refetchUser,
+  } = useQuery(GET_USER, {
+    variables: { firebaseUID: AuthUser.id, issuesId: issueId },
+  });
 
-  const [createUserStance, { loading: mutationLoading, error: mutationError }] = useMutation(
-    CREATE_USER_STANCE,
-  );
+  const [createUserStance, { loading: mutationLoading, error: mutationError }] =
+    useMutation(CREATE_USER_STANCE);
   const [updateOpinion] = useMutation(UPDATE_OPINION);
 
   useEffect(() => {
@@ -285,7 +291,7 @@ const Issue: any = () => {
               {issue.opinions.map(opinion => (
                 <div key={opinion.id} className={s.opinionContainer}>
                   {/* @ts-ignore */}
-                  <OpinionBox opinion={opinion} userStance={userStance} />
+                  <OpinionBox opinion={opinion} />
                 </div>
               ))}
             </div>

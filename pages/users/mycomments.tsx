@@ -9,13 +9,10 @@ import { gql } from '@apollo/client';
 import { initializeApollo } from '../../apollo/apolloClient';
 import _ from 'lodash';
 
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
 import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
 import { GET_USERS } from '../../lib/queries';
 import { fruits } from '../../utils/getFruitForStanceTitle';
-
-dayjs.extend(relativeTime);
+import { getPubDate } from '../../lib/util';
 
 const GET_MY_COMMENTS_DATA = gql`
   query user($id: Int!) {
@@ -88,7 +85,7 @@ const MyComments = props => {
                   </div>
                   <div className={s.profileInfo}>
                     <p className={s.name}>{user.name}</p>
-                    <p className={s.ago}>{dayjs(comment.createdAt).fromNow()}</p>
+                    <p className={s.ago}>{getPubDate(comment.createdAt)}</p>
                   </div>
                 </div>
 

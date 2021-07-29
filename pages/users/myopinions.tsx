@@ -10,12 +10,9 @@ import s from './users.module.scss';
 import { gql } from '@apollo/client';
 import { initializeApollo } from '../../apollo/apolloClient';
 import _ from 'lodash';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
 import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
 import { GET_USERS, GET_STANCES, GET_ISSUES } from '../../lib/queries';
-
-dayjs.extend(relativeTime);
+import { getPubDate } from '../../lib/util';
 
 const GET_MY_OPINIONS_DATA = gql`
   query user($id: Int!) {
@@ -99,7 +96,7 @@ const MyOpinions = props => {
                 </div>
                 <div className={s.profileInfo}>
                   <p className={s.name}>{user.name}</p>
-                  <p className={s.ago}>{dayjs(opinion.createdAt).fromNow()}</p>
+                  <p className={s.ago}>{getPubDate(opinion.createdAt)}</p>
                 </div>
               </div>
               <OpinionSummaryBox

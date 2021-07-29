@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
 
 import s from './Utils.module.scss';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
 import { useRouter } from 'next/router';
 import { withAuthUser, useAuthUser } from 'next-firebase-auth';
 
@@ -15,10 +13,9 @@ import {
 
 import _ from 'lodash';
 import { fruits } from '../utils/getFruitForStanceTitle';
+import { getPubDate } from '../lib/util';
 
-dayjs.extend(relativeTime);
-
-const OpinionBox = ({ opinion, userStance }) => {
+const OpinionBox = ({ opinion }) => {
   const { data, refetch: refetchOpinion } = useQuery(GET_OPINION_REACTS_AND_COMMENTS, {
     variables: { id: opinion.id },
   });
@@ -86,7 +83,7 @@ const OpinionBox = ({ opinion, userStance }) => {
             <img src={opinion.user.profileImageUrl} />
           </div>
           <div className={s.profileName}>{opinion.user.name}</div>
-          <div className={s.ago}>{dayjs(opinion.createdAt).fromNow()}</div>
+          <div className={s.ago}>{getPubDate(opinion.createdAt)}</div>
         </div>
         <div className={s.commentContentWrapper}>
           <span className={s.commentStance}>
