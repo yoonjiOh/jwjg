@@ -2,11 +2,14 @@ import s from '../pages/users/users.module.scss';
 import _ from 'lodash';
 
 import { useQuery } from '@apollo/client';
+import { useRouter } from 'next/router';
+
 import { GET_OPINION_REACTS_AND_COMMENTS } from '../lib/queries';
 import { fruits } from '../utils/getFruitForStanceTitle';
 
 const OpinionSummaryBox = ({ opinion, issues, stances }) => {
   const { data } = useQuery(GET_OPINION_REACTS_AND_COMMENTS, { variables: { id: opinion.id } });
+  const router = useRouter();
 
   const matchIssue = _.find(issues, issue => {
     return issue.id === opinion.issuesId;
@@ -16,7 +19,15 @@ const OpinionSummaryBox = ({ opinion, issues, stances }) => {
   });
 
   return (
-    <div key={opinion.id} className={s.opinionSummaryBox}>
+    <div
+      key={opinion.id}
+      className={s.opinionSummaryBox}
+      onClick={() => {
+        router.push({
+          pathname: `/opinions/${opinion.id}`,
+        });
+      }}
+    >
       <div className={s.issueImgBox}>
         <img src={matchIssue.imageUrl} />
       </div>

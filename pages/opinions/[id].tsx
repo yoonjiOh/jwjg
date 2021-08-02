@@ -214,7 +214,7 @@ const Opinion = props => {
 
   return (
     <Layout title={'개별 오피니언 페이지'} headerInfo={{ headerType: 'common' }} isDimmed={false}>
-      <main className={common_style.main} style={{ background: '#fff' }}>
+      <main style={{ marginTop: '56px', background: '#fff', minHeight: '100vh' }}>
         <div className={s.opinionWrapper}>
           <div className={util_s[`stanceMark-${opinion.stance.orderNum}`]} />
           <div className={s.opinionContent} style={{ position: 'relative' }}>
@@ -234,7 +234,7 @@ const Opinion = props => {
             <div className={s.stancesWrapper}>
               {fruits[opinion.stance.orderNum]}&nbsp;&nbsp;{opinion.stance.title}
             </div>
-            <div>{opinion.content}</div>
+            <div style={{ paddingBottom: '35px' }}>{opinion.content}</div>
             <div
               className={s.likeWrapper}
               style={{ position: 'absolute', bottom: '5px', paddingLeft: '0' }}
@@ -309,8 +309,10 @@ const Opinion = props => {
         <div className={s.commentsWrapper}>
           {opinion.opinionComments &&
             opinion.opinionComments.map(comment => (
-              <CommentBox comment={comment} me={{ id: userId }} />
+              <CommentBox comment={comment} me={{ id: userId }} key={comment.id} />
             ))}
+
+          <div style={{ height: '90px' }}></div>
         </div>
 
         {myStanceData && myStanceData.myStance ? (

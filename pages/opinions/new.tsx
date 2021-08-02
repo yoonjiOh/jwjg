@@ -119,6 +119,7 @@ const New = props => {
   };
 
   const handleRegisterOpinion = async () => {
+    let newOpinionId;
     try {
       if (myOpinion) {
         await updateOpinion({
@@ -128,7 +129,7 @@ const New = props => {
           },
         });
       } else {
-        await createOpinion({
+        const newOpinion = await createOpinion({
           variables: {
             content: opinionBody,
             usersId: Number(userId),
@@ -136,10 +137,12 @@ const New = props => {
             stancesId: Number(stancesId),
           },
         });
+
+        newOpinionId = newOpinion.data.id;
       }
 
       router.push({
-        pathname: `/issues`,
+        pathname: `/opinions/${myOpinion ? myOpinion.id : newOpinionId}`,
       });
     } catch (e) {
       window.alert('의견 등록에 실패하였습니다. 다시 시도해 주세요');
