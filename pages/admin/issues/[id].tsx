@@ -95,15 +95,15 @@ const reducer = (state, action) => {
 
 export const getServerSideProps = async context => {
   const apolloClient = initializeApollo(null);
-  const { id } = context.query;
+  const { issueId } = context.query;
   const { data } = await apolloClient.query({
     query: GET_ISSUE,
-    variables: { id: parseInt(id) },
+    variables: { id: parseInt(issueId) },
   });
 
   const { data: stances } = await apolloClient.query({
     query: GET_STANCES_BY_ISSUE,
-    variables: { issuesId: parseInt(id) },
+    variables: { issuesId: parseInt(issueId) },
   });
 
   return {
@@ -116,7 +116,7 @@ export const getServerSideProps = async context => {
 
 const IssueDetail = props => {
   const router = useRouter();
-  const issue_id = Number(router.query.id);
+  const issueId = Number(router.query.issueId);
 
   const issue_data = props.issue_data;
   const stances_data = props.stances_data;
@@ -179,7 +179,7 @@ const IssueDetail = props => {
 
   const handleAddStanceBtn = () => {
     const stanceIdx = _.isEmpty(stances) ? 1 : _.size(stances) + 1;
-    const payload: Stance = { title: newStance, orderNum: stanceIdx, issuesId: issue_id };
+    const payload: Stance = { title: newStance, orderNum: stanceIdx, issuesId: issueId };
 
     dispatch({
       type: 'ADD_STANCE',
@@ -219,7 +219,7 @@ const IssueDetail = props => {
             onClick={() =>
               updateIssue({
                 variables: {
-                  id: issue_id,
+                  id: issueId,
                   title: issue.title,
                   content: issue.content,
                   imageUrl: issue.imageUrl,

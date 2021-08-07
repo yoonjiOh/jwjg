@@ -5,7 +5,7 @@ import { initializeApollo } from '../../apollo/apolloClient';
 import Layout from '../../components/Layout';
 import { useRouter } from 'next/router';
 import s from './index.module.scss';
-import style from '../issues/[id].module.scss';
+import style from '../issues/[issueId].module.scss';
 import { GET_USERS, GET_STANCES_BY_ISSUE } from '../../lib/queries';
 
 import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
@@ -80,8 +80,8 @@ const CREATE_OPINION = gql`
 `;
 
 const UPDATE_OPINION = gql`
-  mutation updateOpinion($id: Int!, $content: String) {
-    updateOpinion(id: $id, content: $content) {
+  mutation updateOpinion($id: Int!, $content: String, $stancesId: Int) {
+    updateOpinion(id: $id, content: $content, stancesId: $stancesId) {
       id
     }
   }
@@ -119,13 +119,18 @@ const New = props => {
   };
 
   const handleRegisterOpinion = async () => {
+    if (!opinionBody) {
+      window.alert('내용을 작성해 주세요.');
+      return;
+    }
     let newOpinionId;
     try {
       if (myOpinion) {
-        await updateOpinion({
+        const result = await updateOpinion({
           variables: {
             id: myOpinion.id,
             content: opinionBody,
+            stancesId: Number(stancesId),
           },
         });
       } else {
@@ -141,8 +146,9 @@ const New = props => {
         newOpinionId = newOpinion.data.id;
       }
 
+      const path = `/issues/${issueId}/opinions/${myOpinion ? myOpinion.id : newOpinionId}`;
       router.push({
-        pathname: `/opinions/${myOpinion ? myOpinion.id : newOpinionId}`,
+        pathname: path,
       });
     } catch (e) {
       window.alert('의견 등록에 실패하였습니다. 다시 시도해 주세요');

@@ -15,7 +15,7 @@ import _ from 'lodash';
 import { fruits } from '../utils/getFruitForStanceTitle';
 import { getPubDate } from '../lib/util';
 
-const OpinionBox = ({ opinion }) => {
+const OpinionBox = ({ opinion, issueId }) => {
   const { data, refetch: refetchOpinion } = useQuery(GET_OPINION_REACTS_AND_COMMENTS, {
     variables: { id: opinion.id },
   });
@@ -70,8 +70,7 @@ const OpinionBox = ({ opinion }) => {
       onClick={() => {
         if (userId) {
           router.push({
-            pathname: '/opinions/[id]',
-            query: { id: opinion.id },
+            pathname: `/issues/${issueId}/opinions/${opinion.id}`,
           });
         }
       }}

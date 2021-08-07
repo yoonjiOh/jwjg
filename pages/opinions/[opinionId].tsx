@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import { withAuthUser, AuthAction, useAuthUser, withAuthUserTokenSSR } from 'next-firebase-auth';
 
 import common_style from './index.module.scss';
-import s from './[id].module.css';
+import s from './[opinionId].module.css';
 import util_s from '../../components/Utils.module.scss';
 import user_s from '../users/users.module.scss';
 import { GET_USERS, DO_LIKE_ACTION_TO_OPINION } from '../../lib/queries';
@@ -76,7 +76,7 @@ export const getServerSideProps = withAuthUserTokenSSR({
   authPageURL: '/users',
 })(async ({ query }) => {
   const apolloClient = initializeApollo(null);
-  const { id } = query;
+  const { opinionId: id } = query;
   const { data } = await apolloClient.query({
     query: GET_DATA,
     variables: { id: Number(id) },
@@ -140,7 +140,7 @@ const Opinion = props => {
   const [createUserStance] = useMutation(CREATE_USER_STANCE);
 
   const router = useRouter();
-  const { id: opinionId } = router.query;
+  const { opinionId: opinionId } = router.query;
   const issueId = _.head(props.data.opinions).issuesId;
   const opinion = _.head(props.data.opinions);
 
@@ -167,6 +167,10 @@ const Opinion = props => {
   };
 
   const handleRegisterOpinionComment = async () => {
+    if (!opinionComment) {
+      window.alert('내용을 작성해 주세요.');
+      return;
+    }
     try {
       await createOpinionComment({
         variables: {

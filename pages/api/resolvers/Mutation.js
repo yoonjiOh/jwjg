@@ -144,7 +144,9 @@ async function createOpinion(parent, args, context) {
 }
 
 async function updateOpinion(parent, args, context) {
-  const payload = args.content ? { content: args.content } : { stancesId: args.stancesId };
+  const payload = {};
+  if (args.stancesId) payload.stancesId = args.stancesId;
+  if (args.content) payload.content = args.content;
 
   const updatedOpinion = await context.prisma.opinions.update({
     where: { id: args.id },
