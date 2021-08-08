@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
+import { AuthAction, withAuthUser } from 'next-firebase-auth';
 import { useRouter } from 'next/router';
-import { withAuthUser, AuthAction } from 'next-firebase-auth';
+import React, { useState } from 'react';
 import Layout from '../../components/Layout';
-
+import { EmailAlreadyExistError, WrongPasswordFormatError } from '../../lib/errors';
+import { firebaseUserSignup, validateEmail, validatePassword } from '../../lib/users';
 import common_style from '../index.module.scss';
 import s from './users.module.scss';
-
-import { validatePassword, firebaseUserSignup, validateEmail } from '../../lib/users';
-import { EmailAlreadyExistError, WrongPasswordFormatError } from '../../lib/errors';
 
 function EmailRegistration() {
   const [email, setEmail] = useState('');

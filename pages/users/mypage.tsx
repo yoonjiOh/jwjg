@@ -1,17 +1,16 @@
-import Layout from '../../components/Layout';
-import Divider from '../../components/Divider';
-import OpinionSummaryBox from '../../components/OpinionSummaryBox';
-import HashTag from '../../components/HashTag';
-
-import s from './users.module.scss';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
-
 import { gql } from '@apollo/client';
-import { initializeApollo } from '../../apollo/apolloClient';
+import { Users } from '@prisma/client';
 import _ from 'lodash';
-import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
-import { GET_USERS, GET_STANCES, GET_ISSUES } from '../../lib/queries';
+import { AuthAction, useAuthUser, withAuthUser, withAuthUserTokenSSR } from 'next-firebase-auth';
+import { useRouter } from 'next/router';
+import { ReactNode } from 'react';
+import { initializeApollo } from '../../apollo/apolloClient';
+import Divider from '../../components/Divider';
+import HashTag from '../../components/HashTag';
+import Layout from '../../components/Layout';
+import OpinionSummaryBox from '../../components/OpinionSummaryBox';
+import { GET_ISSUES, GET_STANCES, GET_USERS } from '../../lib/queries';
+import s from './users.module.scss';
 
 const GET_MYPAGE_DATA = gql`
   query user($id: Int!) {
@@ -42,19 +41,132 @@ const GET_MYPAGE_DATA = gql`
   }
 `;
 
+function UserPage(props) {
+  if (!props.user) {
+    return null;
+  }
+  const router = props.router;
+
+  return (
+    <main className={s.main}>
+      <div className={s.profileWrapper}>
+        <div className={s.profileImgContainer}>
+          <img src={user && user.profileImageUrl} />
+        </div>
+        <p>{user && user.name}</p>
+        <div>
+          <span className={s.count}>{user && user.opinions && user.opinions.length}</span>
+          <span
+            onClick={() => {
+              router.push(`/users/myopinions`);
+            }}
+          >
+            의견
+          </span>
+          <span className={s.count}>
+            {user && user.opinionComments && user.opinionComments.length}
+          </span>
+          <span
+            onClick={() => {
+              router.push(`/users/mycomments`);
+            }}
+          >
+            댓글
+          </span>
+        </div>
+      </div>
+
+      <hr className={s.divider} />
+
+      <div className={s.profileIntro}>
+        <div>{user && user.intro}</div>
+        <button
+          onClick={() => {
+            router.push({
+              pathname: 'edit_profile',
+            });
+          }}
+        >
+          프로필 편집
+        </button>
+      </div>
+      <Divider />
+
+      <div>
+        <div
+          className={s.hashTagsContainer}
+          onClick={() => {
+            router.push({
+              pathname: '/users/myhashtags',
+            });
+          }}
+        >
+          <h3 className={s.title}>해시태그</h3>
+          <p className={s.hashTagSum}>{_.size(tagsMap)}</p>
+          <div className={s.goNext} />
+          {!_.isEmpty(tagsMap) && (
+            <div className={s.tags}>
+              {_.map(tagsMap, (value, key) => {
+                return <HashTag tag={key} key={key} count={value} />;
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className={s.myOpinionsWrapper}>
+        <div
+          className={s.hashTagsContainer}
+          onClick={() => {
+            router.push(`/users/myopinions`);
+          }}
+        >
+          <h3 className={s.title}>작성한 의견</h3>
+          <p className={s.hashTagSum}>{user && user.opinions && user.opinions.length}</p>
+          <div className={s.goNext} />
+        </div>
+
+        {user && user.opinions && user.opinions.length ? (
+          user.opinions.map(opinion => (
+            <OpinionSummaryBox
+              opinion={opinion}
+              issues={props.issues_data.issues}
+              stances={props.stances_data.stances}
+              key={opinion.id}
+            />
+          ))
+        ) : (
+          <div className={s.noOpinions}>
+            <p>아직 작성한 의견이 없어요 🍊</p>
+            <img src={'https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/Capybara2.png'} />
+          </div>
+        )}
+      </div>
+    </main>
+  );
+}
+
 export const getServerSideProps = withAuthUserTokenSSR({
   whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
   authPageURL: '/users',
 })(async ({ AuthUser }) => {
   const apolloClient = initializeApollo(null);
-  const meData = await apolloClient.query({
+  const {
+    error,
+    data: { userByFirebase: userData },
+  }: { error?: any, data: { userByFirebase: Users } } = await apolloClient.query({
     query: GET_USERS,
     variables: { firebaseUID: AuthUser.id },
   });
-  const userId = meData?.data?.userByFirebase?.id;
+
+  if (!userData) {
+    return null;
+  }
+
+  const userId = userData.id;
   const { data } = await apolloClient.query({
     query: GET_MYPAGE_DATA,
-    variables: { id: parseInt(userId) },
+    variables: { id: userId },
   });
 
   const issues = await apolloClient.query({
@@ -74,138 +186,60 @@ export const getServerSideProps = withAuthUserTokenSSR({
   };
 });
 
-const MyPage = props => {
-  const { user } = props.data;
+interface Props {
+  data: any;
+  issues_data: any;
+  stances_data: any;
+  children?: ReactNode;
+}
+
+const MyPage = (props: Props) => {
+  const AuthUser = useAuthUser();
   const router = useRouter();
-  const relatedIssueIds = _.uniq(
-    props.data.user.opinions.map(opinion => opinion.issuesId),
-    props.data.user.userStances.map(stance => stance.issuesId),
-  );
+  // useEffect(() => {
+  //   if (!props.data) {
+  //     // AuthUser.signOut();
+  //     // router.push('/');
+  //   }
+  // }, []);
 
-  const tagsMap = {};
+  if (!props.data) {
+    AuthUser.signOut().then(() => {
+      router.push('/');
+    });
+  }
 
-  relatedIssueIds.map(issueId => {
-    const matchIssue = _.find(props.issues_data.issues, issue => issue.id === issueId);
-    if (matchIssue.issueHashTags.length) {
-      matchIssue.issueHashTags.forEach(issueHashTag => {
-        const targetTag = issueHashTag.hashTags[0].name;
+  let user;
+  if (props.data && props.data.user) {
+    user = props.data.user;
+    const relatedIssueIds = _.uniq(
+      props.data.user.opinions.map(opinion => opinion.issuesId),
+      props.data.user.userStances.map(stance => stance.issuesId),
+    );
 
-        if (tagsMap[targetTag]) {
-          tagsMap[targetTag]++;
-        } else {
-          tagsMap[targetTag] = 1;
-        }
-      });
-    }
-  });
+    const tagsMap = {};
+
+    relatedIssueIds.map(issueId => {
+      const matchIssue = _.find(props.issues_data.issues, issue => issue.id === issueId);
+      if (matchIssue.issueHashTags.length) {
+        matchIssue.issueHashTags.forEach(issueHashTag => {
+          const targetTag = issueHashTag.hashTags[0].name;
+
+          if (tagsMap[targetTag]) {
+            tagsMap[targetTag]++;
+          } else {
+            tagsMap[targetTag] = 1;
+          }
+        });
+      }
+    });
+  }
 
   return (
     <Layout title={'마이페이지'} headerInfo={{ headerType: 'common' }} isDimmed={false}>
-      <main className={s.main}>
-        <div className={s.profileWrapper}>
-          <div className={s.profileImgContainer}>
-            <img src={user && user.profileImageUrl} />
-          </div>
-          <p>{user && user.name}</p>
-          <div>
-            <span className={s.count}>{user && user.opinions && user.opinions.length}</span>
-            <span
-              onClick={() => {
-                router.push(`/users/myopinions`);
-              }}
-            >
-              의견
-            </span>
-            <span className={s.count}>
-              {user && user.opinionComments && user.opinionComments.length}
-            </span>
-            <span
-              onClick={() => {
-                router.push(`/users/mycomments`);
-              }}
-            >
-              댓글
-            </span>
-          </div>
-        </div>
-
-        <hr className={s.divider} />
-
-        <div className={s.profileIntro}>
-          <div>{user && user.intro}</div>
-          <button
-            onClick={() => {
-              router.push({
-                pathname: 'edit_profile',
-              });
-            }}
-          >
-            프로필 편집
-          </button>
-        </div>
-        <Divider />
-
-        {user.isAdmin ? (
-          <Link href={`/admin/issues`}>
-            <button className={s.btnDefault} style={{ marginLeft: '20px' }}>
-              이슈 발제하기
-            </button>
-          </Link>
-        ) : null}
-
-        <div>
-          <div
-            className={s.hashTagsContainer}
-            onClick={() => {
-              router.push({
-                pathname: '/users/myhashtags',
-              });
-            }}
-          >
-            <h3 className={s.title}>해시태그</h3>
-            <p className={s.hashTagSum}>{_.size(tagsMap)}</p>
-            <div className={s.goNext} />
-            {!_.isEmpty(tagsMap) && (
-              <div className={s.tags}>
-                {_.map(tagsMap, (value, key) => {
-                  return <HashTag tag={key} key={key} count={value} />;
-                })}
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className={s.myOpinionsWrapper}>
-          <div
-            className={s.hashTagsContainer}
-            onClick={() => {
-              router.push(`/users/myopinions`);
-            }}
-          >
-            <h3 className={s.title}>작성한 의견</h3>
-            <p className={s.hashTagSum}>{user && user.opinions && user.opinions.length}</p>
-            <div className={s.goNext} />
-          </div>
-
-          {user && user.opinions && user.opinions.length ? (
-            user.opinions.map(opinion => (
-              <OpinionSummaryBox
-                opinion={opinion}
-                issues={props.issues_data.issues}
-                stances={props.stances_data.stances}
-                key={opinion.id}
-              />
-            ))
-          ) : (
-            <div className={s.noOpinions}>
-              <p>아직 작성한 의견이 없어요 🍊</p>
-              <img src={'https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/Capybara2.png'} />
-            </div>
-          )}
-        </div>
-      </main>
+      <UserPage user={user} router={router} />
     </Layout>
   );
 };
 
-export default MyPage;
+export default withAuthUser()(MyPage);

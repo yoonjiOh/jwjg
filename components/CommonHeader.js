@@ -1,9 +1,7 @@
-import Link from 'next/link';
-import s from './Layout.module.css';
-import { useRouter } from 'next/router';
-
-import { gql, useQuery } from '@apollo/client';
 import { useAuthUser, withAuthUser } from 'next-firebase-auth';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import s from './Layout.module.css';
 
 const CommonHeader = ({ isDimmed }) => {
   const AuthUser = useAuthUser();

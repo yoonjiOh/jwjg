@@ -1,13 +1,14 @@
-import React, { useState, useEffect, useContext, createContext } from 'react';
 import firebase from 'firebase/app';
-import { JsonWebTokenError } from 'jsonwebtoken';
-import { useRouter } from 'next/router';
-import { WrongEmailError, EmailAlreadyExistError, WrongPasswordFormatError } from './errors';
-import { AuthUser } from 'next-firebase-auth';
 import { SerializedAuthUser } from '../pages/users/additional_information';
-import { ConfigurationServicePlaceholders } from 'aws-sdk/lib/config_service_placeholders';
+import {
+  EmailAlreadyExistError,
+  FacebookLoginError,
+  WrongEmailError,
+  WrongPasswordFormatError,
+} from './errors';
 
-const EMAIL_REGEX = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const EMAIL_REGEX =
+  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const MINIMUM_PASSWORD_LENGTH = 8;
 const PASSWORD_REGEX = '^(?=\\w*[a-zA-Z])(?=\\w*[0-9])';
 
@@ -131,29 +132,29 @@ export function startFacebookSigninFlow() {
     display: 'popup',
   });
 
-  firebase
+  return firebase
     .auth()
     .signInWithPopup(provider)
-    // .then(result => {
-    //   console.log(result);
-    //   /** @type {firebase.auth.OAuthCredential} */
-    //   const credential = result.credential;
+    .then(result => {
+      /** @type {firebase.auth.OAuthCredential} */
+      const credential = result.credential;
 
-    //   // The signed-in user info.
-    //   const user = result.user;
-
-    //   // This gives you a Facebook Access Token. You can use it to access the Facebook API.
-    //   // @ts-ignore
-    //   const accessToken = credential.accessToken;
-
-    //   // ...
-    // })
-    .catch(error => {
+      // // This gives you a Google Access Token. You can use it to access the Google API.
+      // const token = credential.accessToken;
+      // // The signed-in user info.
+      // const user = result.user;
+      // ...
+    })
+    .catch(async error => {
       const errorCode = error.code;
       const errorMessage = error.message;
+
+      // TODO: remove logging.
       console.log(errorCode);
       console.log(errorMessage);
 
-      alert(`Failed to login via facebook, errorCode(${errorCode}) errorMessage(${errorMessage})`);
+      throw new FacebookLoginError(
+        `Failed to login via facebook, errorCode(${errorCode}) errorMessage(${errorMessage})`,
+      );
     });
 }

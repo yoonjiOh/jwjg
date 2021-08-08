@@ -1,17 +1,16 @@
-import React from 'react';
-import s from './index.module.scss';
-import { initializeApollo } from '../apollo/apolloClient';
 import { gql } from '@apollo/client';
-import { useRouter } from 'next/router';
-
-import Link from 'next/link';
 import _ from 'lodash';
-import Layout from '../components/Layout';
-import IssueCard from '../components/IssueCard';
 import { withAuthUser, withAuthUserTokenSSR } from 'next-firebase-auth';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import React from 'react';
+import { initializeApollo } from '../apollo/apolloClient';
 import CurrentStances from '../components/issue/CurrentStances';
+import IssueCard from '../components/IssueCard';
+import Layout from '../components/Layout';
 import { GET_USERS } from '../lib/queries';
 import { fruits, getFruitForStanceTitle } from '../utils/getFruitForStanceTitle';
+import s from './index.module.scss';
 
 const GET_ISSUES_AND_OPINIONS = gql`
   query {

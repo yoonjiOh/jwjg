@@ -1,9 +1,9 @@
-import { withAuthUser, AuthAction } from 'next-firebase-auth';
-import Layout from '../../components/Layout';
+import { AuthAction, withAuthUser } from 'next-firebase-auth';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
+import Layout from '../../components/Layout';
 import common_style from '../index.module.scss';
 import u_style from './users.module.scss';
-import { useRouter } from 'next/router';
 
 const headerTitle = '약관 동의';
 
@@ -287,8 +287,4 @@ function TermsOfService() {
   );
 }
 
-export default withAuthUser({
-  whenAuthed: AuthAction.RENDER,
-  whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
-  whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
-})(TermsOfService);
+export default withAuthUser()(TermsOfService);

@@ -1,9 +1,7 @@
 import React from 'react';
+import FirebaseAuth from '../../components/FirebaseAuth';
 import Layout from '../../components/Layout';
 import common_style from '../index.module.scss';
-import style from './users.module.scss';
-import Link from 'next/link';
-import FirebaseAuth from '../../components/FirebaseAuth';
 
 class LoginForm extends React.Component {
   constructor(props) {
@@ -12,7 +10,6 @@ class LoginForm extends React.Component {
 
     this.handleEmailChange = this.handleEmailChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleEmailChange(event) {
@@ -21,12 +18,6 @@ class LoginForm extends React.Component {
 
   handlePasswordChange(event) {
     this.setState({ password: event.target.value });
-  }
-
-  handleSubmit(event) {
-    // @ts-ignore
-    alert('A email/password was submitted: ' + this.state.email + '/' + this.state.password);
-    event.preventDefault();
   }
 
   render() {

@@ -1,15 +1,31 @@
-import React from 'react';
 import Link from 'next/link';
-import s from './users.module.scss';
+import { useRouter } from 'next/router';
+import React from 'react';
 import { startFacebookSigninFlow } from '../../lib/users';
+import s from './users.module.scss';
 
 function RegistrationWidget() {
+  const router = useRouter();
+
+  const handleFacebookLogin = e => {
+    e.preventDefault();
+    // try {
+    //   await startFacebookSigninFlow();
+    // } catch (err) {
+    //   console.log(err);
+    //   return;
+    // }
+
+    // router.push('/users/terms_of_service');
+    startFacebookSigninFlow();
+  };
+
   return (
     <div className={s.registrationWidgetWrapper}>
       <Link href={`/users/email_registration`}>
         <button className={s.btnDefault}>이메일로 시작하기</button>
       </Link>
-      <button className={s.btnFacebook} onClick={startFacebookSigninFlow}>
+      <button className={s.btnFacebook} onClick={handleFacebookLogin}>
         Facebook으로 시작하기
       </button>
     </div>
