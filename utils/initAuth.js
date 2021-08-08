@@ -18,6 +18,7 @@ const initAuth = () => {
       },
       databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
     },
+    // Configuration passed to the Firebase JS SDK's initializeApp
     firebaseClientInitConfig: {
       apiKey: process.env.NEXT_PUBLIC_FIREBASE_PUBLIC_API_KEY, // required
       authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,

@@ -120,6 +120,36 @@ export async function createUserFromFirebaseUser(
   // }
 }
 
+export function getFacebookLoginResult() {
+  firebase
+    .auth()
+    .getRedirectResult()
+    .then(result => {
+      console.log(result);
+      if (result.credential) {
+        /** @type {firebase.auth.OAuthCredential} */
+        const credential = result.credential;
+
+        // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+        const token = credential.accessToken;
+        // ...
+      }
+      // The signed-in user info.
+      const user = result.user;
+    })
+    .catch(error => {
+      console.log(error);
+      // Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // The email of the user's account used.
+      const email = error.email;
+      // The firebase.auth.AuthCredential type that was used.
+      const credential = error.credential;
+      // ...
+    });
+}
+
 export function startFacebookSigninFlow() {
   const provider = new firebase.auth.FacebookAuthProvider();
   // TODO: updates scopes
@@ -132,29 +162,28 @@ export function startFacebookSigninFlow() {
     display: 'popup',
   });
 
-  return firebase
-    .auth()
-    .signInWithPopup(provider)
-    .then(result => {
-      /** @type {firebase.auth.OAuthCredential} */
-      const credential = result.credential;
+  return firebase.auth().signInWithRedirect(provider);
+  // .signInWithPopup(provider)
+  // .then(result => {
+  //   /** @type {firebase.auth.OAuthCredential} */
+  //   const credential = result.credential;
 
-      // // This gives you a Google Access Token. You can use it to access the Google API.
-      // const token = credential.accessToken;
-      // // The signed-in user info.
-      // const user = result.user;
-      // ...
-    })
-    .catch(async error => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
+  //   // // This gives you a Google Access Token. You can use it to access the Google API.
+  //   // const token = credential.accessToken;
+  //   // // The signed-in user info.
+  //   // const user = result.user;
+  //   // ...
+  // })
+  // .catch(async error => {
+  //   const errorCode = error.code;
+  //   const errorMessage = error.message;
 
-      // TODO: remove logging.
-      console.log(errorCode);
-      console.log(errorMessage);
+  //   // TODO: remove logging.
+  //   console.log(errorCode);
+  //   console.log(errorMessage);
 
-      throw new FacebookLoginError(
-        `Failed to login via facebook, errorCode(${errorCode}) errorMessage(${errorMessage})`,
-      );
-    });
+  //   throw new FacebookLoginError(
+  //     `Failed to login via facebook, errorCode(${errorCode}) errorMessage(${errorMessage})`,
+  //   );
+  // });
 }

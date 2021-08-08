@@ -1,23 +1,24 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { startFacebookSigninFlow } from '../../lib/users';
+import { getFacebookLoginResult, startFacebookSigninFlow } from '../../lib/users';
 import s from './users.module.scss';
 
 function RegistrationWidget() {
   const router = useRouter();
 
-  const handleFacebookLogin = e => {
+  const handleFacebookLogin = async e => {
     e.preventDefault();
-    // try {
-    //   await startFacebookSigninFlow();
-    // } catch (err) {
-    //   console.log(err);
-    //   return;
-    // }
-
-    // router.push('/users/terms_of_service');
-    startFacebookSigninFlow();
+    try {
+      console.log('here');
+      await startFacebookSigninFlow();
+      console.log('here');
+      await getFacebookLoginResult();
+    } catch (err) {
+      console.log(err);
+      return;
+    }
+    console.log('here');
   };
 
   return (

@@ -46,6 +46,8 @@ function UserPage(props) {
     return null;
   }
   const router = props.router;
+  const user = props.user;
+  const tagsMap = props.tagsMap;
 
   return (
     <main className={s.main}>
@@ -179,6 +181,7 @@ export const getServerSideProps = withAuthUserTokenSSR({
 
   return {
     props: {
+      user: userData,
       data: data,
       issues_data: issues.data,
       stances_data: stances.data,
@@ -191,6 +194,7 @@ interface Props {
   issues_data: any;
   stances_data: any;
   children?: ReactNode;
+  user: any;
 }
 
 const MyPage = (props: Props) => {
@@ -209,15 +213,13 @@ const MyPage = (props: Props) => {
     });
   }
 
-  let user;
-  if (props.data && props.data.user) {
-    user = props.data.user;
+  const tagsMap = {};
+  const user = props.user;
+  if (props.data && user) {
     const relatedIssueIds = _.uniq(
       props.data.user.opinions.map(opinion => opinion.issuesId),
       props.data.user.userStances.map(stance => stance.issuesId),
     );
-
-    const tagsMap = {};
 
     relatedIssueIds.map(issueId => {
       const matchIssue = _.find(props.issues_data.issues, issue => issue.id === issueId);
@@ -237,7 +239,7 @@ const MyPage = (props: Props) => {
 
   return (
     <Layout title={'마이페이지'} headerInfo={{ headerType: 'common' }} isDimmed={false}>
-      <UserPage user={user} router={router} />
+      <UserPage user={props.user} router={router} tagsMap={tagsMap} />
     </Layout>
   );
 };
