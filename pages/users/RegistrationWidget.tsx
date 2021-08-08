@@ -10,15 +10,11 @@ function RegistrationWidget() {
   const handleFacebookLogin = async e => {
     e.preventDefault();
     try {
-      console.log('here');
       await startFacebookSigninFlow();
-      console.log('here');
-      await getFacebookLoginResult();
     } catch (err) {
       console.log(err);
       return;
     }
-    console.log('here');
   };
 
   return (
