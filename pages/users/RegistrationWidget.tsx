@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { getFacebookLoginResult, startFacebookSigninFlow } from '../../lib/users';
+import { startFacebookSigninFlow } from '../../lib/users';
 import s from './users.module.scss';
 
 function RegistrationWidget() {
