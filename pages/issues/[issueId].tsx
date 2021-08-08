@@ -1,4 +1,4 @@
-import s from './[id].module.scss';
+import s from './[issueId].module.scss';
 
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
@@ -115,17 +115,9 @@ const CREATE_USER_STANCE = gql`
   }
 `;
 
-const UPDATE_OPINION = gql`
-  mutation updateOpinion($id: Int!, $stancesId: Int) {
-    updateOpinion(id: $id, stancesId: $stancesId) {
-      id
-    }
-  }
-`;
-
 const Issue: any = () => {
   const router = useRouter();
-  const issueId = Number(router.query.id);
+  const issueId = Number(router.query.issueId);
 
   const {
     loading,
@@ -147,7 +139,6 @@ const Issue: any = () => {
 
   const [createUserStance, { loading: mutationLoading, error: mutationError }] =
     useMutation(CREATE_USER_STANCE);
-  const [updateOpinion] = useMutation(UPDATE_OPINION);
 
   useEffect(() => {
     refetchIssue({ id: issueId });
@@ -183,14 +174,6 @@ const Issue: any = () => {
       return;
     }
     try {
-      if (userData.userByFirebaseWithIssuesId.myOpinion) {
-        await updateOpinion({
-          variables: {
-            id: userData.userByFirebaseWithIssuesId.myOpinion.id,
-            stancesId: stancesId,
-          },
-        });
-      }
       await createUserStance({
         variables: {
           usersId: userId,
@@ -273,10 +256,7 @@ const Issue: any = () => {
             className={s.opinionTitleContainer}
             onClick={() => {
               router.push({
-                pathname: '/opinions',
-                query: {
-                  issueId: issue.id,
-                },
+                pathname: `/issues/${issue.id}/opinions`,
               });
             }}
           >
@@ -291,7 +271,7 @@ const Issue: any = () => {
               {issue.opinions.map(opinion => (
                 <div key={opinion.id} className={s.opinionContainer}>
                   {/* @ts-ignore */}
-                  <OpinionBox opinion={opinion} />
+                  <OpinionBox opinion={opinion} issueId={issue.id} />
                 </div>
               ))}
             </div>
@@ -299,10 +279,7 @@ const Issue: any = () => {
               <div
                 onClick={() => {
                   router.push({
-                    pathname: '/opinions',
-                    query: {
-                      issueId: issue.id,
-                    },
+                    pathname: `/issues/${issue.id}/opinions`,
                   });
                 }}
               >

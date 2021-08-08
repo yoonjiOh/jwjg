@@ -313,9 +313,11 @@ const NewIssue = props => {
             </div>
           )}
 
-          <button className={style.btn_add_option} onClick={handleSetStanceMode}>
-            옵션 추가하기
-          </button>
+          {stances.length < 5 ? (
+            <button className={style.btn_add_option} onClick={handleSetStanceMode}>
+              옵션 추가하기
+            </button>
+          ) : null}
 
           <div>선택된 태그: {selected_tags.map(tag => tag.id).join(', ')}</div>
 

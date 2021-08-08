@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import { withAuthUser, AuthAction, useAuthUser, withAuthUserTokenSSR } from 'next-firebase-auth';
 
 import common_style from './index.module.scss';
-import s from './[id].module.css';
+import s from './[opinionId].module.css';
 import util_s from '../../components/Utils.module.scss';
 import user_s from '../users/users.module.scss';
 import { GET_USERS, DO_LIKE_ACTION_TO_OPINION } from '../../lib/queries';
@@ -76,7 +76,7 @@ export const getServerSideProps = withAuthUserTokenSSR({
   authPageURL: '/users',
 })(async ({ query }) => {
   const apolloClient = initializeApollo(null);
-  const { id } = query;
+  const { opinionId: id } = query;
   const { data } = await apolloClient.query({
     query: GET_DATA,
     variables: { id: Number(id) },
@@ -140,7 +140,7 @@ const Opinion = props => {
   const [createUserStance] = useMutation(CREATE_USER_STANCE);
 
   const router = useRouter();
-  const { id: opinionId } = router.query;
+  const { opinionId: opinionId } = router.query;
   const issueId = _.head(props.data.opinions).issuesId;
   const opinion = _.head(props.data.opinions);
 
@@ -167,6 +167,10 @@ const Opinion = props => {
   };
 
   const handleRegisterOpinionComment = async () => {
+    if (!opinionComment) {
+      window.alert('내용을 작성해 주세요.');
+      return;
+    }
     try {
       await createOpinionComment({
         variables: {
@@ -214,7 +218,7 @@ const Opinion = props => {
 
   return (
     <Layout title={'개별 오피니언 페이지'} headerInfo={{ headerType: 'common' }} isDimmed={false}>
-      <main className={common_style.main} style={{ background: '#fff' }}>
+      <main style={{ marginTop: '56px', background: '#fff', minHeight: '100vh' }}>
         <div className={s.opinionWrapper}>
           <div className={util_s[`stanceMark-${opinion.stance.orderNum}`]} />
           <div className={s.opinionContent} style={{ position: 'relative' }}>
@@ -234,7 +238,7 @@ const Opinion = props => {
             <div className={s.stancesWrapper}>
               {fruits[opinion.stance.orderNum]}&nbsp;&nbsp;{opinion.stance.title}
             </div>
-            <div>{opinion.content}</div>
+            <div style={{ paddingBottom: '35px' }}>{opinion.content}</div>
             <div
               className={s.likeWrapper}
               style={{ position: 'absolute', bottom: '5px', paddingLeft: '0' }}
@@ -309,8 +313,10 @@ const Opinion = props => {
         <div className={s.commentsWrapper}>
           {opinion.opinionComments &&
             opinion.opinionComments.map(comment => (
-              <CommentBox comment={comment} me={{ id: userId }} />
+              <CommentBox comment={comment} me={{ id: userId }} key={comment.id} />
             ))}
+
+          <div style={{ height: '90px' }}></div>
         </div>
 
         {myStanceData && myStanceData.myStance ? (

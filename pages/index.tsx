@@ -161,7 +161,7 @@ function HotIssueCard(props) {
             <div className={s.issueCardComments}>
               <div
                 onClick={() => {
-                  const path = `/opinions/${hotIssue.opinions[0]?.id}`;
+                  const path = `/issues/${hotIssue.id}/opinions/${hotIssue.opinions[0]?.id}`;
                   if (!me) {
                     router.push(`/users`);
                     return;
@@ -182,7 +182,7 @@ function HotIssueCard(props) {
               <div
                 onClick={() =>
                   router.push({
-                    pathname: `/opinions/${hotIssue.opinions[0]?.id}`,
+                    pathname: `issues/${hotIssue.id}/opinions/${hotIssue.opinions[0]?.id}`,
                   })
                 }
                 className={s.issueCardComment}

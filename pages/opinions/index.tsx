@@ -264,7 +264,7 @@ const Opinions = props => {
               <div>
                 {opinion.opinionComments &&
                   opinion.opinionComments.map(comment => (
-                    <CommentBox comment={comment} me={{ id: Number(userId) }} />
+                    <CommentBox comment={comment} me={{ id: Number(userId) }} key={comment.id} />
                   ))}
               </div>
             </div>

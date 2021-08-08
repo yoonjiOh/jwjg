@@ -75,7 +75,6 @@
 .opinionWrapper {
   min-width: 240px;
   max-width: 480px;
-  height: 320px;
   display: flex;
 }
 .opinionContent {
