@@ -78,17 +78,14 @@
 }
 .formWrapper {
   padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
 }
 .inputForm {
-  display: block;
+  display: inline-block;
   border: 0;
   border-bottom: 1px solid #c4c4c4;
   height: 30px;
-  width: 320px;
+  width: 100%;
+  font-size: 14px;
 }
 .inputForm:focus {
   outline: none;
@@ -337,17 +334,17 @@
 }
 
 .wrapper {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  padding-top: 32px;
 }
 .bigHeader {
   color: #333;
   font-size: 20px;
   font-weight: 700;
-  padding: 10px;
-  margin-top: 30px;
+  text-align: center;
+}
+.label {
+  font-size: 12px;
+  color: #4494FF;
 }
 .agreeBread {
   display: flex;
@@ -372,11 +369,14 @@
   color: #4494ff;
 }
 .inputWrapper {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  max-width: 580px;
+  position: relative;
 }
 .inputWrapper img {
+  position: absolute;
+  top: 0;
+  right: 0;
+  vertical-align: middle;
   width: 28px;
   cursor: pointer;
 }
