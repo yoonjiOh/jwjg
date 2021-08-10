@@ -2,7 +2,6 @@ import React from 'react';
 import { gql, useQuery } from '@apollo/client';
 import Link from 'next/link';
 import Layout from '../../../components/Layout';
-// import common_style from '../index.module.css';
 import style from './index.module.css';
 import Loading from '../../../components/Loading';
 
@@ -29,7 +28,7 @@ const IssueList = () => {
             <Link href={`/admin/issues/new`}>새 이슈 만들기</Link>
           </button>
 
-          {data.issues.map(issue => (
+          {data && data.issues.map(issue => (
             <p className={style.issue_title}>
               <Link key={issue.title} href={`/admin/issues/${issue.id}`}>
                 {issue.title}

@@ -1,20 +1,7 @@
-const Loading = props => {
-  const loadingStyle = {
-    height: (props.height || '40') + 'px',
-    width: (props.width || '40') + 'px',
-  };
-
-  if (props.width) {
-    loadingStyle.width = props.width + 'px';
-  }
-
+const Loading = () => {
   return (
-    <div className="spinner" style={loadingStyle}>
-      <div className="rect1"></div>
-      <div className="rect2"></div>
-      <div className="rect3"></div>
-      <div className="rect4"></div>
-      <div className="rect5"></div>
+    <div className="spinner" style={{ height: '100vh', width: '100%', background: '#fff' }}>
+      <img src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/jwjg_loading.gif" style={{ width: '100%' }} />
     </div>
   );
 };
