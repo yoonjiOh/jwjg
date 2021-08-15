@@ -88,6 +88,7 @@ type Issue {
   stances: [Stance]
   userStances: [UserStance]
   author: User
+  isDeleted: boolean
 }
 
 type Stance {
