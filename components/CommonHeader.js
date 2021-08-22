@@ -21,22 +21,23 @@ const CommonHeader = ({ isDimmed }) => {
         <Link href="/users">
           <span className={s.actionBtn}>로그인</span>
         </Link>
-      ) : router.pathname.includes('mypage') ? (
-        <button
-          onClick={() => {
-            AuthUser.signOut();
-            router.push({
-              pathname: '/',
-            });
-          }}
-          style={{ background: 'none', border: 'none' }}
-        >
-          <span className={s.actionBtn}>로그아웃</span>
-        </button>
       ) : (
-        <Link href={`/users/mypage`}>
-          <span className={s.actionBtn}>마이페이지</span>
-        </Link>
+        <div>
+          <button
+            onClick={() => {
+              AuthUser.signOut();
+              router.push({
+                pathname: '/',
+              });
+            }}
+            style={{ background: 'none', border: 'none' }}
+          >
+            <span className={s.actionBtn}>로그아웃</span>
+          </button>
+          <Link href={`/users/mypage`}>
+            <span className={s.actionBtn}>마이페이지</span>
+          </Link>
+        </div>
       )}
     </header>
   );

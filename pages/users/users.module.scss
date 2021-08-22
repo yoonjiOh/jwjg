@@ -26,7 +26,7 @@
   font-size: 16px;
   padding: 6px 20px;
   cursor: pointer;
-  width: 320px;
+  width: 100%;
   margin-top: 20px;
 }
 
@@ -39,11 +39,12 @@
   font-size: 13px;
   padding: 6px 20px;
   cursor: pointer;
-  width: 320px;
+  width: 100%;
 }
 .registrationWidgetWrapper {
+  width: 100%;
   position: fixed;
-  bottom: 20px;
+  padding: 0 20px;
 }
 .btnDefault {
   display: block;
@@ -55,7 +56,7 @@
   font-size: 13px;
   padding: 6px 20px;
   cursor: pointer;
-  width: 320px;
+  width: 100%;
   margin-top: 20px;
 }
 .btnFacebook {
@@ -68,7 +69,7 @@
   font-size: 13px;
   padding: 6px 20px;
   cursor: pointer;
-  width: 320px;
+  width: 100%;
   margin-top: 20px;
 }
 .greetingWrapper {
@@ -344,7 +345,7 @@
 }
 .label {
   font-size: 12px;
-  color: #4494FF;
+  color: #4494ff;
 }
 .agreeBread {
   display: flex;

@@ -59,12 +59,10 @@ const LoginForm = () => {
         <img
           alt="로그인 대문이미지"
           src={'https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/Capybara1.png'}
-          style={{ display: 'flex', margin: '0 auto' }}
+          style={{ display: 'flex', margin: '0 auto', width: '50%' }}
         />
 
-        <div className={s.formWrapper}>
-          <RegistrationWidget />
-        </div>
+        <RegistrationWidget />
       </main>
     </Layout>
   );
