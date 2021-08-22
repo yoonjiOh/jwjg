@@ -84,7 +84,7 @@ export async function doEmailLogin(email, password) {
  */
 export async function createUserFromFirebaseUser(
   firebaseUser: SerializedAuthUser,
-): Promise<boolean> {
+): Promise<Boolean> {
   console.log('firebaseUser:' + firebaseUser.id + '/' + firebaseUser.email);
   const response = await fetch('/api/users', {
     method: 'POST',
