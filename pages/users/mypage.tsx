@@ -91,6 +91,14 @@ function UserPage(props) {
         >
           프로필 편집
         </button>
+        <button
+          style={{ marginTop: '10px' }}
+          onClick={() => {
+            router.push('/admin/issues/new');
+          }}
+        >
+          이슈 발제하기
+        </button>
       </div>
       <Divider />
 
@@ -138,11 +146,11 @@ function UserPage(props) {
             />
           ))
         ) : (
-          <div className={s.noOpinions}>
-            <p>아직 작성한 의견이 없어요 🍊</p>
-            <img src={'https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/Capybara2.png'} />
-          </div>
-        )}
+            <div className={s.noOpinions}>
+              <p>아직 작성한 의견이 없어요 🍊</p>
+              <img src={'https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/Capybara2.png'} />
+            </div>
+          )}
       </div>
     </main>
   );
@@ -223,7 +231,7 @@ const MyPage = (props: Props) => {
 
     relatedIssueIds.map(issueId => {
       const matchIssue = _.find(props.issues_data.issues, issue => issue.id === issueId);
-      if (matchIssue.issueHashTags.length) {
+      if (matchIssue && matchIssue.issueHashTags.length) {
         matchIssue.issueHashTags.forEach(issueHashTag => {
           const targetTag = issueHashTag.hashTags[0].name;
 

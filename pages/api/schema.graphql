@@ -151,6 +151,7 @@ type Query {
   user(id: Int!): User
   issue(id: Int!): Issue
   issues(id: Int): [Issue]
+  publishedIssues(id: Int): [Issue]
   opinions(id: Int): [Opinion]
   myOpinion(usersId: Int, issuesId: Int): Opinion
   opinionsWithIssuesId(issuesId: Int): [Opinion]
@@ -202,6 +203,8 @@ type Mutation {
     profileImageUrl: String
   ): User
   createUserInfo(usersId: Int!, gender: String, age: Int, residence: String): UserInfo
+  manageIssuePublishStatus(id: Int!, isPublished: Boolean!): Issue
+  deleteIssue(id: Int!): Issue
 }
 
 scalar DateTime

@@ -117,5 +117,5 @@
   background-color: $orange;
 }
 .commentContent {
-  @include ellipsis(3, 1.6)
+  @include ellipsis(3, 1.6);
 }

@@ -14,7 +14,7 @@ import s from './index.module.scss';
 
 const GET_ISSUES_AND_OPINIONS = gql`
   query {
-    issues {
+    publishedIssues {
       id
       title
       imageUrl
@@ -51,7 +51,7 @@ export const getServerSideProps = withAuthUserTokenSSR({})(async ({ AuthUser }) 
   const issuesData = await apolloClient.query({
     query: GET_ISSUES_AND_OPINIONS,
   });
-  const issues = issuesData.data.issues.map(issue => {
+  const issues = issuesData.data.publishedIssues.map(issue => {
     const { opinions, stances, userStances } = issue;
     let sortedOpinions;
     if (opinions.length <= 2) {

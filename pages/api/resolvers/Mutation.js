@@ -233,6 +233,28 @@ async function createUserInfo(parent, args, context) {
   });
 }
 
+async function manageIssuePublishStatus(parent, args, context) {
+  await context.prisma.issues.update({
+    where: {
+      id: args.id,
+    },
+    data: {
+      isPublished: args.isPublished,
+    },
+  });
+}
+
+async function deleteIssue(parent, args, context) {
+  await context.prisma.issues.update({
+    where: {
+      id: args.id,
+    },
+    data: {
+      isDeleted: true,
+    },
+  });
+}
+
 export default {
   createIssue,
   updateIssue,
@@ -249,4 +271,6 @@ export default {
   doLikeActionToOpinionComment,
   updateUserProfile,
   createUserInfo,
+  manageIssuePublishStatus,
+  deleteIssue,
 };
