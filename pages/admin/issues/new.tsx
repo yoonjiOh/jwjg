@@ -293,7 +293,9 @@ const NewIssue = props => {
           </div>
           <div className={style.content}>
             <p className={style.title_sm}>이슈 설명</p>
+            <span className={style.comment}>링크 입력 시, <strong>[text](URL)</strong> (ex. [네이버](https://www.naver.com))로 입력해 주세요. <a style={{ color: "rgb(33, 111, 219)" }} href="">text</a> 형태로 출력됩니다.</span>
             <textarea
+              wrap="hard"
               value={issue.content}
               onChange={e => handleChange(e.target.value, 'content')}
             />

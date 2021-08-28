@@ -18,6 +18,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import { fruits } from '../../utils/getFruitForStanceTitle';
 import { getPubDate } from '../../lib/util';
+import { parseCommentContent } from '../../utils/parseContent';
 
 const GET_DATA = gql`
   query opinions($id: Int!) {
@@ -218,7 +219,7 @@ const Opinion = props => {
 
   return (
     <Layout title={'개별 오피니언 페이지'} headerInfo={{ headerType: 'common' }} isDimmed={false}>
-      <main style={{ marginTop: '56px', background: '#fff', minHeight: '100vh' }}>
+      <main className={s.main}>
         <div className={s.opinionWrapper}>
           <div className={util_s[`stanceMark-${opinion.stance.orderNum}`]} />
           <div className={s.opinionContent} style={{ position: 'relative' }}>
@@ -238,11 +239,11 @@ const Opinion = props => {
             <div className={s.stancesWrapper}>
               {fruits[opinion.stance.orderNum]}&nbsp;&nbsp;{opinion.stance.title}
             </div>
-            <div style={{ paddingBottom: '35px' }}>{opinion.content}</div>
             <div
-              className={s.likeWrapper}
-              style={{ position: 'absolute', bottom: '5px', paddingLeft: '0' }}
-            >
+              className={s.content}
+              dangerouslySetInnerHTML={{ __html: parseCommentContent(opinion.content) }}
+            ></div>
+            <div className={s.likeWrapper}>
               {isLikedByMe ? (
                 <div style={{ color: '#4494FF', cursor: 'pointer', display: 'inline-flex' }}>
                   <img

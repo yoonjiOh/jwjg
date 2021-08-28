@@ -14,6 +14,7 @@ import CurrentStances from '../../components/issue/CurrentStances';
 import OpinionBox from '../../components/OpinionBox';
 import Loading from '../../components/Loading';
 import { fruits, getFruitForStanceTitle } from '../../utils/getFruitForStanceTitle';
+import { parseIssueContent } from '../../utils/parseContent';
 
 const GET_ISSUE = gql`
   query issue($id: Int!) {
@@ -215,8 +216,8 @@ const Issue: any = () => {
           {issue.content && (
             <div>
               <h3 className={s.title}>이슈의 맥</h3>
-              <p className={s.body}>
-                {issue.content}
+              <div className={s.body}>
+                <div dangerouslySetInnerHTML={{ __html: parseIssueContent(issue.content) }}></div>
                 <div className={s.authorInfoWrapper}>
                   <div className={s.text}>
                     <span>이슈지기 | {issue.author.name}</span>
@@ -224,7 +225,7 @@ const Issue: any = () => {
                   </div>
                   <img src={issue.author.profileImageUrl} />
                 </div>
-              </p>
+              </div>
             </div>
           )}
           <h3 className={s.title}>지금 여론</h3>
