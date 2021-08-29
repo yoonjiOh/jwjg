@@ -2,6 +2,7 @@ import s from './[issueId].module.scss';
 
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
+import Link from 'next/link';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { withAuthUser, useAuthUser } from 'next-firebase-auth';
 
@@ -209,8 +210,12 @@ const Issue: any = () => {
         <div className={s.issueBody}>
           <h2 className={s.issueTitle}>{issue.title}</h2>
           <div className={s.issueSum}>
-            <p>🔥&nbsp;&nbsp;{'참여 ' + issue.userStances.length}</p>
-            <p>💬&nbsp;&nbsp;{'의견 ' + issue.opinions.length}</p>
+            <Link href={`/issues/${issue.id}/#stance`} scroll={false}>
+              <p>&nbsp;&nbsp;{'참여 ' + issue.userStances.length}</p>
+            </Link>
+            <Link href={`/issues/${issue.id}/#opinion`} scroll={false}>
+              <p>💬&nbsp;&nbsp;{'의견 ' + issue.opinions.length}</p>
+            </Link>
           </div>
           <hr />
           {issue.content && (
@@ -228,7 +233,9 @@ const Issue: any = () => {
               </div>
             </div>
           )}
-          <h3 className={s.title}>지금 여론</h3>
+          <h3 id="stance" className={s.title}>
+            지금 여론
+          </h3>
           <CurrentStances
             userStances={issue.userStances}
             stances={newStances}
@@ -255,6 +262,7 @@ const Issue: any = () => {
           </div>
           <div
             className={s.opinionTitleContainer}
+            id="opinion"
             onClick={() => {
               router.push({
                 pathname: `/issues/${issue.id}/opinions`,
