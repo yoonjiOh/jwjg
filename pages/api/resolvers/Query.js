@@ -53,6 +53,9 @@ async function publishedIssues(parent, args, context) {
   const where = args.id ? { id: args.id } : { isPublished: true };
   const issues = await context.prisma.issues.findMany({
     where,
+    orderBy: {
+      createdAt: 'desc',
+    },
   });
   return issues;
 }

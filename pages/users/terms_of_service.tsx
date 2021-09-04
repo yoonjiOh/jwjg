@@ -48,7 +48,7 @@ function TermsOfService() {
   return (
     <Layout title={headerTitle} headerInfo={headerInfo} isDimmed={false}>
       <main className={common_style.main}>
-        <div className={u_style.wrapper}>
+        <div className={u_style.wrapper} style={{ padding: '32px' }}>
           <div className={u_style.bigHeader}>약관에 동의해 주세요</div>
           <div className={u_style.agreeBread}>
             <label>

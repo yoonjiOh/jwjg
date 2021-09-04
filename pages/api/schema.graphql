@@ -175,6 +175,7 @@ type Mutation {
     option_list_json: String
   ): Issue!
   createTagsByIssue(data: [IssueHashTagInput]): bulkInsertCount
+  createTag(name: String!): HashTag
   updateStancesByIssue(id: Int, title: String!, orderNum: Int!, issuesId: Int!): Stance
   createStancesByIssue(data: [IssueStancesInput]): bulkInsertCount
   createUserStance(usersId: Int, issuesId: Int, stancesId: Int): UserStance

@@ -48,6 +48,20 @@ async function createTagsByIssue(parent, args, context) {
   }
 }
 
+async function createTag(parent, args, context) {
+  try {
+    const result = await context.prisma.hashTags.create({
+      data: {
+        name: args.name,
+      },
+    });
+
+    return result;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 async function createStancesByIssue(parent, args, context) {
   try {
     const result = await context.prisma.stances.createMany({
@@ -259,6 +273,7 @@ export default {
   createIssue,
   updateIssue,
   createTagsByIssue,
+  createTag,
   createStancesByIssue,
   createUserStance,
   signup,

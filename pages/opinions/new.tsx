@@ -143,7 +143,7 @@ const New = props => {
           },
         });
 
-        newOpinionId = newOpinion.data.id;
+        newOpinionId = newOpinion.data.createOpinion.id;
       }
 
       const path = `/issues/${issueId}/opinions/${myOpinion ? myOpinion.id : newOpinionId}`;
@@ -205,22 +205,22 @@ const New = props => {
               </div>
             </div>
           ) : (
-            <div className={s.opinionHasStanceWrapper}>
-              <div className={s.stanceNoti}>
-                {fruits[stance && stance.orderNum] + ' '}
-                <span className={s.title}>{stance && stance.title}</span>
+              <div className={s.opinionHasStanceWrapper}>
+                <div className={s.stanceNoti}>
+                  {fruits[stance && stance.orderNum] + ' '}
+                  <span className={s.title}>{stance && stance.title}</span>
                 입장을 표하셨어요.
               </div>
-              <div className="stancesWrapper">
-                <textarea
-                  className={s.opinionInput}
-                  placeholder="이슈에 대한 생각을 자유롭게 말해 주세요."
-                  value={opinionBody}
-                  onChange={handleChange}
-                />
+                <div className="stancesWrapper">
+                  <textarea
+                    className={s.opinionInput}
+                    placeholder="이슈에 대한 생각을 자유롭게 말해 주세요."
+                    value={opinionBody}
+                    onChange={handleChange}
+                  />
+                </div>
               </div>
-            </div>
-          )}
+            )}
         </main>
       </Layout>
     </>

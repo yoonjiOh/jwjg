@@ -1,5 +1,5 @@
-import React, { useReducer, useEffect } from 'react';
-import { gql, useMutation, useQuery } from '@apollo/client';
+import React, { useReducer, useState } from 'react';
+import { gql, useMutation } from '@apollo/client';
 import { useRouter } from 'next/router';
 import _ from 'lodash';
 import config from '../../../config';
@@ -54,6 +54,15 @@ const CREATE_STANCES_BY_ISSUE = gql`
   }
 `;
 
+const CREATE_TAG = gql`
+  mutation createTag($name: String!) {
+    createTag(name: $name) {
+      id,
+      name
+    }
+  }
+`;
+
 const reducer = (state, action) => {
   switch (action.type) {
     case 'CHANGE_ISSUE_INPUT':
@@ -89,6 +98,11 @@ const reducer = (state, action) => {
         ...state,
         tags: action.data,
       };
+    case 'ADD_HASHTAG':
+      return {
+        ...state,
+        tags: state.tags.concat(action.tag)
+      }
     case 'SET_HASHTAGS':
       return {
         ...state,
@@ -144,9 +158,12 @@ const NewIssue = props => {
   const [state, dispatch] = useReducer(reducer, initial_state);
   const { issue, addStanceMode, newStance, stances, tags, selected_tags } = state;
 
+  const [newTag, setNewTag] = useState('');
+  const [addTagErr, setAddTagErr] = useState(null);
   const [createIssue] = useMutation(CREATE_ISSUE);
   const [createTagsByIssue] = useMutation(CREATE_TAGS_BY_ISSUE);
   const [createStancesByIssue] = useMutation(CREATE_STANCES_BY_ISSUE);
+  const [createTag] = useMutation(CREATE_TAG);
 
   const [mutate, { loading, error }] = useMutation(SINGLE_UPLOAD_IMG);
 
@@ -211,6 +228,39 @@ const NewIssue = props => {
       payload: { key: key, value: value },
     });
   };
+
+  const handleChangeTagInput = (value) => {
+    setAddTagErr(null);
+    setNewTag(value);
+  };
+
+  const handleClickAddTagBtn = async () => {
+    if (newTag.length === 0) {
+      return setAddTagErr('태그명을 입력해주세요');
+    }
+
+    if (tags.find(tag => { return tag.name === newTag.trim(); })) {
+      return setAddTagErr('이미 등록되어 있는 태그 입니다.');
+    }
+
+    try {
+      await createTag({
+        variables: {
+          name: newTag
+        }
+      }).then((result) => {
+        dispatch({
+          type: 'ADD_HASHTAG',
+          tag: {
+            id: result.data.createTag.id,
+            name: result.data.createTag.name,
+          }
+        });
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
 
   const handleSubmit = async () => {
     let createdIssueId;
@@ -284,8 +334,8 @@ const NewIssue = props => {
             {issue.imageUrl !== '' ? (
               <img src={issue.imageUrl} alt="new_issue_img" />
             ) : (
-              <input type="file" required onChange={handleFileChange} />
-            )}
+                <input type="file" required onChange={handleFileChange} />
+              )}
           </div>
           <div className={style.title}>
             <p className={style.title_sm}>이슈 제목</p>
@@ -345,6 +395,16 @@ const NewIssue = props => {
                 );
               })}
           </select>
+
+          <div className={style.title_sm} style={{ margin: '15px 0' }}>
+            태그 추가
+          </div>
+
+          <div className={style.option_wrapper}>
+            <p style={{ color: 'red' }}>{addTagErr}</p>
+            <input onChange={(e) => handleChangeTagInput(e.target.value)} />
+            <button onClick={handleClickAddTagBtn}>+</button>
+          </div>
         </div>
       </main>
     </Layout>
