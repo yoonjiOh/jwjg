@@ -77,9 +77,12 @@ const Auth = props => {
   console.log(data);
 
   useEffect(() => {
-    if (AuthUser.id && !data) {
-      router.push('/users/terms_of_service');
-    }
+    setTimeout(() => {
+      if (AuthUser.id && !data) {
+        console.log('ddd',)
+        router.push('/users/terms_of_service');
+      }
+    }, 3000)
   }, [AuthUser, data, router]);
 
   // // const AuthUser = useAuthUser();

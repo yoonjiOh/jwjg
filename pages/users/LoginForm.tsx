@@ -5,10 +5,12 @@ import { doEmailLogin } from '../../lib/users';
 import common_style from '../index.module.scss';
 import RegistrationWidget from './RegistrationWidget';
 import s from './users.module.scss';
+import { useRouter } from 'next/router';
 
 const LoginForm = () => {
   const [state, setState] = useState({ email: '', password: '' });
   const { email, password } = state;
+  const router = useRouter();
 
   const handleEmailChange = event => {
     setState(prevState => {
@@ -24,7 +26,12 @@ const LoginForm = () => {
 
   const handleSubmit = event => {
     event.preventDefault();
-    doEmailLogin(email, password);
+    try {
+      doEmailLogin(email, password);
+      router.push('/');
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (
