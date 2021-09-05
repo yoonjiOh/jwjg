@@ -204,7 +204,8 @@ function HotIssueCard(props) {
 
 const Main = props => {
   const { issues, me } = props.data;
-  const hotIssue = _.maxBy(issues, i => i.opinions.length);
+  // const hotIssue = _.maxBy(issues, i => i.opinions.length);
+  const hotIssue = issues && issues[0];
   const other_issues = issues.filter(i => i.id !== hotIssue.id);
 
   return (
