@@ -158,7 +158,7 @@ const IssueList = () => {
                   <button className={style.button}
                     onClick={() => handleClickManageHotIssueBtn(issue.id, HOT_ISSUE_STATUS.approveHotIssue)}>
                     핫이슈 선택</button>
-                ) : <span></span>
+                ) : <span> </span>
               }
             </div>
           ))}
