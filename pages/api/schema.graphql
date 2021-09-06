@@ -89,6 +89,7 @@ type Issue {
   userStances: [UserStance]
   author: User
   isDeleted: Boolean
+  isHotIssue: Boolean
 }
 
 type Stance {
@@ -206,6 +207,8 @@ type Mutation {
   createUserInfo(usersId: Int!, gender: String, age: Int, residence: String): UserInfo
   manageIssuePublishStatus(id: Int!, isPublished: Boolean!): Issue
   deleteIssue(id: Int!): Issue
+  manageApproveHotIssue(id: Int!, isHotIssue: Boolean!): Issue
+  manageRollbackHotIssue(id: Int!, isHotIssue: Boolean): Issue
 }
 
 scalar DateTime

@@ -40,6 +40,7 @@ model Issues {
   updatedAt   DateTime @default(now())
   authorId    Int
   isDeleted   Boolean  @default(false)
+  isHotIssue  Boolean  @default(false)
 
   Stances       Stances[]
   UserStances   UserStances[]

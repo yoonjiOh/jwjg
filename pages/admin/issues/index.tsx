@@ -11,6 +11,7 @@ const GET_ISSUES = gql`
       id
       title
       isPublished
+      isHotIssue
     }
   }
 `;
@@ -39,15 +40,52 @@ export const DELETE_ISSUE = gql`
   }
 `;
 
+export const MANAGE_APPROVE_HOT_ISSUE = gql`
+  mutation manageApproveHotIssue(
+    $id: Int!
+    $isHotIssue: Boolean!
+  ) {
+    manageApproveHotIssue(
+      id: $id,
+      isHotIssue: $isHotIssue
+    ) {
+      id,
+      isHotIssue
+    }
+  }
+`;
+
+export const MANAGE_ROLLBACK_HOT_ISSUE = gql`
+  mutation manageRollbackHotIssue(
+    $id: Int!
+    $isHotIssue: Boolean!
+  ) {
+    manageRollbackHotIssue(
+      id: $id,
+      isHotIssue: $isHotIssue
+    ) {
+      id,
+      isHotIssue
+    }
+  }
+`;
+
 const ISSUE_PUBLISHED_STATUS = {
   rollbackPublishing: false,
   approvePublishing: true,
+}
+
+const HOT_ISSUE_STATUS = {
+  rollbackHotIssue: false,
+  approveHotIssue: true,
 }
 
 const IssueList = () => {
   const { loading, error, data, refetch } = useQuery(GET_ISSUES);
   const [manageIssuePublishStatus, { data: publishStatus }] = useMutation(MANAGE_ISSUE_PUBLISH_STATUS);
   const [deleteIssue, { data: isDeleted }] = useMutation(DELETE_ISSUE);
+  const [manageApproveHotIssue, { data: isApproveHotIssue }] = useMutation(MANAGE_APPROVE_HOT_ISSUE);
+  const [manageRollbackHotIssue, { data: isRollbackHotIssue }] = useMutation(MANAGE_ROLLBACK_HOT_ISSUE);
 
   if (loading) return <Loading />;
   if (error) return `Error! ${error.message}`;
@@ -67,6 +105,28 @@ const IssueList = () => {
     await deleteIssue({
       variables: {
         id: issueId,
+      }
+    }).then(() => {
+      refetch();
+    })
+  }
+
+  const handleClickManageHotIssueBtn = async (issueId, status) => {
+    await manageApproveHotIssue({
+      variables: {
+        id: issueId,
+        isHotIssue: status,
+      }
+    }).then(() => {
+      handleRollbackHotIssue(issueId, HOT_ISSUE_STATUS.rollbackHotIssue);
+    })
+  }
+
+  const handleRollbackHotIssue = async (issueId, status) => {
+    await manageRollbackHotIssue({
+      variables: {
+        id: issueId,
+        isHotIssue: status,
       }
     }).then(() => {
       refetch();
@@ -93,6 +153,13 @@ const IssueList = () => {
               }
               <button className={style.button}
                 onClick={() => handleClickDeleteIssueBtn(issue.id)}>삭제하기</button>
+              {
+                issue.isPublished && !issue.isHotIssue ? (
+                  <button className={style.button}
+                    onClick={() => handleClickManageHotIssueBtn(issue.id, HOT_ISSUE_STATUS.approveHotIssue)}>
+                    핫이슈 선택</button>
+                ) : <span></span>
+              }
             </div>
           ))}
         </div>
