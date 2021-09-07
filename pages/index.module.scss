@@ -65,6 +65,7 @@
 }
 .barchart {
   height: 20px;
+  margin-bottom: 13px;
 }
 .line {
   width: 100%;
@@ -76,17 +77,24 @@
 }
 .issueCardComments {
   display: flex;
+  justify-content: space-between;
 }
 .issueCardComment {
   cursor: pointer;
-  width: 50%;
+  width: 47%;
   background-color: #ffffff;
-  margin-right: 16px;
   line-height: 1.6;
   font-size: 12px;
 }
 .issueCardComment p {
   margin-bottom: 3px;
+}
+.issueCardCommentTitle {
+  font-weight: bold;
+}
+.commentUsername {
+  color: #777;
+  font-weight: bold;
 }
 .responseSum,
 .commentSum {
