@@ -7,6 +7,7 @@ import React from 'react';
 import { initializeApollo } from '../apollo/apolloClient';
 import CurrentStances from '../components/issue/CurrentStances';
 import IssueCard from '../components/IssueCard';
+import ServiceCard from '../components/ServiceCard';
 import Layout from '../components/Layout';
 import { GET_USERS } from '../lib/queries';
 import { fruits, getFruitForStanceTitle } from '../utils/getFruitForStanceTitle';
@@ -18,6 +19,7 @@ const GET_ISSUES_AND_OPINIONS = gql`
       id
       title
       imageUrl
+      isHotIssue
       stances {
         id
         title
@@ -207,7 +209,8 @@ function HotIssueCard(props) {
 const Main = props => {
   const { issues, me } = props.data;
   // const hotIssue = _.maxBy(issues, i => i.opinions.length);
-  const hotIssue = issues && issues[0];
+  //const hotIssue = issues && issues[0];
+  const hotIssue = _.find(issues, i => i.isHotIssue == true);
   const other_issues = issues.filter(i => i.id !== hotIssue.id);
 
   return (
@@ -224,6 +227,7 @@ const Main = props => {
         <div className={s.issueWrap}>
           <h2 className={s.issue}>📫 가장 최근 이슈</h2>
           <article className={s.article}>
+            <ServiceCard />
             {other_issues.map(issue => (
               <IssueCard issue={issue} key={issue.id} />
             ))}

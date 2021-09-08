@@ -285,6 +285,28 @@ async function deleteIssue(parent, args, context) {
   });
 }
 
+async function manageApproveHotIssue(parent, args, context) {
+  await context.prisma.issues.update({
+    where: {
+      id: args.id,
+    },
+    data: {
+      isHotIssue: args.isHotIssue,
+    }
+  });
+}
+
+async function manageRollbackHotIssue(parent, args, context) {
+  await context.prisma.issues.update({
+    where: {
+      id: args.id
+    },
+    data: {
+      isHotIssue: args.isHotIssue,
+    }
+  });
+}
+
 export default {
   createIssue,
   updateIssue,
@@ -305,4 +327,6 @@ export default {
   createUserInfo,
   manageIssuePublishStatus,
   deleteIssue,
+  manageApproveHotIssue,
+  manageRollbackHotIssue
 };
