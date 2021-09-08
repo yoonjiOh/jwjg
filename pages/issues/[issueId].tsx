@@ -117,6 +117,15 @@ const CREATE_USER_STANCE = gql`
   }
 `;
 
+const DELETE_USER_STANCE = gql`
+  mutation deleteUserStance($usersId: Int, $issuesId: Int) {
+    deleteUserStance(usersId: $usersId, issuesId: $issuesId) {
+      usersId
+      issuesId
+    }
+  }
+`;
+
 const Issue: any = () => {
   const router = useRouter();
   const issueId = Number(router.query.issueId);
@@ -146,6 +155,13 @@ const Issue: any = () => {
     refetchIssue({ id: issueId });
   }, []);
 
+  const [deleteUserStance, { loading: mutationDeleteLoading, error: mutationDeleteError }] =
+    useMutation(DELETE_USER_STANCE);
+
+  useEffect(() => {
+    refetchIssue({ id: issueId });
+  }, []);
+
   if (loading || userLoading) return <Loading />;
   if (error || userError) return `Error! ${error && error.message}`;
 
@@ -157,7 +173,7 @@ const Issue: any = () => {
 
   const newStances = getFruitForStanceTitle(issue?.stances).reduce((acc, stance) => {
     const { id, title, fruit } = stance;
-    const result = { title: '', sum: 0, fruit };
+    const result = { id, title: '', sum: 0, fruit };
     for (const userStance of issue.userStances) {
       if (id === userStance.stancesId) {
         result.title = fruit + ' ' + title;
@@ -176,13 +192,22 @@ const Issue: any = () => {
       return;
     }
     try {
-      await createUserStance({
-        variables: {
-          usersId: userId,
-          issuesId: issue.id,
-          stancesId,
-        },
-      });
+      if (userStance?.stancesId === stancesId) {
+        await deleteUserStance({
+          variables: {
+            usersId: userId,
+            issuesId: issue.id,
+          },
+        });
+      } else {
+        await createUserStance({
+          variables: {
+            usersId: userId,
+            issuesId: issue.id,
+            stancesId,
+          },
+        });
+      }
     } catch (err) {
       console.error('[UPDATE STANCE FAILED: ]', err);
       alert('입장 선택에 오류가 생겼어요! 조금 있다 다시 선택해 주세요');
