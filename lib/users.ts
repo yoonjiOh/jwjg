@@ -34,7 +34,7 @@ export async function validatePassword(password: string) {
     );
   }
   if (!password.match(PASSWORD_REGEX)) {
-    throw new WrongPasswordFormatError('The password should contain both alphabets and numbers.');
+    throw new WrongPasswordFormatError('비밀번호에는 특수문자를 사용할 수 없어요!');
   }
 }
 

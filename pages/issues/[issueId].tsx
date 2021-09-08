@@ -217,7 +217,7 @@ const Issue: any = () => {
               <p>💬&nbsp;&nbsp;{'의견 ' + issue.opinions.length}</p>
             </Link>
           </div>
-          <hr />
+          <hr className={s.hr} />
           {issue.content && (
             <div>
               <h3 className={s.title}>이슈의 맥</h3>

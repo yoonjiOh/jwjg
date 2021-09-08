@@ -172,12 +172,13 @@ function HotIssueCard(props) {
                 }}
                 className={s.issueCardComment}
               >
-                <p>
+                <p className={s.issueCardCommentTitle}>
                   {fruits[hotIssue.opinions[0]?.stance?.orderNum] +
                     ' ' +
                     hotIssue.opinions[0]?.stance?.title}
                 </p>
                 <p className={s.commentContent}>{hotIssue.opinions[0]?.content}</p>
+                <p className={s.commentUsername}>{hotIssue.opinions[0]?.user.name}</p>
               </div>
               <div
                 onClick={() =>
@@ -187,12 +188,13 @@ function HotIssueCard(props) {
                 }
                 className={s.issueCardComment}
               >
-                <p>
+                <p className={s.issueCardCommentTitle}>
                   {fruits[hotIssue.opinions[1]?.stance?.orderNum] +
                     ' ' +
                     hotIssue.opinions[1]?.stance?.title}
                 </p>
                 <p className={s.commentContent}>{hotIssue.opinions[1]?.content}</p>
+                <p className={s.commentUsername}>{hotIssue.opinions[0]?.user.name}</p>
               </div>
             </div>
           </div>
