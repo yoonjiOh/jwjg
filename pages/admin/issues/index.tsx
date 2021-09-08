@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { gql, useQuery, useMutation } from '@apollo/client';
 import Link from 'next/link';
 import Layout from '../../../components/Layout';
@@ -86,6 +86,15 @@ const IssueList = () => {
   const [deleteIssue, { data: isDeleted }] = useMutation(DELETE_ISSUE);
   const [manageApproveHotIssue, { data: isApproveHotIssue }] = useMutation(MANAGE_APPROVE_HOT_ISSUE);
   const [manageRollbackHotIssue, { data: isRollbackHotIssue }] = useMutation(MANAGE_ROLLBACK_HOT_ISSUE);
+  const [hotIssueId, setHotIssueId] = useState(null);
+
+  useEffect(() => {
+    data && data.issues.map(issue => {
+      if (issue.isHotIssue) {
+        setHotIssueId(issue.id)
+      }
+    })
+  });
 
   if (loading) return <Loading />;
   if (error) return `Error! ${error.message}`;
@@ -118,7 +127,7 @@ const IssueList = () => {
         isHotIssue: status,
       }
     }).then(() => {
-      handleRollbackHotIssue(issueId, HOT_ISSUE_STATUS.rollbackHotIssue);
+      handleRollbackHotIssue(hotIssueId, HOT_ISSUE_STATUS.rollbackHotIssue);
     })
   }
 
@@ -132,6 +141,7 @@ const IssueList = () => {
       refetch();
     })
   }
+
 
   return (
     <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }} isDimmed={false}>

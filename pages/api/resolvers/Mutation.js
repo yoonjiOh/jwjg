@@ -281,11 +281,9 @@ async function manageApproveHotIssue(parent, args, context) {
 }
 
 async function manageRollbackHotIssue(parent, args, context) {
-  await context.prisma.issues.updateMany({
+  await context.prisma.issues.update({
     where: {
-      NOT: {
-        id: args.id
-      }
+      id: args.id
     },
     data: {
       isHotIssue: args.isHotIssue,
