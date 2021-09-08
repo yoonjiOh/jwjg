@@ -97,6 +97,22 @@ async function createUserStance(parent, args, context) {
   }
 }
 
+async function deleteUserStance(parent, args, context) {
+  try {
+    const result = await context.prisma.userStances.delete({
+      where: {
+        usersId_issuesId: {
+          usersId: args.usersId,
+          issuesId: args.issuesId,
+        },
+      },
+    });
+    return result;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 // For type:user
 // TODO(jurampark): accepts firebase id token to support social auth like google/apple login.
 async function signup(parent, args, context, info) {
@@ -276,6 +292,7 @@ export default {
   createTag,
   createStancesByIssue,
   createUserStance,
+  deleteUserStance,
   signup,
   login,
   singleUpload: s3Uploader.singleFileUploadResolver.bind(s3Uploader),

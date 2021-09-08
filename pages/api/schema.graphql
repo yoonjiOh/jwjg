@@ -179,6 +179,7 @@ type Mutation {
   updateStancesByIssue(id: Int, title: String!, orderNum: Int!, issuesId: Int!): Stance
   createStancesByIssue(data: [IssueStancesInput]): bulkInsertCount
   createUserStance(usersId: Int, issuesId: Int, stancesId: Int): UserStance
+  deleteUserStance(usersId: Int, issuesId: Int): UserStance
   signup(email: String!, password: String!, name: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload
   singleUpload(file: Upload!): UploadedFileResponse!
