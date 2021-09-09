@@ -179,6 +179,7 @@ type Mutation {
   createTag(name: String!): HashTag
   updateStancesByIssue(id: Int, title: String!, orderNum: Int!, issuesId: Int!): Stance
   createStancesByIssue(data: [IssueStancesInput]): bulkInsertCount
+  updateStance(id: Int!, title: String): Stance
   createUserStance(usersId: Int, issuesId: Int, stancesId: Int): UserStance
   deleteUserStance(usersId: Int, issuesId: Int): UserStance
   signup(email: String!, password: String!, name: String!): AuthPayload

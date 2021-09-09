@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { gql, useQuery, useMutation } from '@apollo/client';
-import Link from 'next/link';
 import Layout from '../../../components/Layout';
 import style from './index.module.css';
 import Loading from '../../../components/Loading';
+import { useRouter } from 'next/router';
 
 const GET_ISSUES = gql`
   query FetchIssues {
@@ -88,6 +88,8 @@ const IssueList = () => {
   const [manageRollbackHotIssue, { data: isRollbackHotIssue }] = useMutation(MANAGE_ROLLBACK_HOT_ISSUE);
   const [hotIssueId, setHotIssueId] = useState(null);
 
+  const router = useRouter();
+
   useEffect(() => {
     data && data.issues.map(issue => {
       if (issue.isHotIssue) {
@@ -149,9 +151,14 @@ const IssueList = () => {
         <div className={style.wrapper}>
           {data && data.issues.map(issue => (
             <div key={issue.title} className={style.issue_title}>
-              <Link key={issue.title} href={`/admin/issues/${issue.id}`}>
+              <a key={issue.title} onClick={() => {
+                router.push({
+                  pathname: '/admin/issues/[id]',
+                  query: { id: issue.id },
+                });
+              }}>
                 {issue.title}
-              </Link>
+              </a>
               {
                 issue.isPublished ?
                   <button className={style.button}

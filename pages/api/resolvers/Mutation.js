@@ -75,6 +75,22 @@ async function createStancesByIssue(parent, args, context) {
   }
 }
 
+async function updateStance(parent, args, context) {
+  console.log('updateStance', args);
+  try {
+    const result = await context.prisma.stances.update({
+      where: { id: args.id },
+      data: {
+        title: args.title,
+      },
+    });
+
+    return result;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 async function createUserStance(parent, args, context) {
   try {
     const result = await context.prisma.userStances.upsert({
@@ -292,18 +308,18 @@ async function manageApproveHotIssue(parent, args, context) {
     },
     data: {
       isHotIssue: args.isHotIssue,
-    }
+    },
   });
 }
 
 async function manageRollbackHotIssue(parent, args, context) {
   await context.prisma.issues.update({
     where: {
-      id: args.id
+      id: args.id,
     },
     data: {
       isHotIssue: args.isHotIssue,
-    }
+    },
   });
 }
 
@@ -313,6 +329,7 @@ export default {
   createTagsByIssue,
   createTag,
   createStancesByIssue,
+  updateStance,
   createUserStance,
   deleteUserStance,
   signup,
@@ -328,5 +345,5 @@ export default {
   manageIssuePublishStatus,
   deleteIssue,
   manageApproveHotIssue,
-  manageRollbackHotIssue
+  manageRollbackHotIssue,
 };

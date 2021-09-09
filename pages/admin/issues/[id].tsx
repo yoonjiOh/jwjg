@@ -43,6 +43,14 @@ const CREATE_STANCES_BY_ISSUE = gql`
   }
 `;
 
+const UPDATE_STANCE = gql`
+  mutation updateStance($id: Int!, $title: String) {
+    updateStance(id: $id, title: $title) {
+      id
+    }
+  }
+`;
+
 const reducer = (state, action) => {
   switch (action.type) {
     case 'FETCH_ISSUE':
@@ -50,13 +58,19 @@ const reducer = (state, action) => {
         ...state,
         issue: action.data,
       };
-    case 'FETCH_STANCES':
-      return {
+    case 'FETCH_STANCES': {
+      const newState = {
         ...state,
         stances: action.data,
       };
+
+      return action.data?.reduce((acc, stance) => {
+        return { ...acc, [`stance_${stance.id}`]: stance };
+      }, newState)
+    }
     case 'CHANGE_ISSUE_INPUT':
       const { key, value } = action.payload;
+      console.log('CHANGE_ISSUE_INPUT')
       return {
         ...state,
         issue: {
@@ -80,6 +94,19 @@ const reducer = (state, action) => {
         stances: state.stances.concat(action.value),
         addStanceMode: false,
       };
+    case 'UPDATE_ISSUE_STANCES': {
+      const { value: title, id, orderNum } = action.payload;
+      console.log('UPDATE_ISSUE_STANCES')
+
+      return {
+        ...state,
+        [`stance_${id}`]: {
+          id,
+          orderNum,
+          title
+        },
+      };
+    }
     case 'SET_IMAGE_URL':
       return {
         ...state,
@@ -95,7 +122,7 @@ const reducer = (state, action) => {
 
 export const getServerSideProps = async context => {
   const apolloClient = initializeApollo(null);
-  const { issueId } = context.query;
+  const { id: issueId } = context.query;
   const { data } = await apolloClient.query({
     query: GET_ISSUE,
     variables: { id: parseInt(issueId) },
@@ -116,7 +143,6 @@ export const getServerSideProps = async context => {
 
 const IssueDetail = props => {
   const router = useRouter();
-  const issueId = Number(router.query.issueId);
 
   const issue_data = props.issue_data;
   const stances_data = props.stances_data;
@@ -134,11 +160,15 @@ const IssueDetail = props => {
   };
 
   const [state, dispatch] = useReducer(reducer, initial_state);
+  console.log({ state })
   const { issue, addStanceMode, stances, newStance } = state;
+
+
 
   const [updateIssue, { data }] = useMutation(UPDATE_ISSUE);
   const [createStancesByIssue] = useMutation(CREATE_STANCES_BY_ISSUE);
   const [mutate, { loading, error }] = useMutation(SINGLE_UPLOAD_IMG);
+  const [updateStance] = useMutation(UPDATE_STANCE);
 
   useEffect(() => {
     dispatch({
@@ -160,7 +190,14 @@ const IssueDetail = props => {
   const handleChange = (value, key) => {
     dispatch({
       type: 'CHANGE_ISSUE_INPUT',
-      payload: { key: key, value: value },
+      payload: { key, value },
+    });
+  };
+
+  const handleChangeStance = (value, stance) => {
+    dispatch({
+      type: 'UPDATE_ISSUE_STANCES',
+      payload: { value, id: stance.id, orderNum: stance.orderNum }
     });
   };
 
@@ -179,7 +216,7 @@ const IssueDetail = props => {
 
   const handleAddStanceBtn = () => {
     const stanceIdx = _.isEmpty(stances) ? 1 : _.size(stances) + 1;
-    const payload: Stance = { title: newStance, orderNum: stanceIdx, issuesId: issueId };
+    const payload: Stance = { title: newStance, orderNum: stanceIdx, issuesId: issue.id };
 
     dispatch({
       type: 'ADD_STANCE',
@@ -219,7 +256,7 @@ const IssueDetail = props => {
             onClick={() =>
               updateIssue({
                 variables: {
-                  id: issueId,
+                  id: issue.id,
                   title: issue.title,
                   content: issue.content,
                   imageUrl: issue.imageUrl,
@@ -232,6 +269,13 @@ const IssueDetail = props => {
                         data: stance,
                       },
                     });
+                  } else {
+                    await updateStance({
+                      variables: {
+                        id: stance.id,
+                        title: state[`stance_${stance.id}`].title
+                      }
+                    })
                   }
                 });
               })
@@ -266,7 +310,7 @@ const IssueDetail = props => {
           {!_.isEmpty(stances) &&
             _.map(stances, stance => (
               <li className={style.option} key={stance.title}>
-                {stance.title}
+                <input value={state[`stance_${stance.id}`]?.title} onChange={e => handleChangeStance(e.target.value, stance)} />
               </li>
             ))}
 
