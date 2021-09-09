@@ -9,6 +9,7 @@ export const GET_USERS = gql`
       nickname
       intro
       profileImageUrl
+      isAdmin
     }
   }
 `;
