@@ -81,7 +81,7 @@ const OpinionBox = ({ opinion, issueId }) => {
           <div className={s.profilePlaceholder}>
             <img src={opinion.user.profileImageUrl} />
           </div>
-          <div className={s.profileName}>{opinion.user.name}</div>
+          <div className={s.profileName}>{opinion.user.nickname}</div>
           <div className={s.ago}>{getPubDate(opinion.createdAt)}</div>
         </div>
         <div className={s.commentContentWrapper}>

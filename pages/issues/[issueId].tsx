@@ -54,6 +54,7 @@ const GET_ISSUE = gql`
         user {
           id
           name
+          nickname
           intro
           profileImageUrl
         }

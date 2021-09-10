@@ -42,6 +42,7 @@ const GET_DATA = gql`
       user {
         id
         name
+        nickname
         intro
         profileImageUrl
       }
@@ -231,7 +232,7 @@ const Opinion = props => {
                 <img src={opinion.user.profileImageUrl} />
               </div>
               <div className={user_s.profileInfo}>
-                <p className={user_s.name}>{opinion.user.name}</p>
+                <p className={user_s.name}>{opinion.user.nickname}</p>
                 <p className={user_s.ago}>{getPubDate(opinion.createdAt)}</p>
               </div>
             </div>
@@ -254,15 +255,15 @@ const Opinion = props => {
                   {opinion.opinionReactsSum}
                 </div>
               ) : (
-                <label style={{ cursor: 'pointer' }}>
-                  <img
-                    src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
-                    alt="좋아요 버튼"
-                    style={{ marginRight: '5px' }}
-                  />{' '}
-                  {opinion.opinionReactsSum}
-                </label>
-              )}
+                  <label style={{ cursor: 'pointer' }}>
+                    <img
+                      src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
+                      alt="좋아요 버튼"
+                      style={{ marginRight: '5px' }}
+                    />{' '}
+                    {opinion.opinionReactsSum}
+                  </label>
+                )}
 
               <img
                 src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/bubble.svg"
@@ -284,14 +285,14 @@ const Opinion = props => {
                 />{' '}
               </label>
             ) : (
-              <label style={{ cursor: 'pointer' }}>
-                <img
-                  src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
-                  alt="좋아요 버튼"
-                  style={{ marginRight: '5px' }}
-                />{' '}
-              </label>
-            )}
+                <label style={{ cursor: 'pointer' }}>
+                  <img
+                    src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
+                    alt="좋아요 버튼"
+                    style={{ marginRight: '5px' }}
+                  />{' '}
+                </label>
+              )}
           </div>
           <div className={s.action} onClick={handleClickCommentIcon}>
             <img
@@ -333,18 +334,18 @@ const Opinion = props => {
             </div>
           </div>
         ) : (
-          <div className={s.stanceSelectorWrapper}>
-            <div className={s.guide}>댓글을 남기기 전, 입장을 선택하세요..</div>
-            <div className={s.stanceWrapper}>
-              {opinion.issueStances.map(stance => (
-                <div className={s.stance} key={stance.id} onClick={() => onStanceClick(stance.id)}>
-                  {fruits[stance.orderNum]}&nbsp;&nbsp;
-                  {stance.title}
-                </div>
-              ))}
+            <div className={s.stanceSelectorWrapper}>
+              <div className={s.guide}>댓글을 남기기 전, 입장을 선택하세요..</div>
+              <div className={s.stanceWrapper}>
+                {opinion.issueStances.map(stance => (
+                  <div className={s.stance} key={stance.id} onClick={() => onStanceClick(stance.id)}>
+                    {fruits[stance.orderNum]}&nbsp;&nbsp;
+                    {stance.title}
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
       </main>
     </Layout>
   );
