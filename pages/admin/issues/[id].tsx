@@ -10,7 +10,7 @@ import { GET_STANCES_BY_ISSUE, SINGLE_UPLOAD_IMG } from '../../../lib/queries';
 interface Stance {
   title: String;
   orderNum: Number;
-  issuesId: Number;
+  id: Number;
 }
 
 const GET_ISSUE = gql`
@@ -43,9 +43,9 @@ const CREATE_STANCES_BY_ISSUE = gql`
   }
 `;
 
-const UPDATE_STANCE = gql`
-  mutation updateStance($id: Int!, $title: String) {
-    updateStance(id: $id, title: $title) {
+const UPSERT_STANCE = gql`
+  mutation upsertStance($id: Int!, $title: String, $orderNum: Int, $issuesId: Int) {
+    upsertStance(id: $id, title: $title, orderNum: $orderNum, issuesId: $issuesId) {
       id
     }
   }
@@ -70,7 +70,6 @@ const reducer = (state, action) => {
     }
     case 'CHANGE_ISSUE_INPUT':
       const { key, value } = action.payload;
-      console.log('CHANGE_ISSUE_INPUT')
       return {
         ...state,
         issue: {
@@ -88,15 +87,21 @@ const reducer = (state, action) => {
         ...state,
         newStance: action.value,
       };
-    case 'ADD_STANCE':
+    case 'ADD_STANCE': {
+      const { id, orderNum, title } = action.value
       return {
         ...state,
         stances: state.stances.concat(action.value),
+        [`stance_${id}`]: {
+          id,
+          orderNum,
+          title
+        },
         addStanceMode: false,
       };
+    }
     case 'UPDATE_ISSUE_STANCES': {
       const { value: title, id, orderNum } = action.payload;
-      console.log('UPDATE_ISSUE_STANCES')
 
       return {
         ...state,
@@ -160,15 +165,13 @@ const IssueDetail = props => {
   };
 
   const [state, dispatch] = useReducer(reducer, initial_state);
-  console.log({ state })
   const { issue, addStanceMode, stances, newStance } = state;
-
-
+  console.log({ state })
 
   const [updateIssue, { data }] = useMutation(UPDATE_ISSUE);
   const [createStancesByIssue] = useMutation(CREATE_STANCES_BY_ISSUE);
   const [mutate, { loading, error }] = useMutation(SINGLE_UPLOAD_IMG);
-  const [updateStance] = useMutation(UPDATE_STANCE);
+  const [upsertStance] = useMutation(UPSERT_STANCE);
 
   useEffect(() => {
     dispatch({
@@ -216,7 +219,7 @@ const IssueDetail = props => {
 
   const handleAddStanceBtn = () => {
     const stanceIdx = _.isEmpty(stances) ? 1 : _.size(stances) + 1;
-    const payload: Stance = { title: newStance, orderNum: stanceIdx, issuesId: issue.id };
+    const payload: Stance = { title: newStance, orderNum: stanceIdx, id: issue.id };
 
     dispatch({
       type: 'ADD_STANCE',
@@ -263,20 +266,14 @@ const IssueDetail = props => {
                 },
               }).then(async () => {
                 state.stances.map(async stance => {
-                  if (!_.has(stance, 'id')) {
-                    await createStancesByIssue({
-                      variables: {
-                        data: stance,
-                      },
-                    });
-                  } else {
-                    await updateStance({
-                      variables: {
-                        id: stance.id,
-                        title: state[`stance_${stance.id}`].title
-                      }
-                    })
-                  }
+                  await upsertStance({
+                    variables: {
+                      id: stance.id,
+                      title: state[`stance_${stance.id}`].title,
+                      orderNum: stance.orderNum,
+                      issuesId: issue.id
+                    }
+                  })
                 });
               })
             }

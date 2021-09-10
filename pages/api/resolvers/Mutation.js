@@ -75,13 +75,19 @@ async function createStancesByIssue(parent, args, context) {
   }
 }
 
-async function updateStance(parent, args, context) {
-  console.log('updateStance', args);
+async function upsertStance(parent, args, context) {
   try {
-    const result = await context.prisma.stances.update({
-      where: { id: args.id },
-      data: {
+    const result = await context.prisma.stances.upsert({
+      where: {
+        id: args.id,
+      },
+      update: {
         title: args.title,
+      },
+      create: {
+        issuesId: args.issuesId,
+        title: args.title,
+        orderNum: args.orderNum,
       },
     });
 
@@ -329,7 +335,7 @@ export default {
   createTagsByIssue,
   createTag,
   createStancesByIssue,
-  updateStance,
+  upsertStance,
   createUserStance,
   deleteUserStance,
   signup,
