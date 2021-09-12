@@ -42,34 +42,13 @@ const LoginForm = () => {
           <p>우리 이제 화해해요😫</p>
           <p>싸우기 싫은 사회 SNS, 좌우지간</p>
         </div>
-        <form onSubmit={handleSubmit} className={s.formWrapper}>
-          <input
-            type="text"
-            value={email}
-            onChange={handleEmailChange}
-            placeholder="이메일"
-            className={s.inputForm}
-          />
-          <input
-            type="password"
-            value={password}
-            onChange={handlePasswordChange}
-            placeholder="비밀번호"
-            className={s.inputForm}
-          />
-          <input type="submit" value="로그인" className={s.btnActive} />
-          <button className={s.btnLink}>
-            <Link href={`/users/reset_password`}>비밀번호 찾기</Link>
-          </button>
-        </form>
+        <RegistrationWidget />
 
         <img
           alt="로그인 대문이미지"
           src={'https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/Capybara1.png'}
           style={{ display: 'flex', margin: '0 auto', width: '50%' }}
         />
-
-        <RegistrationWidget />
       </main>
     </Layout>
   );

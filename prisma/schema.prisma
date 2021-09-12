@@ -50,29 +50,36 @@ model User {
   nickname        String?
   intro           String?
   consentToSAt  DateTime?
+  isAdmin       Boolean @default(false)
+
   UserInfo      UserInfo[]
-}
-
-// TODO(jurampark): update doc about schema.prisma convention.
-model Users {
-  id              Int      @id @default(autoincrement())
-  firebaseUID     String   @unique // TODO(jurampark): update design doc for user authentication with flow chats.
-  email           String?   @unique
-  name            String?
-  nickname        String?
-  intro           String?
-  profileImageUrl String? // TODO(jurampark): update dd about uploading images.
-  isAdmin         Int @default(0)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @default(now())
-
-  UserStances          UserStances[]
-  // UserInfo             UserInfo[]
-  Opinions             Opinions[]
-  OpinionComments      OpinionComments[]
-  OpinionReacts        OpinionReacts[]
+  UserStances   UserStances[]
+  Opinions      Opinions[]
+  OpinionReacts OpinionReacts[]
+  OpinionComments OpinionComments[]
   OpinionCommentReacts OpinionCommentReacts[]
 }
+
+// // TODO(jurampark): update doc about schema.prisma convention.
+// model User {
+//   id              Int      @id @default(autoincrement())
+//   firebaseUID     String   @unique // TODO(jurampark): update design doc for user authentication with flow chats.
+//   email           String?   @unique
+//   name            String?
+//   nickname        String?
+//   intro           String?
+//   profileImageUrl String? // TODO(jurampark): update dd about uploading images.
+//   isAdmin         Int @default(0)
+//   createdAt       DateTime @default(now())
+//   updatedAt       DateTime @default(now())
+
+//   UserStances          UserStances[]
+//   // UserInfo             UserInfo[]
+//   Opinions             Opinions[]
+//   OpinionComments      OpinionComments[]
+//   OpinionReacts        OpinionReacts[]
+//   OpinionCommentReacts OpinionCommentReacts[]
+// }
 
 /// Isseus written by autorities.
 model Issues {
@@ -107,15 +114,15 @@ model Stances {
 }
 
 model UserStances {
-  user   Users   @relation(fields: [usersId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
   issue  Issues  @relation(fields: [issuesId], references: [id])
   stance Stances @relation(fields: [stancesId], references: [id])
 
-  usersId   Int
+  userId   String
   issuesId  Int
   stancesId Int
 
-  @@id([usersId, issuesId])
+  @@id([userId, issuesId])
 }
 
 model UserInfo {
@@ -148,13 +155,13 @@ model IssueHashTags {
 
 model Opinions {
   id        Int      @id @default(autoincrement())
-  user      Users    @relation(fields: [usersId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
   issue     Issues   @relation(fields: [issuesId], references: [id])
   stance    Stances  @relation(fields: [stancesId], references: [id])
   content   String   @db.Text
   createdAt DateTime @default(now())
 
-  usersId   Int
+  userId   String
   issuesId  Int
   stancesId Int
 
@@ -164,13 +171,13 @@ model Opinions {
 
 model OpinionComments {
   id        Int      @id @default(autoincrement())
-  user      Users    @relation(fields: [usersId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
   opinion   Opinions @relation(fields: [opinionsId], references: [id])
   stance    Stances  @relation(fields: [stancesId], references: [id])
   content   String   @db.Text
   createdAt DateTime @default(now())
 
-  usersId    Int
+  userId    String
   opinionsId Int
   stancesId  Int
 
@@ -178,25 +185,25 @@ model OpinionComments {
 }
 
 model OpinionReacts {
-  user    Users    @relation(fields: [usersId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
   opinion Opinions @relation(fields: [opinionsId], references: [id])
   like    Boolean  @default(false)
 
-  usersId    Int
+  userId    String
   opinionsId Int
 
-  @@id([usersId, opinionsId])
+  @@id([userId, opinionsId])
 }
 
 model OpinionCommentReacts {
-  user           Users           @relation(fields: [usersId], references: [id])
+  user           User           @relation(fields: [userId], references: [id])
   opinionComment OpinionComments @relation(fields: [opinionCommentsId], references: [id])
   like           Boolean         @default(false)
 
-  usersId           Int
+  userId           String
   opinionCommentsId Int
 
-  @@id([usersId, opinionCommentsId])
+  @@id([userId, opinionCommentsId])
 }
 
 // ***** Obsolete since 20210301 *****

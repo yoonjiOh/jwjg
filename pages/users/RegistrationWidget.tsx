@@ -20,12 +20,8 @@ function RegistrationWidget() {
 
   return (
     <div className={s.registrationWidgetWrapper}>
-      <Link href={`/users/email_registration`}>
-        <button className={s.btnDefault}>이메일로 시작하기</button>
-      </Link>
-      {/* <button className={s.btnFacebook} onClick={handleFacebookLogin}> */}
       <button
-        className={s.btnFacebook}
+        className={s.btnGoogle}
         onClick={() =>
           signIn('google', { callbackUrl: 'http://localhost:3000/users/terms_of_service' })
         }

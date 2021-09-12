@@ -1,7 +1,8 @@
-import { gql } from '@apollo/client';
+import { gql, useQuery } from '@apollo/client';
 import { Users } from '@prisma/client';
 import _ from 'lodash';
-import { AuthAction, useAuthUser, withAuthUser, withAuthUserTokenSSR } from 'next-firebase-auth';
+import { User } from 'next-auth';
+import { signOut } from 'next-auth/client';
 import { useRouter } from 'next/router';
 import { ReactNode } from 'react';
 import { initializeApollo } from '../../apollo/apolloClient';
@@ -10,15 +11,19 @@ import HashTag from '../../components/HashTag';
 import Layout from '../../components/Layout';
 import OpinionSummaryBox from '../../components/OpinionSummaryBox';
 import { GET_ISSUES, GET_STANCES, GET_USERS } from '../../lib/queries';
+import {
+  GetServerSidePropsContextWithUser,
+  requireAuthentication,
+} from '../libs/requireAuthentication';
 import s from './users.module.scss';
 
 const GET_MYPAGE_DATA = gql`
-  query user($id: Int!) {
+  query user($id: String!) {
     user(id: $id) {
       id
       name
       intro
-      profileImageUrl
+      image
       isAdmin
       opinions {
         id
@@ -41,7 +46,7 @@ const GET_MYPAGE_DATA = gql`
   }
 `;
 
-function UserPage(props) {
+function UserPage(props: any) {
   if (!props.user) {
     return null;
   }
@@ -156,81 +161,74 @@ function UserPage(props) {
   );
 }
 
-export const getServerSideProps = withAuthUserTokenSSR({
-  whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
-  authPageURL: '/users',
-})(async ({ AuthUser }) => {
-  const apolloClient = initializeApollo(null);
-  const {
-    error,
-    data: { userByFirebase: userData },
-  }: { error?: any, data: { userByFirebase: Users } } = await apolloClient.query({
-    query: GET_USERS,
-    variables: { firebaseUID: AuthUser.id },
-  });
+export const getServerSideProps = requireAuthentication(
+  async (context: GetServerSidePropsContextWithUser) => {
+    // const { data } = await apolloClient.query({
+    //   query: GET_MYPAGE_DATA,
+    //   variables: { id: userId },
+    // });
+    return {
+      props: {
+        user: context.user,
+      },
+    };
+  },
+);
 
-  if (!userData) {
-    return null;
-  }
+//   const { data } = await apolloClient.query({
+//     query: GET_MYPAGE_DATA,
+//     variables: { id: userId },
+//   });
 
-  const userId = userData.id;
-  const { data } = await apolloClient.query({
-    query: GET_MYPAGE_DATA,
-    variables: { id: userId },
-  });
+//   const issues = await apolloClient.query({
+//     query: GET_ISSUES,
+//   });
 
-  const issues = await apolloClient.query({
-    query: GET_ISSUES,
-  });
+//   const stances = await apolloClient.query({
+//     query: GET_STANCES,
+//   });
 
-  const stances = await apolloClient.query({
-    query: GET_STANCES,
-  });
-
-  return {
-    props: {
-      user: userData,
-      data: data,
-      issues_data: issues.data,
-      stances_data: stances.data,
-    },
-  };
-});
+//   return {
+//     props: {
+//       user: userData,
+//       data: data,
+//       issues_data: issues.data,
+//       stances_data: stances.data,
+//     },
+//   };
+// });
 
 interface Props {
-  data: any;
-  issues_data: any;
-  stances_data: any;
+  // data: any;
+  // issues_data: any;
+  // stances_data: any;
   children?: ReactNode;
-  user: any;
+  user: User;
 }
 
 const MyPage = (props: Props) => {
-  const AuthUser = useAuthUser();
   const router = useRouter();
-  // useEffect(() => {
-  //   if (!props.data) {
-  //     // AuthUser.signOut();
-  //     // router.push('/');
-  //   }
-  // }, []);
 
-  if (!props.data) {
-    AuthUser.signOut().then(() => {
-      router.push('/');
-    });
+  const { data, loading } = useQuery(GET_MYPAGE_DATA, { variables: { id: props.user.id } });
+  const { data: issues_data, loading: loadingIssues } = useQuery(GET_ISSUES);
+  const { data: stances_data, loading: loadingStances } = useQuery(GET_STANCES);
+
+  if (loading || loadingIssues || loadingStances) return null;
+
+  if (!data) {
+    signOut();
   }
 
   const tagsMap = {};
   const user = props.user;
-  if (props.data && user) {
+  if (data && user) {
     const relatedIssueIds = _.uniq(
-      props.data.user.opinions.map(opinion => opinion.issuesId),
-      props.data.user.userStances.map(stance => stance.issuesId),
+      data.user.opinions?.map(opinion => opinion.issuesId),
+      data.user.userStances?.map(stance => stance.issuesId),
     );
 
     relatedIssueIds.map(issueId => {
-      const matchIssue = _.find(props.issues_data.issues, issue => issue.id === issueId);
+      const matchIssue = _.find(issues_data.issues, issue => issue.id === issueId);
       if (matchIssue && matchIssue.issueHashTags.length) {
         matchIssue.issueHashTags.forEach(issueHashTag => {
           const targetTag = issueHashTag.hashTags[0].name;
@@ -247,9 +245,15 @@ const MyPage = (props: Props) => {
 
   return (
     <Layout title={'마이페이지'} headerInfo={{ headerType: 'common' }} isDimmed={false}>
-      <UserPage user={props.user} router={router} tagsMap={tagsMap} />
+      <UserPage
+        user={props.user}
+        router={router}
+        tagsMap={tagsMap}
+        issues_data={issues_data}
+        stances_data={stances_data}
+      />
     </Layout>
   );
 };
 
-export default withAuthUser()(MyPage);
+export default MyPage;

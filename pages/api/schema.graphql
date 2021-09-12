@@ -4,14 +4,22 @@ type User {
   email: String
   emailVerified: DateTime
   image: String
-  nickname: String
-  intro: String
-  profileImageUrl: String
-  consentToSAt: DateTime
   createdAt: DateTime
   updatedAt: DateTime
   accounts: [Account]
   sessions: [Session]
+
+  nickname: String
+  intro: String
+  consentToSAt: DateTime
+  isAdmin: Boolean
+
+  userInfo: [UserInfo]
+  userStances: [UserStance]
+  opinions: [Opinion]
+  opinionReacts: [OpinionReact]
+  opinionComments: [OpinionComment]
+  opinionCommentReacts: [OpinionCommentReact]
 }
 
 type Session {
@@ -190,7 +198,7 @@ type Query {
   users: [User]
   userByFirebase(firebaseUID: String): User
   userByFirebaseWithIssuesId(firebaseUID: String, issuesId: Int): User
-  user(id: Int!): User
+  user(id: String!): User
   issue(id: Int!): Issue
   issues(id: Int): [Issue]
   publishedIssues(id: Int): [Issue]
