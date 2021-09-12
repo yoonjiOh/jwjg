@@ -31,7 +31,7 @@ const GET_TAGS = gql`
 `;
 
 const CREATE_ISSUE = gql`
-  mutation createIssue($title: String!, $content: String!, $imageUrl: String!, $authorId: Int!) {
+  mutation createIssue($title: String!, $content: String!, $imageUrl: String!, $authorId: String!) {
     createIssue(title: $title, content: $content, imageUrl: $imageUrl, authorId: $authorId) {
       id
       title
