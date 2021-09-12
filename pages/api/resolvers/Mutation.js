@@ -79,13 +79,13 @@ async function createUserStance(parent, args, context) {
   try {
     const result = await context.prisma.userStances.upsert({
       where: {
-        usersId_issuesId: { usersId: args.usersId, issuesId: args.issuesId },
+        usersId_issuesId: { userId: args.usersId, issuesId: args.issuesId },
       },
       update: {
         stancesId: args.stancesId,
       },
       create: {
-        usersId: args.usersId,
+        userId: args.usersId,
         stancesId: args.stancesId,
         issuesId: args.issuesId,
       },
@@ -102,7 +102,7 @@ async function deleteUserStance(parent, args, context) {
     const result = await context.prisma.userStances.delete({
       where: {
         usersId_issuesId: {
-          usersId: args.usersId,
+          userId: args.usersId,
           issuesId: args.issuesId,
         },
       },
@@ -164,7 +164,7 @@ async function createOpinion(parent, args, context) {
   const newOpinion = await context.prisma.opinions.create({
     data: {
       content: args.content,
-      usersId: args.usersId,
+      userId: args.usersId,
       issuesId: args.issuesId,
       stancesId: args.stancesId,
     },
@@ -190,7 +190,7 @@ async function createOpinionComment(parent, args, context) {
   const newOpinionComment = await context.prisma.opinionComments.create({
     data: {
       content: args.content,
-      usersId: args.usersId,
+      userId: args.usersId,
       opinionsId: args.opinionsId,
       stancesId: args.stancesId,
     },
@@ -202,13 +202,13 @@ async function createOpinionComment(parent, args, context) {
 async function doLikeActionToOpinion(parent, args, context) {
   const result = await context.prisma.opinionReacts.upsert({
     where: {
-      usersId_opinionsId: { usersId: args.usersId, opinionsId: args.opinionsId },
+      usersId_opinionsId: { userId: args.usersId, opinionsId: args.opinionsId },
     },
     update: {
       like: args.like,
     },
     create: {
-      usersId: args.usersId,
+      userId: args.usersId,
       opinionsId: args.opinionsId,
       like: args.like,
     },
@@ -221,7 +221,7 @@ async function doLikeActionToOpinionComment(parent, args, context) {
   const result = await context.prisma.opinionCommentReacts.upsert({
     where: {
       usersId_opinionCommentsId: {
-        usersId: args.usersId,
+        userId: args.usersId,
         opinionCommentsId: args.opinionCommentsId,
       },
     },
@@ -229,7 +229,7 @@ async function doLikeActionToOpinionComment(parent, args, context) {
       like: args.like,
     },
     create: {
-      usersId: args.usersId,
+      userId: args.usersId,
       opinionCommentsId: args.opinionCommentsId,
       like: args.like,
     },
@@ -238,24 +238,25 @@ async function doLikeActionToOpinionComment(parent, args, context) {
   return result;
 }
 
-async function updateUserProfile(parent, args, context) {
-  const result = await context.prisma.users.update({
+async function updateUserInfo(_, { id, name, nickname, intro, image, consentToSAt }, { prisma }) {
+  return await prisma.user.update({
     where: {
-      id: args.id,
+      id: id,
     },
     data: {
-      name: args.name,
-      nickname: args.nickname,
-      intro: args.intro,
-      profileImageUrl: args.profileImageUrl,
+      name: name,
+      nickname: nickname,
+      intro: intro,
+      image: image,
+      consentToSAt: consentToSAt,
     },
   });
 }
 
 async function createUserInfo(parent, args, context) {
-  await context.prisma.userInfo.create({
+  return await context.prisma.userInfo.create({
     data: {
-      usersId: args.usersId,
+      userId: args.userId,
       gender: args.gender,
       age: args.age,
       residence: args.residence,
@@ -292,18 +293,18 @@ async function manageApproveHotIssue(parent, args, context) {
     },
     data: {
       isHotIssue: args.isHotIssue,
-    }
+    },
   });
 }
 
 async function manageRollbackHotIssue(parent, args, context) {
   await context.prisma.issues.update({
     where: {
-      id: args.id
+      id: args.id,
     },
     data: {
       isHotIssue: args.isHotIssue,
-    }
+    },
   });
 }
 
@@ -323,10 +324,10 @@ export default {
   createOpinionComment,
   doLikeActionToOpinion,
   doLikeActionToOpinionComment,
-  updateUserProfile,
+  updateUserInfo,
   createUserInfo,
   manageIssuePublishStatus,
   deleteIssue,
   manageApproveHotIssue,
-  manageRollbackHotIssue
+  manageRollbackHotIssue,
 };

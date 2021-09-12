@@ -108,8 +108,8 @@ const GET_USER = gql`
 `;
 
 const CREATE_USER_STANCE = gql`
-  mutation createUserStance($usersId: Int, $issuesId: Int, $stancesId: Int) {
-    createUserStance(usersId: $usersId, issuesId: $issuesId, stancesId: $stancesId) {
+  mutation createUserStance($userId: Int, $issuesId: Int, $stancesId: Int) {
+    createUserStance(userId: $userId, issuesId: $issuesId, stancesId: $stancesId) {
       usersId
       issuesId
       stancesId
@@ -118,13 +118,23 @@ const CREATE_USER_STANCE = gql`
 `;
 
 const DELETE_USER_STANCE = gql`
-  mutation deleteUserStance($usersId: Int, $issuesId: Int) {
-    deleteUserStance(usersId: $usersId, issuesId: $issuesId) {
+  mutation deleteUserStance($userId: Int, $issuesId: Int) {
+    deleteUserStance(userId: $userId, issuesId: $issuesId) {
       usersId
       issuesId
     }
   }
 `;
+
+export const getServerSideProps = requireAuthentication(
+  async (context: GetServerSidePropsContextWithUser) => {
+    return {
+      props: {
+        user: context.user,
+      },
+    };
+  },
+);
 
 const Issue: any = () => {
   const router = useRouter();
@@ -138,7 +148,6 @@ const Issue: any = () => {
   } = useQuery(GET_ISSUE, {
     variables: { id: issueId },
   });
-  const AuthUser = useAuthUser();
   const {
     loading: userLoading,
     error: userError,
@@ -195,14 +204,14 @@ const Issue: any = () => {
       if (userStance?.stancesId === stancesId) {
         await deleteUserStance({
           variables: {
-            usersId: userId,
+            userId: userId,
             issuesId: issue.id,
           },
         });
       } else {
         await createUserStance({
           variables: {
-            usersId: userId,
+            userId: userId,
             issuesId: issue.id,
             stancesId,
           },
@@ -305,7 +314,7 @@ const Issue: any = () => {
               {issue.opinions.map(opinion => (
                 <div key={opinion.id} className={s.opinionContainer}>
                   {/* @ts-ignore */}
-                  <OpinionBox opinion={opinion} issueId={issue.id} />
+                  <OpinionBox user={user} opinion={opinion} issueId={issue.id} />
                 </div>
               ))}
             </div>

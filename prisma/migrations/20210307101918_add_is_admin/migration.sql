@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE `Users` ADD COLUMN     `isAdmin` INTEGER NOT NULL DEFAULT 0;

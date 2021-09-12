@@ -1,6 +1,7 @@
 generator client {
   provider        = "prisma-client-js"
   binaryTargets = ["native", "rhel-openssl-1.0.x"]
+  previewFeatures = ["referentialActions"]
 }
 
 datasource db {
@@ -8,26 +9,77 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// TODO(jurampark): update doc about schema.prisma convention.
-model Users {
-  id              Int      @id @default(autoincrement())
-  firebaseUID     String   @unique // TODO(jurampark): update design doc for user authentication with flow chats.
-  email           String?   @unique
-  name            String?
+model Account {
+  id                 String    @id @default(cuid())
+  userId             String
+  providerType       String
+  providerId         String
+  providerAccountId  String
+  refreshToken       String?
+  accessToken        String?
+  accessTokenExpires DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  user               User      @relation(fields: [userId], references: [id])
+
+  @@unique([providerId, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  expires      DateTime
+  sessionToken String   @unique
+  accessToken  String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+
   nickname        String?
   intro           String?
-  profileImageUrl String? // TODO(jurampark): update dd about uploading images.
-  isAdmin         Int @default(0)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @default(now())
+  consentToSAt  DateTime?
+  isAdmin       Boolean @default(false)
 
-  UserStances          UserStances[]
-  UserInfo             UserInfo[]
-  Opinions             Opinions[]
-  OpinionComments      OpinionComments[]
-  OpinionReacts        OpinionReacts[]
+  UserInfo      UserInfo[]
+  UserStances   UserStances[]
+  Opinions      Opinions[]
+  OpinionReacts OpinionReacts[]
+  OpinionComments OpinionComments[]
   OpinionCommentReacts OpinionCommentReacts[]
 }
+
+// // TODO(jurampark): update doc about schema.prisma convention.
+// model User {
+//   id              Int      @id @default(autoincrement())
+//   firebaseUID     String   @unique // TODO(jurampark): update design doc for user authentication with flow chats.
+//   email           String?   @unique
+//   name            String?
+//   nickname        String?
+//   intro           String?
+//   profileImageUrl String? // TODO(jurampark): update dd about uploading images.
+//   isAdmin         Int @default(0)
+//   createdAt       DateTime @default(now())
+//   updatedAt       DateTime @default(now())
+
+//   UserStances          UserStances[]
+//   // UserInfo             UserInfo[]
+//   Opinions             Opinions[]
+//   OpinionComments      OpinionComments[]
+//   OpinionReacts        OpinionReacts[]
+//   OpinionCommentReacts OpinionCommentReacts[]
+// }
 
 /// Isseus written by autorities.
 model Issues {
@@ -62,26 +114,26 @@ model Stances {
 }
 
 model UserStances {
-  user   Users   @relation(fields: [usersId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
   issue  Issues  @relation(fields: [issuesId], references: [id])
   stance Stances @relation(fields: [stancesId], references: [id])
 
-  usersId   Int
+  userId   String
   issuesId  Int
   stancesId Int
 
-  @@id([usersId, issuesId])
+  @@id([userId, issuesId])
 }
 
 model UserInfo {
-  user    Users   @relation(fields: [usersId], references: [id])
+  user    User   @relation(fields: [userId], references: [id])
   
-  usersId     Int
+  userId     String @unique
   age         Int?
   gender      String?
   residence   String?
 
-  @@id([usersId])
+  @@id([userId])
 }
 
 model HashTags {
@@ -103,13 +155,13 @@ model IssueHashTags {
 
 model Opinions {
   id        Int      @id @default(autoincrement())
-  user      Users    @relation(fields: [usersId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
   issue     Issues   @relation(fields: [issuesId], references: [id])
   stance    Stances  @relation(fields: [stancesId], references: [id])
   content   String   @db.Text
   createdAt DateTime @default(now())
 
-  usersId   Int
+  userId   String
   issuesId  Int
   stancesId Int
 
@@ -119,13 +171,13 @@ model Opinions {
 
 model OpinionComments {
   id        Int      @id @default(autoincrement())
-  user      Users    @relation(fields: [usersId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
   opinion   Opinions @relation(fields: [opinionsId], references: [id])
   stance    Stances  @relation(fields: [stancesId], references: [id])
   content   String   @db.Text
   createdAt DateTime @default(now())
 
-  usersId    Int
+  userId    String
   opinionsId Int
   stancesId  Int
 
@@ -133,25 +185,25 @@ model OpinionComments {
 }
 
 model OpinionReacts {
-  user    Users    @relation(fields: [usersId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
   opinion Opinions @relation(fields: [opinionsId], references: [id])
   like    Boolean  @default(false)
 
-  usersId    Int
+  userId    String
   opinionsId Int
 
-  @@id([usersId, opinionsId])
+  @@id([userId, opinionsId])
 }
 
 model OpinionCommentReacts {
-  user           Users           @relation(fields: [usersId], references: [id])
+  user           User           @relation(fields: [userId], references: [id])
   opinionComment OpinionComments @relation(fields: [opinionCommentsId], references: [id])
   like           Boolean         @default(false)
 
-  usersId           Int
+  userId           String
   opinionCommentsId Int
 
-  @@id([usersId, opinionCommentsId])
+  @@id([userId, opinionCommentsId])
 }
 
 // ***** Obsolete since 20210301 *****

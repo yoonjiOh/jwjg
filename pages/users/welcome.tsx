@@ -2,10 +2,14 @@ import s from './users.module.scss';
 import React from 'react';
 
 import { useRouter } from 'next/router';
-import { withAuthUser, useAuthUser } from 'next-firebase-auth';
 
 import { gql, useQuery } from '@apollo/client';
-import Loading from '../../components/Loading';
+import {
+  GetServerSidePropsContextWithUser,
+  requireAuthentication,
+} from '../libs/requireAuthentication';
+import { User } from 'next-auth';
+import { GET_USER_INFO } from './graph_queries';
 
 const GET_USER = gql`
   query userByFirebase($firebaseUID: String) {
@@ -24,12 +28,10 @@ const GET_USER = gql`
   }
 `;
 
-function UserInfo(props) {
-  if (!props.userInfo) {
+function UserInfo({ userInfo }: any) {
+  if (!userInfo) {
     return null;
   }
-
-  const userInfo = props.userInfo;
 
   return (
     <span>
@@ -38,19 +40,27 @@ function UserInfo(props) {
   );
 }
 
-const welcomePage = () => {
+export const getServerSideProps = requireAuthentication(
+  async (context: GetServerSidePropsContextWithUser) => {
+    return {
+      props: {
+        user: context.user,
+      },
+    };
+  },
+);
+
+interface Props {
+  user: User;
+}
+
+const WelcomePage = (props: Props) => {
   const router = useRouter();
-  const AuthUser = useAuthUser();
+  const { data, loading } = useQuery(GET_USER_INFO, { variables: { userId: props.user.id } });
+  if (loading) return null;
 
-  const { data: userData } = useQuery(GET_USER, {
-    variables: { firebaseUID: AuthUser.id },
-  });
-
-  const user = userData?.userByFirebase;
-
-  if (!user) {
-    return <Loading />;
-  }
+  const user = props.user;
+  const userInfo = data.userInfo;
 
   return (
     <div className={s.main} style={{ marginTop: '0', height: '100vh' }}>
@@ -71,12 +81,12 @@ const welcomePage = () => {
               margin: '0 auto',
             }}
           >
-            <img src={user.profileImageUrl} style={{ width: '50%', height: '50%' }} />
+            <img src={user.image} style={{ width: '50%', height: '50%' }} />
           </div>
 
           <span>{user.nickname}</span>
           <span>@{user.name}</span>
-          <UserInfo userInfo={user.userInfo} />
+          <UserInfo userInfo={userInfo} />
 
           <div style={{ marginTop: '15px' }}>
             <div>{user.intro}</div>
@@ -87,7 +97,7 @@ const welcomePage = () => {
         <button
           className={s.primary}
           onClick={() => {
-            router.push('/');
+            router.push('/', undefined, { shallow: false });
           }}
         >
           시작하기🎉
@@ -97,4 +107,4 @@ const welcomePage = () => {
   );
 };
 
-export default withAuthUser()(welcomePage);
+export default WelcomePage;

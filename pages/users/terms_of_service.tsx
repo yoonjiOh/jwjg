@@ -1,20 +1,66 @@
-import { AuthAction, withAuthUser } from 'next-firebase-auth';
+import { useMutation } from '@apollo/client';
+import { User } from 'next-auth';
+import { getSession } from 'next-auth/client';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import Layout from '../../components/Layout';
 import common_style from '../index.module.scss';
+import {
+  GetServerSidePropsContextWithUser,
+  requireAuthentication,
+} from '../libs/requireAuthentication';
+import { UPDATE_USER_INFO } from './graph_queries';
 import u_style from './users.module.scss';
 
 const headerTitle = '약관 동의';
 
-function TermsOfService() {
+export const getServerSideProps = requireAuthentication(
+  async (context: GetServerSidePropsContextWithUser) => {
+    if (context.user.consentToSAt) {
+      return {
+        redirect: {
+          destination: '/',
+          permanent: false,
+        },
+      };
+    }
+
+    return {
+      props: {
+        user: context.user,
+      },
+    };
+  },
+);
+
+interface Props {
+  user: User;
+}
+
+function TermsOfService(props: Props) {
   const router = useRouter();
   const [agreed, setAgreed] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
+  const [updateUserInfo] = useMutation(UPDATE_USER_INFO);
 
   const handleSubmit = async e => {
     e.preventDefault();
-    router.push('/users/additional_information');
+    await updateUserInfo({
+      variables: {
+        id: props.user.id,
+        consentToSAt: new Date(),
+      },
+    })
+      .then(() => {})
+      .catch(e => {
+        console.error(JSON.stringify(e, null, 2));
+      })
+      .finally(() => {
+        router.push({
+          pathname: '/users/edit_profile',
+          query: { isFirst: true },
+        });
+      });
   };
 
   const headerInfo = {
@@ -60,7 +106,7 @@ function TermsOfService() {
                 }
               />
               <input style={{ visibility: 'hidden' }} type="checkbox" onChange={handleChange} />
-              <span className={agreed && u_style.agreed}>이용 약관에 동의해요</span>
+              <span className={agreed ? u_style.agreed : undefined}>이용 약관에 동의해요</span>
             </label>
 
             <span style={{ textDecoration: 'underline' }} onClick={() => showMoreTerms()}>
@@ -287,4 +333,4 @@ function TermsOfService() {
   );
 }
 
-export default withAuthUser()(TermsOfService);
+export default TermsOfService;

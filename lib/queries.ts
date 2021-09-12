@@ -24,9 +24,9 @@ export const GET_OPINION_REACTS_AND_COMMENTS = gql`
 `;
 
 export const DO_LIKE_ACTION_TO_OPINION_COMMENT = gql`
-  mutation doLikeActionToOpinionComment($usersId: Int!, $opinionCommentsId: Int!, $like: Boolean!) {
+  mutation doLikeActionToOpinionComment($userId: Int!, $opinionCommentsId: Int!, $like: Boolean!) {
     doLikeActionToOpinionComment(
-      usersId: $usersId
+      userId: $userId
       opinionCommentsId: $opinionCommentsId
       like: $like
     ) {
@@ -38,8 +38,8 @@ export const DO_LIKE_ACTION_TO_OPINION_COMMENT = gql`
 `;
 
 export const DO_LIKE_ACTION_TO_OPINION = gql`
-  mutation doLikeActionToOpinion($usersId: Int!, $opinionsId: Int!, $like: Boolean!) {
-    doLikeActionToOpinion(usersId: $usersId, opinionsId: $opinionsId, like: $like) {
+  mutation doLikeActionToOpinion($userId: Int!, $opinionsId: Int!, $like: Boolean!) {
+    doLikeActionToOpinion(userId: $userId, opinionsId: $opinionsId, like: $like) {
       usersId
       opinionsId
       like

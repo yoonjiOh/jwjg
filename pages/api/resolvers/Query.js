@@ -2,15 +2,23 @@
 import { AuthenticationError } from 'apollo-server';
 
 async function user(parent, args, context) {
-  return await context.prisma.users.findUnique({
+  return await context.prisma.user.findUnique({
     where: { id: args.id },
+  });
+}
+
+async function userInfo(parent, args, context) {
+  const userId = args.userId;
+  if (!userId) return null;
+  return await context.prisma.userInfo.findUnique({
+    where: { userId: userId },
   });
 }
 
 async function userByFirebase(parent, args, context) {
   const firebaseUID = args.firebaseUID;
   if (!firebaseUID) return null;
-  return await context.prisma.users.findUnique({
+  return await context.prisma.user.findUnique({
     where: { firebaseUID: args.firebaseUID },
   });
 }
@@ -18,13 +26,13 @@ async function userByFirebase(parent, args, context) {
 async function userByFirebaseWithIssuesId(parent, args, context) {
   const firebaseUID = args.firebaseUID;
   if (!firebaseUID) return null;
-  return await context.prisma.users.findUnique({
+  return await context.prisma.user.findUnique({
     where: { firebaseUID: args.firebaseUID },
   });
 }
 
 async function users(parent, args, context) {
-  return await context.prisma.users.findMany();
+  return await context.prisma.user.findMany();
 }
 
 async function stances(parent, args, context) {
@@ -122,7 +130,7 @@ async function myStance(parent, args, context) {
   return await context.prisma.userStances.findFirst({
     where: {
       issuesId: args.issuesId,
-      usersId: args.usersId,
+      userId: args.usersId,
     },
   });
 }
@@ -130,7 +138,7 @@ async function myStance(parent, args, context) {
 async function myOpinion(parent, args, context) {
   return await context.prisma.opinions.findFirst({
     where: {
-      usersId: args.usersId,
+      userId: args.usersId,
       issuesId: args.issuesId,
     },
   });
@@ -138,6 +146,7 @@ async function myOpinion(parent, args, context) {
 
 export default {
   user,
+  userInfo,
   userByFirebase,
   users,
   issue,

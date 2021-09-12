@@ -16,7 +16,8 @@
     "@apollo/client": "^3.3.21",
     "@apollo/react-ssr": "4.0.0",
     "@material-ui/core": "^4.12.1",
-    "@prisma/client": "^2.27.0",
+    "@next-auth/prisma-adapter": "^0.5.4",
+    "@prisma/client": "^2.30.3",
     "apollo-boost": "0.4.9",
     "apollo-link-http": "1.5.17",
     "apollo-link-schema": "1.2.5",
@@ -29,9 +30,6 @@
     "dayjs": "^1.10.6",
     "deepmerge": "^4.2.2",
     "express": "4.17.1",
-    "firebase": "^8.7.1",
-    "firebase-admin": "^9.11.0",
-    "firebase-auth": "^0.1.2",
     "graphql": "15.4.0",
     "graphql-request": "^3.4.0",
     "graphql-tag": "2.11.0",
@@ -41,12 +39,11 @@
     "micro-cors": "^0.1.1",
     "multiselect-react-dropdown": "^1.7.0",
     "next": "^10.2.3",
-    "next-firebase-auth": "^0.13.2",
+    "next-auth": "^3.29.0",
     "react": "17.0.1",
     "react-apollo": "3.1.5",
     "react-copy-to-clipboard": "^5.0.3",
     "react-dom": "17.0.1",
-    "react-firebaseui": "^4.2.0",
     "react-markdown": "5.0.3",
     "sass": "^1.35.2"
   },
@@ -66,12 +63,12 @@
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.2.0",
     "prettier": "^2.3.2",
-    "prisma": "^2.27.0",
+    "prisma": "^3.0.2",
     "ts-node": "^9.1.0",
     "typescript": "^4.3.5"
   },
   "resolutions": {
-    "fs-capacitor":"^6.2.0",
+    "fs-capacitor": "^6.2.0",
     "**/graphql-upload": "^11.0.0"
   }
 }

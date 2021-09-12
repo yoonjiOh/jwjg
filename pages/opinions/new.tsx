@@ -24,8 +24,8 @@ const GET_STANCE = gql`
 `;
 
 const GET_MY_OPINION = gql`
-  query myOpinion($usersId: Int, $issuesId: Int) {
-    myOpinion(usersId: $usersId, issuesId: $issuesId) {
+  query myOpinion($userId: Int, $issuesId: Int) {
+    myOpinion(userId: $userId, issuesId: $issuesId) {
       id
       content
     }
@@ -52,7 +52,7 @@ export const getServerSideProps = withAuthUserTokenSSR({
   const { data: opinionData } = await apolloClient.query({
     query: GET_MY_OPINION,
     variables: {
-      usersId: +userId,
+      userId: +userId,
       issuesId: +issueId,
     },
   });
@@ -67,13 +67,8 @@ export const getServerSideProps = withAuthUserTokenSSR({
 });
 
 const CREATE_OPINION = gql`
-  mutation createOpinion($content: String!, $usersId: Int!, $issuesId: Int!, $stancesId: Int!) {
-    createOpinion(
-      content: $content
-      usersId: $usersId
-      issuesId: $issuesId
-      stancesId: $stancesId
-    ) {
+  mutation createOpinion($content: String!, $userId: Int!, $issuesId: Int!, $stancesId: Int!) {
+    createOpinion(content: $content, userId: $userId, issuesId: $issuesId, stancesId: $stancesId) {
       id
     }
   }
@@ -88,8 +83,8 @@ const UPDATE_OPINION = gql`
 `;
 
 const CREATE_USER_STANCE = gql`
-  mutation createUserStance($usersId: Int, $issuesId: Int, $stancesId: Int) {
-    createUserStance(usersId: $usersId, issuesId: $issuesId, stancesId: $stancesId) {
+  mutation createUserStance($userId: Int, $issuesId: Int, $stancesId: Int) {
+    createUserStance(userId: $userId, issuesId: $issuesId, stancesId: $stancesId) {
       usersId
       issuesId
       stancesId
@@ -137,7 +132,7 @@ const New = props => {
         const newOpinion = await createOpinion({
           variables: {
             content: opinionBody,
-            usersId: Number(userId),
+            userId: Number(userId),
             issuesId: Number(issueId),
             stancesId: Number(stancesId),
           },
@@ -171,7 +166,7 @@ const New = props => {
   const onStanceClick = async stancesId => {
     await createUserStance({
       variables: {
-        usersId: Number(userId),
+        userId: Number(userId),
         issuesId: Number(issueId),
         stancesId,
       },
@@ -205,22 +200,22 @@ const New = props => {
               </div>
             </div>
           ) : (
-              <div className={s.opinionHasStanceWrapper}>
-                <div className={s.stanceNoti}>
-                  {fruits[stance && stance.orderNum] + ' '}
-                  <span className={s.title}>{stance && stance.title}</span>
+            <div className={s.opinionHasStanceWrapper}>
+              <div className={s.stanceNoti}>
+                {fruits[stance && stance.orderNum] + ' '}
+                <span className={s.title}>{stance && stance.title}</span>
                 입장을 표하셨어요.
               </div>
-                <div className="stancesWrapper">
-                  <textarea
-                    className={s.opinionInput}
-                    placeholder="이슈에 대한 생각을 자유롭게 말해 주세요."
-                    value={opinionBody}
-                    onChange={handleChange}
-                  />
-                </div>
+              <div className="stancesWrapper">
+                <textarea
+                  className={s.opinionInput}
+                  placeholder="이슈에 대한 생각을 자유롭게 말해 주세요."
+                  value={opinionBody}
+                  onChange={handleChange}
+                />
               </div>
-            )}
+            </div>
+          )}
         </main>
       </Layout>
     </>

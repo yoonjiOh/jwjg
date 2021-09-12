@@ -137,7 +137,7 @@ const Opinions = props => {
     try {
       await doLikeActionToOpinion({
         variables: {
-          usersId: +userId,
+          userId: +userId,
           opinionsId: +opinionId,
           like: isLikedByMe ? false : true,
         },
@@ -171,7 +171,7 @@ const Opinions = props => {
                 <div className={util_s.commentWrapper}>
                   <div className={user_s.smallProfileWrapper}>
                     <div>
-                      <img src={opinion.user.profileImageUrl} />
+                      <img src={opinion.user.image} />
                     </div>
                     <div className={user_s.profileInfo}>
                       <p className={user_s.name}>{opinion.user.name}</p>

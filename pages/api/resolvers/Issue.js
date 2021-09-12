@@ -24,7 +24,7 @@ const userStances = async (parent, _args, context) => {
 };
 
 const author = async (parent, _args, context) => {
-  return await context.prisma.users.findUnique({
+  return await context.prisma.user.findUnique({
     where: { id: parent.authorId },
   });
 };

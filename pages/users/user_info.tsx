@@ -2,8 +2,15 @@ import s from './users.module.scss';
 import React, { useState } from 'react';
 
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { withAuthUser, useAuthUser } from 'next-firebase-auth';
+// import { withAuthUser, useAuthUser } from 'next-firebase-auth';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/client';
+import { CREATE_USER_INFO } from './graph_queries';
+import {
+  GetServerSidePropsContextWithUser,
+  requireAuthentication,
+} from '../libs/requireAuthentication';
+import { User } from 'next-auth';
 
 const ageChoices = [10, 20, 30, 40, 50, 60];
 const genderChoices = ['남성', '여성', '그 외'];
@@ -26,16 +33,6 @@ const residenceChoices = [
   '제주',
 ];
 
-const CREATE_USER_INFO = gql`
-  mutation createUserInfo($usersId: Int!, $age: Int, $gender: String, $residence: String) {
-    createUserInfo(usersId: $usersId, age: $age, gender: $gender, residence: $residence) {
-      age
-      gender
-      residence
-    }
-  }
-`;
-
 const GET_USER = gql`
   query userByFirebase($firebaseUID: String) {
     userByFirebase(firebaseUID: $firebaseUID) {
@@ -44,17 +41,26 @@ const GET_USER = gql`
   }
 `;
 
-const userInfo = () => {
+export const getServerSideProps = requireAuthentication(
+  async (context: GetServerSidePropsContextWithUser) => {
+    return {
+      props: {
+        user: context.user,
+      },
+    };
+  },
+);
+
+interface Props {
+  user: User;
+}
+
+const UserInfo = (props: Props) => {
   const [choiceObj, setChoiceObj] = useState({ age: null, gender: null, residence: null });
   const [createUserInfo] = useMutation(CREATE_USER_INFO);
+  const user = props.user;
 
   const router = useRouter();
-  const AuthUser = useAuthUser();
-  const { data: userData } = useQuery(GET_USER, {
-    variables: { firebaseUID: AuthUser.id },
-  });
-
-  const userId = userData?.userByFirebase?.id;
 
   const handleSelectChoice = (type, value) => {
     setChoiceObj(prevState => {
@@ -67,16 +73,14 @@ const userInfo = () => {
 
   const handleSubmitUserInfo = async () => {
     const { age, gender, residence } = choiceObj;
-
-    if (!userId) {
+    if (!user.id) {
       alert('유저 아이디가 없어요');
       return;
     }
-
     try {
       await createUserInfo({
         variables: {
-          usersId: +userId,
+          userId: user.id,
           age,
           gender,
           residence,
@@ -84,8 +88,8 @@ const userInfo = () => {
       }).then(() => {
         router.push('/users/welcome');
       });
-    } catch {
-      console.error('There is a problem in creating user info...');
+    } catch (e) {
+      console.error('There is a problem in creating user info', JSON.stringify(e, null, 2));
     }
   };
 
@@ -162,4 +166,4 @@ const userInfo = () => {
   );
 };
 
-export default withAuthUser()(userInfo);
+export default UserInfo;
