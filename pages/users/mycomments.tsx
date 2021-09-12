@@ -24,7 +24,7 @@ const GET_MY_COMMENTS_DATA = gql`
       id
       name
       intro
-      profileImageUrl
+      image
       opinionComments {
         id
         content

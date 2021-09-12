@@ -21,7 +21,7 @@ const GET_MYPAGE_DATA = gql`
       id
       name
       intro
-      profileImageUrl
+      image
       opinions {
         id
         content

@@ -33,7 +33,7 @@ const GET_OPINIONS_COMMENTS_DATA = gql`
       user {
         id
         name
-        profileImageUrl
+        image
       }
       stance {
         id
@@ -54,7 +54,7 @@ const GET_OPINIONS_COMMENTS_DATA = gql`
         user {
           id
           name
-          profileImageUrl
+          image
         }
         opinionsId
         stancesId
@@ -76,7 +76,7 @@ const GET_USER = gql`
       firebaseUID
       name
       intro
-      profileImageUrl
+      image
       userStance {
         issuesId
         usersId

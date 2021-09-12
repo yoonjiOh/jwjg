@@ -24,6 +24,7 @@ import {
 } from '../../lib/requireAuthentication';
 import { User } from 'next-auth';
 import { GET_OPINIONS } from '../../lib/graph_queries';
+import { ConfigurationServicePlaceholders } from 'aws-sdk/lib/config_service_placeholders';
 
 const CREATE_OPINION_COMMENT = gql`
   mutation createOpinionComment(

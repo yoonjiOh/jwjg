@@ -8,7 +8,7 @@ export const GET_USERS = gql`
       name
       nickname
       intro
-      profileImageUrl
+      image
     }
   }
 `;
@@ -120,13 +120,13 @@ export const GET_OPINIONS = gql`
         id
         name
         intro
-        profileImageUrl
+        image
       }
       opinionComments {
         id
         content
         createdAt
-        usersId
+        userId
         stancesId
         stance {
           id
@@ -137,12 +137,12 @@ export const GET_OPINIONS = gql`
           id
           name
           intro
-          profileImageUrl
+          image
         }
       }
       opinionReacts {
         like
-        usersId
+        userId
       }
       opinionReactsSum
     }
@@ -230,8 +230,12 @@ export const GET_USER_STANCE = gql`
     userStance(userId: $userId, issuesId: $issuesId) {
       userId
       issuesId
-      stnacesId
-      stances
+      stancesId
+      stances {
+        id
+        title
+        orderNum
+      }
     }
   }
 `;

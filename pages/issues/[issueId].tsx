@@ -35,7 +35,7 @@ const GET_ISSUE = gql`
         id
         name
         nickname
-        profileImageUrl
+        image
       }
       stances {
         id
@@ -43,7 +43,7 @@ const GET_ISSUE = gql`
         orderNum
       }
       userStances {
-        usersId
+        userId
         stancesId
         issuesId
       }
@@ -52,7 +52,7 @@ const GET_ISSUE = gql`
         content
         stancesId
         createdAt
-        usersId
+        userId
         stance {
           id
           orderNum
@@ -62,21 +62,21 @@ const GET_ISSUE = gql`
           id
           name
           intro
-          profileImageUrl
+          image
         }
         opinionReacts {
-          usersId
+          userId
           like
         }
         opinionComments {
           id
           content
-          usersId
+          userId
           user {
             id
             name
             intro
-            profileImageUrl
+            image
           }
         }
       }
@@ -110,11 +110,14 @@ const DELETE_USER_STANCE = gql`
 
 export const getServerSideProps = requireAuthentication(
   async (context: GetServerSidePropsContextWithUser) => {
-    const apolloClient = initializeApollo(null);
+    const apolloClient = initializeApollo();
+    console.log(context.user.id, context.query.issueId);
+
     const { data } = await apolloClient.query({
       query: GET_USER_STANCE,
-      variables: { userId: context.user.id, issuesId: context.query.issueId },
+      variables: { userId: context.user.id, issuesId: +context.query.issueId },
     });
+
     return {
       props: {
         user: context.user,
@@ -246,7 +249,7 @@ const Issue: any = (props: Props) => {
                     <span>이슈지기 | {issue.author.name}</span>
                     <span>{issue.author.nickname}</span>
                   </div>
-                  <img src={issue.author.profileImageUrl} />
+                  <img src={issue.author.image} />
                 </div>
               </div>
             </div>

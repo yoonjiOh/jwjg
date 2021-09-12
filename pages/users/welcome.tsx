@@ -18,7 +18,7 @@ const GET_USER = gql`
       name
       nickname
       intro
-      profileImageUrl
+      image
       userInfo {
         age
         gender

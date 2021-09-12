@@ -135,7 +135,7 @@ async function myOpinion(parent, args, context) {
 }
 
 async function userStance(parent, { userId, issuesId }, context) {
-  return await context.prisma.opinions.findUnique({
+  return await context.prisma.opinions.findFirst({
     where: {
       userId,
       issuesId,

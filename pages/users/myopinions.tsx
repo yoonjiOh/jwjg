@@ -25,7 +25,7 @@ const GET_MY_OPINIONS_DATA = gql`
       id
       name
       intro
-      profileImageUrl
+      image
       opinions {
         id
         content
