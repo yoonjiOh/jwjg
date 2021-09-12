@@ -1,4 +1,3 @@
-import { AuthAction, withAuthUser } from 'next-firebase-auth';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import Layout from '../../components/Layout';
@@ -287,4 +286,4 @@ function TermsOfService() {
   );
 }
 
-export default withAuthUser()(TermsOfService);
+export default TermsOfService;

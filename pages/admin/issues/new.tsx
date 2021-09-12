@@ -8,7 +8,7 @@ import Layout from '../../../components/Layout';
 import style from './new.module.css';
 import { initializeApollo } from '../../../apollo/apolloClient';
 import Loading from '../../../components/Loading';
-import { withAuthUser, withAuthUserTokenSSR } from 'next-firebase-auth';
+// import { withAuthUser, withAuthUserTokenSSR } from 'next-firebase-auth';
 import { GET_USERS, SINGLE_UPLOAD_IMG } from '../../../lib/queries';
 
 interface Stance {
@@ -57,7 +57,7 @@ const CREATE_STANCES_BY_ISSUE = gql`
 const CREATE_TAG = gql`
   mutation createTag($name: String!) {
     createTag(name: $name) {
-      id,
+      id
       name
     }
   }
@@ -101,8 +101,8 @@ const reducer = (state, action) => {
     case 'ADD_HASHTAG':
       return {
         ...state,
-        tags: state.tags.concat(action.tag)
-      }
+        tags: state.tags.concat(action.tag),
+      };
     case 'SET_HASHTAGS':
       return {
         ...state,
@@ -229,7 +229,7 @@ const NewIssue = props => {
     });
   };
 
-  const handleChangeTagInput = (value) => {
+  const handleChangeTagInput = value => {
     setAddTagErr(null);
     setNewTag(value);
   };
@@ -239,28 +239,32 @@ const NewIssue = props => {
       return setAddTagErr('태그명을 입력해주세요');
     }
 
-    if (tags.find(tag => { return tag.name === newTag.trim(); })) {
+    if (
+      tags.find(tag => {
+        return tag.name === newTag.trim();
+      })
+    ) {
       return setAddTagErr('이미 등록되어 있는 태그 입니다.');
     }
 
     try {
       await createTag({
         variables: {
-          name: newTag
-        }
-      }).then((result) => {
+          name: newTag,
+        },
+      }).then(result => {
         dispatch({
           type: 'ADD_HASHTAG',
           tag: {
             id: result.data.createTag.id,
             name: result.data.createTag.name,
-          }
+          },
         });
       });
     } catch (e) {
       console.error(e);
     }
-  }
+  };
 
   const handleSubmit = async () => {
     let createdIssueId;
@@ -334,8 +338,8 @@ const NewIssue = props => {
             {issue.imageUrl !== '' ? (
               <img src={issue.imageUrl} alt="new_issue_img" />
             ) : (
-                <input type="file" required onChange={handleFileChange} />
-              )}
+              <input type="file" required onChange={handleFileChange} />
+            )}
           </div>
           <div className={style.title}>
             <p className={style.title_sm}>이슈 제목</p>
@@ -343,7 +347,14 @@ const NewIssue = props => {
           </div>
           <div className={style.content}>
             <p className={style.title_sm}>이슈 설명</p>
-            <span className={style.comment}>링크 입력 시, <strong>[text](URL)</strong> (ex. [네이버](https://www.naver.com))로 입력해 주세요. <a style={{ color: "rgb(33, 111, 219)" }} href="">text</a> 형태로 출력됩니다.</span>
+            <span className={style.comment}>
+              링크 입력 시, <strong>[text](URL)</strong> (ex. [네이버](https://www.naver.com))로
+              입력해 주세요.{' '}
+              <a style={{ color: 'rgb(33, 111, 219)' }} href="">
+                text
+              </a>{' '}
+              형태로 출력됩니다.
+            </span>
             <textarea
               wrap="hard"
               value={issue.content}
@@ -402,7 +413,7 @@ const NewIssue = props => {
 
           <div className={style.option_wrapper}>
             <p style={{ color: 'red' }}>{addTagErr}</p>
-            <input onChange={(e) => handleChangeTagInput(e.target.value)} />
+            <input onChange={e => handleChangeTagInput(e.target.value)} />
             <button onClick={handleClickAddTagBtn}>+</button>
           </div>
         </div>

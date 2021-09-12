@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Prisma } from '@prisma/client';
 import prisma from '../../lib/db';
-import firebase from 'firebase/app';
+// import firebase from 'firebase/app';
 
 // POST /api/user
 // Required fields in body: firebaseUID, email

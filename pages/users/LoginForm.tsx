@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import React, { useState } from 'react';
 import Layout from '../../components/Layout';
-import { doEmailLogin } from '../../lib/users';
+// import { doEmailLogin } from '../../lib/users';
 import common_style from '../index.module.scss';
 import RegistrationWidget from './RegistrationWidget';
 import s from './users.module.scss';
@@ -26,12 +26,12 @@ const LoginForm = () => {
 
   const handleSubmit = event => {
     event.preventDefault();
-    try {
-      doEmailLogin(email, password);
-      router.push('/');
-    } catch (e) {
-      console.error(e);
-    }
+    // try {
+    //   doEmailLogin(email, password);
+    //   router.push('/');
+    // } catch (e) {
+    //   console.error(e);
+    // }
   };
 
   return (

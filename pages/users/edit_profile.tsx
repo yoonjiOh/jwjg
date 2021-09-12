@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 
 import { gql, useMutation } from '@apollo/client';
 import { initializeApollo } from '../../apollo/apolloClient';
-import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
+// import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
 import _ from 'lodash';
 import { empty_string_if_null } from '../../utils/string_utils';
 import { GET_USERS, SINGLE_UPLOAD_IMG } from '../../lib/queries';
@@ -36,10 +36,7 @@ export const UPDATE_PROFILE = gql`
   }
 `;
 
-export const getServerSideProps = withAuthUserTokenSSR({
-  whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
-  authPageURL: '/users',
-})(async ({ AuthUser }) => {
+export const getServerSideProps = async context => {
   const apolloClient = initializeApollo(null);
   const { data } = await apolloClient.query({
     query: GET_USERS,
@@ -51,7 +48,7 @@ export const getServerSideProps = withAuthUserTokenSSR({
       user: data.userByFirebase,
     },
   };
-});
+};
 
 interface Props {
   user: Users;

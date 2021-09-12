@@ -1,5 +1,5 @@
 import React from 'react';
-import FirebaseAuth from '../../components/FirebaseAuth';
+// import FirebaseAuth from '../../components/FirebaseAuth';
 import Layout from '../../components/Layout';
 import common_style from '../index.module.scss';
 
@@ -24,9 +24,7 @@ class LoginForm extends React.Component {
     return (
       <Layout title={'MAIN'} headerInfo={{ headerType: 'common' }} isDimmed={false}>
         <main className={common_style.main}>
-          <div>
-            <FirebaseAuth />
-          </div>
+          <div>{/* <FirebaseAuth /> */}</div>
         </main>
       </Layout>
     );
