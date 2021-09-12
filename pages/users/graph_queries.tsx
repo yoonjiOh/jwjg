@@ -6,20 +6,23 @@ export const UPDATE_USER_INFO = gql`
     $name: String
     $nickname: String
     $intro: String
-    $profileImageUrl: String
+    $image: String
+    $consentToSAt: DateTime
   ) {
     updateUserInfo(
       id: $id
       name: $name
       nickname: $nickname
       intro: $intro
-      profileImageUrl: $profileImageUrl
+      image: $image
+      consentToSAt: $consentToSAt
     ) {
       id
       name
       nickname
       intro
-      profileImageUrl
+      image
+      consentToSAt
     }
   }
 `;
@@ -35,7 +38,7 @@ export const CREATE_USER_INFO = gql`
 `;
 
 export const GET_USER_INFO = gql`
-  query ($userId: String) {
+  query UserInfo($userId: String!) {
     userInfo(userId: $userId) {
       age
       gender

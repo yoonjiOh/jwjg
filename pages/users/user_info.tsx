@@ -6,6 +6,11 @@ import { gql, useMutation, useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/client';
 import { CREATE_USER_INFO } from './graph_queries';
+import {
+  GetServerSidePropsContextWithUser,
+  requireAuthentication,
+} from '../libs/requireAuthentication';
+import { User } from 'next-auth';
 
 const ageChoices = [10, 20, 30, 40, 50, 60];
 const genderChoices = ['남성', '여성', '그 외'];
@@ -36,10 +41,24 @@ const GET_USER = gql`
   }
 `;
 
-const UserInfo = () => {
+export const getServerSideProps = requireAuthentication(
+  async (context: GetServerSidePropsContextWithUser) => {
+    return {
+      props: {
+        user: context.user,
+      },
+    };
+  },
+);
+
+interface Props {
+  user: User;
+}
+
+const UserInfo = (props: Props) => {
   const [choiceObj, setChoiceObj] = useState({ age: null, gender: null, residence: null });
-  const [session] = useSession();
   const [createUserInfo] = useMutation(CREATE_USER_INFO);
+  const user = props.user;
 
   const router = useRouter();
 
@@ -54,14 +73,14 @@ const UserInfo = () => {
 
   const handleSubmitUserInfo = async () => {
     const { age, gender, residence } = choiceObj;
-    if (!session || !session.user.id) {
+    if (!user.id) {
       alert('유저 아이디가 없어요');
       return;
     }
     try {
       await createUserInfo({
         variables: {
-          userId: session.user.id,
+          userId: user.id,
           age,
           gender,
           residence,
@@ -69,8 +88,8 @@ const UserInfo = () => {
       }).then(() => {
         router.push('/users/welcome');
       });
-    } catch {
-      console.error('There is a problem in creating user info...');
+    } catch (e) {
+      console.error('There is a problem in creating user info', JSON.stringify(e, null, 2));
     }
   };
 

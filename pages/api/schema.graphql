@@ -206,7 +206,7 @@ type Query {
   hashTags(id: Int): [HashTag]
   myStance(issuesId: Int, userId: Int): UserStance
   # For new user model (at 2021/09/11)
-  userInfo(userId: String): UserInfo
+  userInfo(userId: String!): UserInfo
 }
 
 type Mutation {
@@ -253,7 +253,8 @@ type Mutation {
     name: String
     nickname: String
     intro: String
-    profileImageUrl: String
+    image: String
+    consentToSAt: DateTime
   ): User
   createUserInfo(userId: String!, gender: String, age: Int, residence: String): UserInfo
   manageIssuePublishStatus(id: Int!, isPublished: Boolean!): Issue

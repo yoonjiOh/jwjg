@@ -252,7 +252,7 @@ async function doLikeActionToOpinionComment(parent, args, context) {
 //   });
 // }
 
-async function updateUserInfo(_, { id, name, nickname, intro, profileImageUrl }, { prisma }) {
+async function updateUserInfo(_, { id, name, nickname, intro, image, consentToSAt }, { prisma }) {
   return await prisma.user.update({
     where: {
       id: id,
@@ -261,15 +261,16 @@ async function updateUserInfo(_, { id, name, nickname, intro, profileImageUrl },
       name: name,
       nickname: nickname,
       intro: intro,
-      profileImageUrl: profileImageUrl,
+      image: image,
+      consentToSAt: consentToSAt,
     },
   });
 }
 
 async function createUserInfo(parent, args, context) {
-  await context.prisma.userInfo.create({
+  return await context.prisma.userInfo.create({
     data: {
-      userId: args.usersId,
+      userId: args.userId,
       gender: args.gender,
       age: args.age,
       residence: args.residence,
@@ -339,7 +340,7 @@ export default {
   doLikeActionToOpinionComment,
   // updateUserProfile,
   updateUserInfo,
-  // createUserInfo,
+  createUserInfo,
   manageIssuePublishStatus,
   deleteIssue,
   manageApproveHotIssue,

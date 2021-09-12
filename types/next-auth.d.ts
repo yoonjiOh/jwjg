@@ -12,6 +12,7 @@ declare module 'next-auth' {
   interface User {
     id: string;
     nickname?: string;
-    profileImageUrl?: string
+    intro?: string;
+    profileImageUrl?: string;
   }
 }

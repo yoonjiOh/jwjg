@@ -53,7 +53,7 @@ function UserPage(props) {
     <main className={s.main}>
       <div className={s.profileWrapper}>
         <div className={s.profileImgContainer}>
-          <img src={user && user.profileImageUrl} />
+          <img src={user && user.image} />
         </div>
         <p>{user && user.name}</p>
         <div>
@@ -146,11 +146,11 @@ function UserPage(props) {
             />
           ))
         ) : (
-            <div className={s.noOpinions}>
-              <p>아직 작성한 의견이 없어요 🍊</p>
-              <img src={'https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/Capybara2.png'} />
-            </div>
-          )}
+          <div className={s.noOpinions}>
+            <p>아직 작성한 의견이 없어요 🍊</p>
+            <img src={'https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/Capybara2.png'} />
+          </div>
+        )}
       </div>
     </main>
   );

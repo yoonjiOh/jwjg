@@ -92,7 +92,7 @@ const MyOpinions = props => {
             >
               <div className={s.smallProfileWrapper}>
                 <div>
-                  <img src={user.profileImageUrl} />
+                  <img src={user.image} />
                 </div>
                 <div className={s.profileInfo}>
                   <p className={s.name}>{user.name}</p>

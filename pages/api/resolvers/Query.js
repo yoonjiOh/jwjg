@@ -9,7 +9,6 @@ async function user(parent, args, context) {
 
 async function userInfo(parent, args, context) {
   const userId = args.userId;
-  console.log(userId);
   if (!userId) return null;
   return await context.prisma.userInfo.findUnique({
     where: { userId: userId },

@@ -30,11 +30,11 @@ import { User } from 'next-auth';
 //   },
 // );
 
-// interface Props {
-//   user: User;
-//   opinion: any
-//   issueId: any
-// }
+interface Props {
+  user: User;
+  opinion: any
+  issueId: any
+}
 
 // const EditProfile = (props: Props) => {
 
@@ -98,7 +98,7 @@ const OpinionBox = (props: Props) => {
       <div className={s.commentWrapper}>
         <div className={s.profileWrapper}>
           <div className={s.profilePlaceholder}>
-            <img src={opinion.user.profileImageUrl} />
+            <img src={opinion.user.image} />
           </div>
           <div className={s.profileName}>{opinion.user.name}</div>
           <div className={s.ago}>{getPubDate(opinion.createdAt)}</div>

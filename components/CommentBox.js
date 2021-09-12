@@ -52,7 +52,7 @@ const CommentBox = ({ comment, me }) => {
       <div className={s[`stanceMark-${comment.stance.orderNum}`]} />
       <div className={s.commentWrapper}>
         <div className={s.profileWrapper}>
-          <img className={s.profilePlaceholder} src={comment.user.profileImageUrl} />
+          <img className={s.profilePlaceholder} src={comment.user.image} />
           <div className={s.profileName}>{comment.user.name}</div>
           <div className={s.ago}>{getPubDate(comment.createdAt)}</div>
         </div>

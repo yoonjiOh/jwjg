@@ -228,7 +228,7 @@ const Opinion = props => {
               style={{ height: '75px', paddingLeft: '0' }}
             >
               <div>
-                <img src={opinion.user.profileImageUrl} />
+                <img src={opinion.user.image} />
               </div>
               <div className={user_s.profileInfo}>
                 <p className={user_s.name}>{opinion.user.name}</p>

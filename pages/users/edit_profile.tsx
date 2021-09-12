@@ -25,20 +25,20 @@ import { User } from 'next-auth';
 //     $name: String
 //     $nickname: String
 //     $intro: String
-//     $profileImageUrl: String
+//     $image: String
 //   ) {
 //     updateUserProfile(
 //       id: $id
 //       name: $name
 //       nickname: $nickname
 //       intro: $intro
-//       profileImageUrl: $profileImageUrl
+//       image: $image
 //     ) {
 //       id
 //       name
 //       nickname
 //       intro
-//       profileImageUrl
+//       image
 //     }
 //   }
 // `;
@@ -62,13 +62,13 @@ const EditProfile = (props: Props) => {
     name: props.user.name,
     nickname: empty_string_if_null(props.user.nickname),
     intro: empty_string_if_null(props.user.intro),
-    profileImageUrl: empty_string_if_null(props.user.profileImageUrl),
+    image: empty_string_if_null(props.user.image),
   };
   const [state, setState] = useState(initState);
   const [mutate, { loading, error }] = useMutation(SINGLE_UPLOAD_IMG);
   const [updateUserInfo, { data }] = useMutation(UPDATE_USER_INFO);
 
-  const { name, nickname, intro, profileImageUrl } = state;
+  const { name, nickname, intro, image } = state;
   const router = useRouter();
   const { isFirst } = router.query;
 
@@ -88,7 +88,7 @@ const EditProfile = (props: Props) => {
         })
         .then(() => {
           setState(prevState => {
-            return { ...prevState, profileImageUrl: uploadedS3Url };
+            return { ...prevState, image: uploadedS3Url };
           });
         }));
   };
@@ -96,14 +96,13 @@ const EditProfile = (props: Props) => {
   const handleSubmit = async event => {
     event.preventDefault();
     console.log(props.user);
-    console.log(name, nickname, intro, profileImageUrl);
     await updateUserInfo({
       variables: {
         id: props.user.id,
-        name: '',
-        nickname: '',
-        intro: '',
-        profileImageUrl: '',
+        name: name,
+        nickname: nickname,
+        intro: intro,
+        image: image,
       },
     })
       .then(result => {
@@ -153,7 +152,7 @@ const EditProfile = (props: Props) => {
     >
       <main className={s.main} style={{ height: '100vh' }}>
         <div style={{ padding: '20px' }}>
-          {!profileImageUrl ? (
+          {!image ? (
             <div
               className={s.profileImgContainer}
               style={{
@@ -182,7 +181,7 @@ const EditProfile = (props: Props) => {
                 margin: '0 auto',
               }}
             >
-              <img src={profileImageUrl} style={{ width: '50%', height: '50%' }} />
+              <img src={image} style={{ width: '50%', height: '50%' }} />
             </div>
           )}
 
@@ -197,16 +196,16 @@ const EditProfile = (props: Props) => {
             <span className={s.inputTitle}>이름</span>
             <input
               type="text"
-              value={nickname}
-              onChange={e => handleChange(e, 'nickname')}
+              value={name}
+              onChange={e => handleChange(e, 'name')}
               placeholder="이름"
               className={s.inputForm}
             />
             <span className={s.inputTitle}>사용자 이름</span>
             <input
               type="text"
-              value={name}
-              onChange={e => handleChange(e, 'name')}
+              value={nickname}
+              onChange={e => handleChange(e, 'nickname')}
               placeholder="사용자 이름"
               className={s.inputForm}
             />

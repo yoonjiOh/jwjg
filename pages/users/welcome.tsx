@@ -4,8 +4,6 @@ import React from 'react';
 import { useRouter } from 'next/router';
 
 import { gql, useQuery } from '@apollo/client';
-import Loading from '../../components/Loading';
-import { signIn, useSession } from 'next-auth/client';
 import {
   GetServerSidePropsContextWithUser,
   requireAuthentication,
@@ -58,10 +56,10 @@ interface Props {
 
 const WelcomePage = (props: Props) => {
   const router = useRouter();
-  console.log('welcome', props.user);
+  const { data, loading } = useQuery(GET_USER_INFO, { variables: { userId: props.user.id } });
+  if (loading) return null;
+
   const user = props.user;
-  const { data } = useQuery(GET_USER_INFO, { variables: { userId: user.id } });
-  console.log(data);
   const userInfo = data.userInfo;
   // const { data: myData, refetch: refetchUser } = useQuery(GET_USERS, {
   //   variables: { firebaseUID: AuthUser.id },
@@ -88,12 +86,12 @@ const WelcomePage = (props: Props) => {
               margin: '0 auto',
             }}
           >
-            <img src={user.profileImageUrl} style={{ width: '50%', height: '50%' }} />
+            <img src={user.image} style={{ width: '50%', height: '50%' }} />
           </div>
 
           <span>{user.nickname}</span>
           <span>@{user.name}</span>
-          <UserInfo userInfo={user.userInfo} />
+          <UserInfo userInfo={userInfo} />
 
           <div style={{ marginTop: '15px' }}>
             <div>{user.intro}</div>
@@ -104,7 +102,7 @@ const WelcomePage = (props: Props) => {
         <button
           className={s.primary}
           onClick={() => {
-            router.push('/');
+            router.push('/', undefined, { shallow: false });
           }}
         >
           시작하기🎉
