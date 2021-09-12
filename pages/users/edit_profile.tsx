@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Layout from '../../components/Layout';
 import { Users } from '@prisma/client';
@@ -11,7 +11,7 @@ import { initializeApollo } from '../../apollo/apolloClient';
 import _ from 'lodash';
 import { empty_string_if_null } from '../../utils/string_utils';
 import { GET_USERS, SINGLE_UPLOAD_IMG } from '../../lib/queries';
-import { getSession } from 'next-auth/client';
+import { getSession, useSession } from 'next-auth/client';
 import {
   GetServerSidePropsContextWithUser,
   requireAuthentication,

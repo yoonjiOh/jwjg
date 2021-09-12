@@ -67,7 +67,7 @@ model Users {
   updatedAt       DateTime @default(now())
 
   UserStances          UserStances[]
-  UserInfo             UserInfo[]
+  // UserInfo             UserInfo[]
   Opinions             Opinions[]
   OpinionComments      OpinionComments[]
   OpinionReacts        OpinionReacts[]
@@ -121,7 +121,7 @@ model UserStances {
 model UserInfo {
   user    User   @relation(fields: [userId], references: [id])
   
-  userId     String
+  userId     String @unique
   age         Int?
   gender      String?
   residence   String?

@@ -4,6 +4,10 @@ import { useMutation, useQuery } from '@apollo/client';
 import s from './Utils.module.scss';
 import { useRouter } from 'next/router';
 import { withAuthUser, useAuthUser } from 'next-firebase-auth';
+import {
+  GetServerSidePropsContextWithUser,
+  requireAuthentication,
+} from '../libs/requireAuthentication';
 
 import {
   GET_USERS,
@@ -14,8 +18,28 @@ import {
 import _ from 'lodash';
 import { fruits } from '../utils/getFruitForStanceTitle';
 import { getPubDate } from '../lib/util';
+import { User } from 'next-auth';
 
-const OpinionBox = ({ opinion, issueId }) => {
+// export const getServerSideProps = requireAuthentication(
+//   async (context: GetServerSidePropsContextWithUser) => {
+//     return {
+//       props: {
+//         user: context.user,
+//       },
+//     };
+//   },
+// );
+
+// interface Props {
+//   user: User;
+//   opinion: any
+//   issueId: any
+// }
+
+// const EditProfile = (props: Props) => {
+
+const OpinionBox = (props: Props) => {
+  const { opinion, issueId }
   const { data, refetch: refetchOpinion } = useQuery(GET_OPINION_REACTS_AND_COMMENTS, {
     variables: { id: opinion.id },
   });
@@ -26,12 +50,8 @@ const OpinionBox = ({ opinion, issueId }) => {
   const likeCount = data && data.opinions && data.opinions[0].opinionReactsSum;
   const commentCount = data && data.opinions && data.opinions[0].opinionCommentsSum;
 
-  const AuthUser = useAuthUser();
-  const { data: userData } = useQuery(GET_USERS, {
-    variables: { firebaseUID: AuthUser.id },
-  });
-
-  const userId = userData?.userByFirebase?.id;
+  // const AuthUser = useAuthUser();
+  const userId = props.user.id;
 
   const myReact =
     opinion &&
@@ -66,8 +86,7 @@ const OpinionBox = ({ opinion, issueId }) => {
   return (
     <div
       className={s.commentBox}
-      key={opinion.id}
-      onClick={() => {
+ => {
         if (userId) {
           router.push({
             pathname: `/issues/${issueId}/opinions/${opinion.id}`,

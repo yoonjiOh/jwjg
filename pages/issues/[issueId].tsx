@@ -126,6 +126,16 @@ const DELETE_USER_STANCE = gql`
   }
 `;
 
+export const getServerSideProps = requireAuthentication(
+  async (context: GetServerSidePropsContextWithUser) => {
+    return {
+      props: {
+        user: context.user,
+      },
+    };
+  },
+);
+
 const Issue: any = () => {
   const router = useRouter();
   const issueId = Number(router.query.issueId);
@@ -138,7 +148,6 @@ const Issue: any = () => {
   } = useQuery(GET_ISSUE, {
     variables: { id: issueId },
   });
-  const AuthUser = useAuthUser();
   const {
     loading: userLoading,
     error: userError,
@@ -305,7 +314,7 @@ const Issue: any = () => {
               {issue.opinions.map(opinion => (
                 <div key={opinion.id} className={s.opinionContainer}>
                   {/* @ts-ignore */}
-                  <OpinionBox opinion={opinion} issueId={issue.id} />
+                  <OpinionBox user={user} opinion={opinion} issueId={issue.id} />
                 </div>
               ))}
             </div>

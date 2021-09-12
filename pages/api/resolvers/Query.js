@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { AuthenticationError } from 'apollo-server';
-import { userInfo } from 'os';
 
 async function user(parent, args, context) {
   return await context.prisma.user.findUnique({
@@ -8,7 +7,14 @@ async function user(parent, args, context) {
   });
 }
 
-async function userInfo(parent)
+async function userInfo(parent, args, context) {
+  const userId = args.userId;
+  console.log(userId);
+  if (!userId) return null;
+  return await context.prisma.userInfo.findUnique({
+    where: { userId: userId },
+  });
+}
 
 async function userByFirebase(parent, args, context) {
   const firebaseUID = args.firebaseUID;
@@ -141,6 +147,7 @@ async function myOpinion(parent, args, context) {
 
 export default {
   user,
+  userInfo,
   userByFirebase,
   users,
   issue,

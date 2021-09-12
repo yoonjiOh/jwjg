@@ -58,9 +58,11 @@ interface Props {
 
 const WelcomePage = (props: Props) => {
   const router = useRouter();
+  console.log('welcome', props.user);
   const user = props.user;
-  const { data } = useQuery(GET_USER_INFO);
-  const userInfo = data.
+  const { data } = useQuery(GET_USER_INFO, { variables: { userId: user.id } });
+  console.log(data);
+  const userInfo = data.userInfo;
   // const { data: myData, refetch: refetchUser } = useQuery(GET_USERS, {
   //   variables: { firebaseUID: AuthUser.id },
   // });
