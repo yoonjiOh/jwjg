@@ -238,30 +238,44 @@ async function doLikeActionToOpinionComment(parent, args, context) {
   return result;
 }
 
-async function updateUserProfile(parent, args, context) {
-  const result = await context.prisma.users.update({
+// async function updateUserProfile(parent, args, context) {
+//   const result = await context.prisma.users.update({
+//     where: {
+//       id: args.id,
+//     },
+//     data: {
+//       name: args.name,
+//       nickname: args.nickname,
+//       intro: args.intro,
+//       profileImageUrl: args.profileImageUrl,
+//     },
+//   });
+// }
+
+async function updateUserInfo(_, { id, name, nickname, intro, profileImageUrl }, { prisma }) {
+  return await prisma.user.update({
     where: {
-      id: args.id,
+      id,
     },
     data: {
-      name: args.name,
-      nickname: args.nickname,
-      intro: args.intro,
-      profileImageUrl: args.profileImageUrl,
+      name,
+      nickname,
+      intro,
+      profileImageUrl,
     },
   });
 }
 
-async function createUserInfo(parent, args, context) {
-  await context.prisma.userInfo.create({
-    data: {
-      usersId: args.usersId,
-      gender: args.gender,
-      age: args.age,
-      residence: args.residence,
-    },
-  });
-}
+// async function createUserInfo(parent, args, context) {
+//   await context.prisma.userInfo.create({
+//     data: {
+//       usersId: args.usersId,
+//       gender: args.gender,
+//       age: args.age,
+//       residence: args.residence,
+//     },
+//   });
+// }
 
 async function manageIssuePublishStatus(parent, args, context) {
   await context.prisma.issues.update({
@@ -292,18 +306,18 @@ async function manageApproveHotIssue(parent, args, context) {
     },
     data: {
       isHotIssue: args.isHotIssue,
-    }
+    },
   });
 }
 
 async function manageRollbackHotIssue(parent, args, context) {
   await context.prisma.issues.update({
     where: {
-      id: args.id
+      id: args.id,
     },
     data: {
       isHotIssue: args.isHotIssue,
-    }
+    },
   });
 }
 
@@ -323,10 +337,11 @@ export default {
   createOpinionComment,
   doLikeActionToOpinion,
   doLikeActionToOpinionComment,
-  updateUserProfile,
-  createUserInfo,
+  // updateUserProfile,
+  updateUserInfo,
+  // createUserInfo,
   manageIssuePublishStatus,
   deleteIssue,
   manageApproveHotIssue,
-  manageRollbackHotIssue
+  manageRollbackHotIssue,
 };

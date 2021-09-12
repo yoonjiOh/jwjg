@@ -11,44 +11,46 @@ import { initializeApollo } from '../../apollo/apolloClient';
 import _ from 'lodash';
 import { empty_string_if_null } from '../../utils/string_utils';
 import { GET_USERS, SINGLE_UPLOAD_IMG } from '../../lib/queries';
+import { getSession } from 'next-auth/client';
+import {
+  GetServerSidePropsContextWithUser,
+  requireAuthentication,
+} from '../libs/requireAuthentication';
+import { UPDATE_USER_INFO } from './graph_queries';
 
-export const UPDATE_PROFILE = gql`
-  mutation updateUserProfile(
-    $id: Int!
-    $name: String
-    $nickname: String
-    $intro: String
-    $profileImageUrl: String
-  ) {
-    updateUserProfile(
-      id: $id
-      name: $name
-      nickname: $nickname
-      intro: $intro
-      profileImageUrl: $profileImageUrl
-    ) {
-      id
-      name
-      nickname
-      intro
-      profileImageUrl
-    }
-  }
-`;
+// export const UPDATE_PROFILE = gql`
+//   mutation updateUserProfile(
+//     $id: Int!
+//     $name: String
+//     $nickname: String
+//     $intro: String
+//     $profileImageUrl: String
+//   ) {
+//     updateUserProfile(
+//       id: $id
+//       name: $name
+//       nickname: $nickname
+//       intro: $intro
+//       profileImageUrl: $profileImageUrl
+//     ) {
+//       id
+//       name
+//       nickname
+//       intro
+//       profileImageUrl
+//     }
+//   }
+// `;
 
-export const getServerSideProps = async context => {
-  const apolloClient = initializeApollo(null);
-  const { data } = await apolloClient.query({
-    query: GET_USERS,
-    variables: { firebaseUID: AuthUser.id },
-  });
-
-  return {
-    props: {
-      user: data.userByFirebase,
-    },
-  };
-};
+export const getServerSideProps = requireAuthentication(
+  async (context: GetServerSidePropsContextWithUser) => {
+    return {
+      props: {
+        user: context.user,
+      },
+    };
+  },
+);
 
 interface Props {
   user: Users;
@@ -63,7 +65,7 @@ const EditProfile = (props: Props) => {
   };
   const [state, setState] = useState(initState);
   const [mutate, { loading, error }] = useMutation(SINGLE_UPLOAD_IMG);
-  const [updateUserProfile, { data }] = useMutation(UPDATE_PROFILE);
+  const [updateUserInfo, { data }] = useMutation(UPDATE_USER_INFO);
 
   const { name, nickname, intro, profileImageUrl } = state;
   const router = useRouter();
@@ -92,23 +94,27 @@ const EditProfile = (props: Props) => {
 
   const handleSubmit = async event => {
     event.preventDefault();
-    await updateUserProfile({
+    console.log(props.user);
+    await updateUserInfo({
       variables: {
-        // @ts-ignore
-        id: parseInt(props.user.id),
+        id: props.user.id,
         name: name,
         nickname: nickname,
         intro: intro,
         profileImageUrl: profileImageUrl,
       },
-    }).then(result => {
-      if (result.data) {
-        // @ts-ignore
-        router.push(isFirst ? '/users/user_info' : '/users/mypage');
-      } else {
-        console.error('프로필 편집에 문제가 생겼습니다.');
-      }
-    });
+    })
+      .then(result => {
+        if (result.data) {
+          // @ts-ignore
+          router.push(isFirst ? '/users/user_info' : '/users/mypage');
+        } else {
+          console.error('프로필 편집에 문제가 생겼습니다.');
+        }
+      })
+      .catch(error => {
+        console.error(JSON.stringify(error, null, 2));
+      });
   };
 
   const handleChange = (e, key) => {

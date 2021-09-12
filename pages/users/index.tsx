@@ -68,9 +68,6 @@ const styles = {
 
 export const getServerSideProps = async context => {
   const session = await getSession(context);
-
-  console.log('session in user index.tsx', session);
-
   if (session) {
     if (session.user.consentToSAt) {
       return {
@@ -94,14 +91,7 @@ export const getServerSideProps = async context => {
 };
 
 const Auth = props => {
-  // const AuthUser = useAuthUser();
-  const [session] = useSession();
-
-  console.log('session:', session);
-
-  if (!session) {
-    return <LoginForm />;
-  }
+  return <LoginForm />;
 
   // const { data } = useQuery(GET_USERS, {
   //   variables: { firebaseUID: session.user.id },

@@ -53,7 +53,7 @@ const GET_ISSUES_AND_OPINIONS = gql`
 export const getServerSideProps: GetServerSideProps = async ctx => {
   const session = await getSession(ctx);
 
-  console.log(session);
+  // console.log('sessoin in main index page:', session);
 
   return {
     props: {

@@ -6,11 +6,11 @@ import common_style from '../index.module.scss';
 import u_style from './users.module.scss';
 import { GET_USERS } from '../../lib/queries';
 
-import { UPDATE_PROFILE } from './edit_profile';
 import { useMutation } from '@apollo/client';
 import { initializeApollo } from '../../apollo/apolloClient';
 import { getSession } from 'next-auth/client';
 import { User } from '.prisma/client';
+import { UPDATE_USER_INFO } from './graph_queries';
 // import { createUserFromFirebaseUser } from '../../lib/users';
 
 export interface SerializedAuthUser {
@@ -49,7 +49,7 @@ const AdditionalInformation = (props: Props) => {
   const apolloClient = initializeApollo(null);
   const [name, setName] = useState('@');
 
-  const [updateUserProfile] = useMutation(UPDATE_PROFILE);
+  const [updateUserInfo] = useMutation(UPDATE_USER_INFO);
 
   const handleNameChange = event => {
     setName('@' + event.target.value.substr(1));
@@ -63,7 +63,7 @@ const AdditionalInformation = (props: Props) => {
     e.preventDefault();
 
     // handle user info update mutation using useMutation hook.
-    await updateUserProfile({
+    await updateUserInfo({
       variables: {
         id: props.user.id,
         name: name.substr(1),

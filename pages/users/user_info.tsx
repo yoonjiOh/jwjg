@@ -26,15 +26,15 @@ const residenceChoices = [
   '제주',
 ];
 
-const CREATE_USER_INFO = gql`
-  mutation createUserInfo($usersId: Int!, $age: Int, $gender: String, $residence: String) {
-    createUserInfo(usersId: $usersId, age: $age, gender: $gender, residence: $residence) {
-      age
-      gender
-      residence
-    }
-  }
-`;
+// const CREATE_USER_INFO = gql`
+//   mutation createUserInfo($usersId: Int!, $age: Int, $gender: String, $residence: String) {
+//     createUserInfo(usersId: $usersId, age: $age, gender: $gender, residence: $residence) {
+//       age
+//       gender
+//       residence
+//     }
+//   }
+// `;
 
 const GET_USER = gql`
   query userByFirebase($firebaseUID: String) {
@@ -46,7 +46,7 @@ const GET_USER = gql`
 
 const userInfo = () => {
   const [choiceObj, setChoiceObj] = useState({ age: null, gender: null, residence: null });
-  const [createUserInfo] = useMutation(CREATE_USER_INFO);
+  // const [createUserInfo] = useMutation(CREATE_USER_INFO);
 
   const router = useRouter();
   const AuthUser = useAuthUser();
@@ -66,27 +66,25 @@ const userInfo = () => {
   };
 
   const handleSubmitUserInfo = async () => {
-    const { age, gender, residence } = choiceObj;
-
-    if (!userId) {
-      alert('유저 아이디가 없어요');
-      return;
-    }
-
-    try {
-      await createUserInfo({
-        variables: {
-          usersId: +userId,
-          age,
-          gender,
-          residence,
-        },
-      }).then(() => {
-        router.push('/users/welcome');
-      });
-    } catch {
-      console.error('There is a problem in creating user info...');
-    }
+    // const { age, gender, residence } = choiceObj;
+    // if (!userId) {
+    //   alert('유저 아이디가 없어요');
+    //   return;
+    // }
+    // try {
+    //   await createUserInfo({
+    //     variables: {
+    //       usersId: +userId,
+    //       age,
+    //       gender,
+    //       residence,
+    //     },
+    //   }).then(() => {
+    //     router.push('/users/welcome');
+    //   });
+    // } catch {
+    //   console.error('There is a problem in creating user info...');
+    // }
   };
 
   return (

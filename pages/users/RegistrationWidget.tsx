@@ -18,15 +18,18 @@ function RegistrationWidget() {
   //   }
   // };
 
-  const email = 'parkjuram@naver.com';
-
   return (
     <div className={s.registrationWidgetWrapper}>
       <Link href={`/users/email_registration`}>
         <button className={s.btnDefault}>이메일로 시작하기</button>
       </Link>
       {/* <button className={s.btnFacebook} onClick={handleFacebookLogin}> */}
-      <button className={s.btnFacebook} onClick={() => signIn('google')}>
+      <button
+        className={s.btnFacebook}
+        onClick={() =>
+          signIn('google', { callbackUrl: 'http://localhost:3000/users/terms_of_service' })
+        }
+      >
         Google로 시작하기
       </button>
       <button className={s.btnFacebook} onClick={() => signIn('facebook')}>

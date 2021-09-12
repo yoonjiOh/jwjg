@@ -1,21 +1,62 @@
 type User {
-  id: Int!
-  firebaseUID: String
+  id: String!
   name: String
+  email: String
+  emailVerified: DateTime
+  image: String
   nickname: String
   intro: String
   profileImageUrl: String
-  isAdmin: Int
+  consentToSAt: DateTime
   createdAt: DateTime
   updatedAt: DateTime
-  userStance(issuesId: Int): UserStance
-  userStances: [UserStance]
-  userInfo: UserInfo
-  user: User
-  myOpinion(issuesId: Int): Opinion
-  opinions: [Opinion]
-  opinionComments: [OpinionComment]
+  accounts: [Account]
+  sessions: [Session]
 }
+
+type Session {
+  id: String!
+  userId: String!
+  expires: DateTime!
+  sessionToken: String!
+  accessToken: String!
+  createdAt: DateTime
+  updatedAt: DateTime
+  user: User
+}
+
+type Account {
+  id: String!
+  userId: String!
+  providerType: String!
+  providerId: String!
+  providerAccountId: String!
+  refreshToken: String
+  accessToken: String
+  accessTokenExpires: DateTime
+  createdAt: DateTime
+  updatedAt: DateTime
+  user: User
+}
+
+# type Users {
+#   id: Int!
+#   firebaseUID: String
+#   name: String
+#   nickname: String
+#   intro: String
+#   profileImageUrl: String
+#   isAdmin: Int
+#   createdAt: DateTime
+#   updatedAt: DateTime
+#   userStance(issuesId: Int): UserStance
+#   userStances: [UserStance]
+#   userInfo: UserInfo
+#   user: User
+#   myOpinion(issuesId: Int): Opinion
+#   opinions: [Opinion]
+#   opinionComments: [OpinionComment]
+# }
 
 type UserInfo {
   usersId: Int
@@ -198,14 +239,21 @@ type Mutation {
     opinionCommentsId: Int!
     like: Boolean!
   ): OpinionCommentReact
-  updateUserProfile(
-    id: Int!
+  # updateUserProfile(
+  #   id: Int!
+  #   name: String
+  #   nickname: String
+  #   intro: String
+  #   profileImageUrl: String
+  # ): Users
+  updateUserInfo(
+    id: String
     name: String
     nickname: String
     intro: String
     profileImageUrl: String
   ): User
-  createUserInfo(usersId: Int!, gender: String, age: Int, residence: String): UserInfo
+  # createUserInfo(usersId: Int!, gender: String, age: Int, residence: String): UserInfo
   manageIssuePublishStatus(id: Int!, isPublished: Boolean!): Issue
   deleteIssue(id: Int!): Issue
   manageApproveHotIssue(id: Int!, isHotIssue: Boolean!): Issue

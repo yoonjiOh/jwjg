@@ -1,3 +1,4 @@
+import { getSession } from 'next-auth/client';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import Layout from '../../components/Layout';
@@ -5,6 +6,23 @@ import common_style from '../index.module.scss';
 import u_style from './users.module.scss';
 
 const headerTitle = '약관 동의';
+
+export const getServerSideProps = async context => {
+  const session = await getSession(context);
+
+  if (session && session.user.consentToSAt) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {}, // will be passed to the page component as props
+  };
+};
 
 function TermsOfService() {
   const router = useRouter();
@@ -59,7 +77,7 @@ function TermsOfService() {
                 }
               />
               <input style={{ visibility: 'hidden' }} type="checkbox" onChange={handleChange} />
-              <span className={agreed && u_style.agreed}>이용 약관에 동의해요</span>
+              <span className={agreed ? u_style.agreed : undefined}>이용 약관에 동의해요</span>
             </label>
 
             <span style={{ textDecoration: 'underline' }} onClick={() => showMoreTerms()}>

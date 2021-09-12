@@ -10,9 +10,14 @@ export default NextAuth({
   callbacks: {
     async signIn(user, account, profile) {
       return true;
+      // if (user.consentToSAt) {
+      //   return '/';
+      // }
+      // return '/users/terms_of_service';
     },
     async redirect(url, baseUrl) {
-      return baseUrl;
+      // It's for security, see https://github.com/nextauthjs/next-auth/issues/591
+      return url.startsWith(baseUrl) ? Promise.resolve(url) : Promise.resolve(baseUrl);
     },
     async session(session, user) {
       session.user.id = user.id;
@@ -33,4 +38,7 @@ export default NextAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
   ],
+  pages: {
+    signIn: '/users',
+  },
 });
