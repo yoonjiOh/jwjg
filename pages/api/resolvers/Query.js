@@ -96,10 +96,9 @@ async function issueHashTags(parent, args, context) {
 
 async function opinions(parent, args, context) {
   const where = args.id ? { id: args.id } : {};
-  const opinions = await context.prisma.opinions.findMany({
+  return await context.prisma.opinions.findMany({
     where,
   });
-  return opinions;
 }
 
 async function opinionsWithIssuesId(parent, args, context) {
@@ -126,20 +125,20 @@ async function opinionCommentReacts(parent, args, context) {
   });
 }
 
-async function myStance(parent, args, context) {
-  return await context.prisma.userStances.findFirst({
+async function myOpinion(parent, args, context) {
+  return await context.prisma.opinions.findFirst({
     where: {
+      userId: args.userId,
       issuesId: args.issuesId,
-      userId: args.usersId,
     },
   });
 }
 
-async function myOpinion(parent, args, context) {
-  return await context.prisma.opinions.findFirst({
+async function userStance(parent, { userId, issuesId }, context) {
+  return await context.prisma.opinions.findUnique({
     where: {
-      userId: args.usersId,
-      issuesId: args.issuesId,
+      userId,
+      issuesId,
     },
   });
 }
@@ -161,6 +160,6 @@ export default {
   opinionsWithIssuesId,
   opinionCommentReacts,
   userByFirebaseWithIssuesId,
-  myStance,
   myOpinion,
+  userStance,
 };

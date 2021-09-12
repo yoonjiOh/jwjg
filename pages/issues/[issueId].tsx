@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { withAuthUser, useAuthUser } from 'next-firebase-auth';
 
 import Layout from '../../components/Layout';
 import FloatingNewOpinionBtn from '../../components/opinion/FloatingNewOpinionBtn';
@@ -16,6 +15,14 @@ import OpinionBox from '../../components/OpinionBox';
 import Loading from '../../components/Loading';
 import { fruits, getFruitForStanceTitle } from '../../utils/getFruitForStanceTitle';
 import { parseIssueContent } from '../../utils/parseContent';
+import {
+  GetServerSidePropsContextWithUser,
+  requireAuthentication,
+} from '../../lib/requireAuthentication';
+import { GET_USER_DETAILS, GET_USER_STANCE } from '../../lib/graph_queries';
+import { initializeApollo } from '../../apollo/apolloClient';
+import { User } from 'next-auth';
+import { UserStances } from '@prisma/client';
 
 const GET_ISSUE = gql`
   query issue($id: Int!) {
@@ -82,33 +89,8 @@ const GET_ISSUE = gql`
   }
 `;
 
-const GET_USER = gql`
-  query userByFirebaseWithIssuesId($firebaseUID: String, $issuesId: Int) {
-    userByFirebaseWithIssuesId(firebaseUID: $firebaseUID, issuesId: $issuesId) {
-      id
-      firebaseUID
-      name
-      intro
-      profileImageUrl
-      myOpinion(issuesId: $issuesId) {
-        id
-      }
-      userStance(issuesId: $issuesId) {
-        issuesId
-        usersId
-        stancesId
-        stances {
-          id
-          title
-          orderNum
-        }
-      }
-    }
-  }
-`;
-
 const CREATE_USER_STANCE = gql`
-  mutation createUserStance($userId: Int, $issuesId: Int, $stancesId: Int) {
+  mutation createUserStance($userId: String, $issuesId: Int, $stancesId: Int) {
     createUserStance(userId: $userId, issuesId: $issuesId, stancesId: $stancesId) {
       usersId
       issuesId
@@ -118,7 +100,7 @@ const CREATE_USER_STANCE = gql`
 `;
 
 const DELETE_USER_STANCE = gql`
-  mutation deleteUserStance($userId: Int, $issuesId: Int) {
+  mutation deleteUserStance($userId: String, $issuesId: Int) {
     deleteUserStance(userId: $userId, issuesId: $issuesId) {
       usersId
       issuesId
@@ -128,15 +110,26 @@ const DELETE_USER_STANCE = gql`
 
 export const getServerSideProps = requireAuthentication(
   async (context: GetServerSidePropsContextWithUser) => {
+    const apolloClient = initializeApollo(null);
+    const { data } = await apolloClient.query({
+      query: GET_USER_STANCE,
+      variables: { userId: context.user.id, issuesId: context.query.issueId },
+    });
     return {
       props: {
         user: context.user,
+        userStance: data?.userStance,
       },
     };
   },
 );
 
-const Issue: any = () => {
+interface Props {
+  user: User;
+  userStance: UserStances;
+}
+
+const Issue: any = (props: Props) => {
   const router = useRouter();
   const issueId = Number(router.query.issueId);
 
@@ -147,14 +140,6 @@ const Issue: any = () => {
     refetch: refetchIssue,
   } = useQuery(GET_ISSUE, {
     variables: { id: issueId },
-  });
-  const {
-    loading: userLoading,
-    error: userError,
-    data: userData,
-    refetch: refetchUser,
-  } = useQuery(GET_USER, {
-    variables: { firebaseUID: AuthUser.id, issuesId: issueId },
   });
 
   const [createUserStance, { loading: mutationLoading, error: mutationError }] =
@@ -171,14 +156,14 @@ const Issue: any = () => {
     refetchIssue({ id: issueId });
   }, []);
 
-  if (loading || userLoading) return <Loading />;
-  if (error || userError) return `Error! ${error && error.message}`;
+  if (loading) return <Loading />;
+  if (error) return `Error! ${error && error.message}`;
 
   const issue = issueData.issue;
   const tags = issue.issueHashTags.map(issueHashTag => issueHashTag.hashTags[0].name);
-  const userId = userData?.userByFirebaseWithIssuesId?.id;
-  const userStance = userData?.userByFirebaseWithIssuesId?.userStance;
-  const myStanceId = userData?.userByFirebaseWithIssuesId?.userStance?.stancesId;
+  const userId = props.user.id;
+  const userStance = props.userStance;
+  const myStanceId = props.userStance?.stancesId;
 
   const newStances = getFruitForStanceTitle(issue?.stances).reduce((acc, stance) => {
     const { id, title, fruit } = stance;
@@ -223,7 +208,6 @@ const Issue: any = () => {
     }
 
     refetchIssue({ id: issueId });
-    refetchUser({ issuesId: issueId, firebaseUID: AuthUser.id });
   };
 
   return (
@@ -337,4 +321,4 @@ const Issue: any = () => {
   );
 };
 
-export default withAuthUser()(Issue);
+export default Issue;

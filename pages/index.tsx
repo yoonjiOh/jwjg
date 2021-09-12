@@ -9,7 +9,7 @@ import CurrentStances from '../components/issue/CurrentStances';
 import IssueCard from '../components/IssueCard';
 import ServiceCard from '../components/ServiceCard';
 import Layout from '../components/Layout';
-import { GET_USERS } from '../lib/queries';
+import { GET_USERS } from '../lib/graph_queries';
 import { fruits, getFruitForStanceTitle } from '../utils/getFruitForStanceTitle';
 import s from './index.module.scss';
 import { getSession } from 'next-auth/client';
@@ -254,4 +254,3 @@ const Main = props => {
 };
 
 export default Main;
-// export default withAuthUser()(Main);

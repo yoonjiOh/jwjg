@@ -9,41 +9,13 @@ import Divider from '../../components/Divider';
 import HashTag from '../../components/HashTag';
 import Layout from '../../components/Layout';
 import OpinionSummaryBox from '../../components/OpinionSummaryBox';
-import { GET_ISSUES, GET_STANCES, GET_USERS } from '../../lib/queries';
+import { GET_ISSUES, GET_STANCES, GET_USERS } from '../../lib/graph_queries';
 import {
   GetServerSidePropsContextWithUser,
   requireAuthentication,
-} from '../libs/requireAuthentication';
+} from '../../lib/requireAuthentication';
+import { GET_USER_DETAILS } from '../../lib/graph_queries';
 import s from './users.module.scss';
-
-const GET_MYPAGE_DATA = gql`
-  query user($id: String!) {
-    user(id: $id) {
-      id
-      name
-      intro
-      image
-      isAdmin
-      opinions {
-        id
-        content
-        createdAt
-        issuesId
-        stancesId
-      }
-      opinionComments {
-        id
-        content
-        createdAt
-        opinionsId
-        stancesId
-      }
-      userStances {
-        issuesId
-      }
-    }
-  }
-`;
 
 function UserPage(props: any) {
   if (!props.user) {
@@ -178,7 +150,7 @@ interface Props {
 const MyPage = (props: Props) => {
   const router = useRouter();
 
-  const { data, loading } = useQuery(GET_MYPAGE_DATA, { variables: { id: props.user.id } });
+  const { data, loading } = useQuery(GET_USER_DETAILS, { variables: { id: props.user.id } });
   const { data: issues_data, loading: loadingIssues } = useQuery(GET_ISSUES);
   const { data: stances_data, loading: loadingStances } = useQuery(GET_STANCES);
 

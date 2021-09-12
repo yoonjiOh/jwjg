@@ -9,13 +9,17 @@ import { gql } from '@apollo/client';
 import { initializeApollo } from '../../apollo/apolloClient';
 import _ from 'lodash';
 
-import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
-import { GET_USERS } from '../../lib/queries';
+import { GET_USERS } from '../../lib/graph_queries';
 import { fruits } from '../../utils/getFruitForStanceTitle';
 import { getPubDate } from '../../lib/util';
+import {
+  GetServerSidePropsContextWithUser,
+  requireAuthentication,
+} from '../../lib/requireAuthentication';
+import { User } from 'next-auth';
 
 const GET_MY_COMMENTS_DATA = gql`
-  query user($id: Int!) {
+  query user($id: String!) {
     user(id: $id) {
       id
       name
@@ -39,29 +43,50 @@ const GET_MY_COMMENTS_DATA = gql`
   }
 `;
 
-export const getServerSideProps = withAuthUserTokenSSR({
-  whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
-  authPageURL: '/users',
-})(async ({ AuthUser }) => {
-  const apolloClient = initializeApollo(null);
-  const meData = await apolloClient.query({
-    query: GET_USERS,
-    variables: { firebaseUID: AuthUser.id },
-  });
-  const userId = meData?.data?.userByFirebase?.id;
-  const { data } = await apolloClient.query({
-    query: GET_MY_COMMENTS_DATA,
-    variables: { id: parseInt(userId) },
-  });
+// export const getServerSideProps = withAuthUserTokenSSR({
+//   whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
+//   authPageURL: '/users',
+// })(async ({ AuthUser }) => {
+//   const apolloClient = initializeApollo(null);
+//   const meData = await apolloClient.query({
+//     query: GET_USERS,
+//     variables: { firebaseUID: AuthUser.id },
+//   });
+//   const userId = meData?.data?.userByFirebase?.id;
+//   const { data } = await apolloClient.query({
+//     query: GET_MY_COMMENTS_DATA,
+//     variables: { id: parseInt(userId) },
+//   });
 
-  return {
-    props: {
-      data: data,
-    },
-  };
-});
+//   return {
+//     props: {
+//       data: data,
+//     },
+//   };
+// });
 
-const MyComments = props => {
+export const getServerSideProps = requireAuthentication(
+  async (context: GetServerSidePropsContextWithUser) => {
+    const apolloClient = initializeApollo();
+    const { data } = await apolloClient.query({
+      query: GET_MY_COMMENTS_DATA,
+      variables: { id: context.user.id },
+    });
+    return {
+      props: {
+        user: context.user,
+        data: data,
+      },
+    };
+  },
+);
+
+interface Props {
+  user: User;
+  data: any;
+}
+
+const MyComments = (props: Props) => {
   const { user } = props.data;
   const headerInfo = {
     headerType: 'editMode',

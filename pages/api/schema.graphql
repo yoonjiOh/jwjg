@@ -196,6 +196,7 @@ type Query {
   myStance(issuesId: Int, userId: Int): UserStance
   # For new user model (at 2021/09/11)
   userInfo(userId: String!): UserInfo
+  userStance(userId: String!, issuesId: Int!): UserStance
 }
 
 type Mutation {

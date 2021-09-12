@@ -5,11 +5,11 @@ import { gql, useMutation, useQuery } from '@apollo/client';
 // import { withAuthUser, useAuthUser } from 'next-firebase-auth';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/client';
-import { CREATE_USER_INFO } from './graph_queries';
+import { CREATE_USER_INFO } from '../../lib/graph_queries';
 import {
   GetServerSidePropsContextWithUser,
   requireAuthentication,
-} from '../libs/requireAuthentication';
+} from '../../lib/requireAuthentication';
 import { User } from 'next-auth';
 
 const ageChoices = [10, 20, 30, 40, 50, 60];

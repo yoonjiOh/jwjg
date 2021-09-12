@@ -3,7 +3,7 @@ import { gql, useQuery, useMutation } from '@apollo/client';
 import s from './Utils.module.scss';
 import _ from 'lodash';
 
-import { DO_LIKE_ACTION_TO_OPINION_COMMENT } from '../lib/queries';
+import { DO_LIKE_ACTION_TO_OPINION_COMMENT } from '../lib/graph_queries';
 import { getPubDate } from '../lib/util';
 import { fruits } from '../utils/getFruitForStanceTitle';
 
@@ -27,7 +27,7 @@ const CommentBox = ({ comment, me }) => {
     data.opinionCommentReacts.filter(react => !!react.like).length;
 
   const myReact =
-    data && data.opinionCommentReacts.filter(react => react.usersId === Number(me && me.id));
+    data && data.opinionCommentReacts.filter(react => react.userId === Number(me && me.id));
   const isLikedByMe = !_.isEmpty(myReact) && _.head(myReact).like;
 
   const handleClickLike = async (opinionCommentsId, isLikedByMe) => {

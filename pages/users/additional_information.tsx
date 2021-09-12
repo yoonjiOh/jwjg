@@ -3,13 +3,13 @@ import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import common_style from '../index.module.scss';
 import u_style from './users.module.scss';
-import { GET_USERS } from '../../lib/queries';
+import { GET_USERS } from '../../lib/graph_queries';
 
 import { useMutation } from '@apollo/client';
 import { initializeApollo } from '../../apollo/apolloClient';
 import { getSession } from 'next-auth/client';
 import { User } from '.prisma/client';
-import { UPDATE_USER_INFO } from './graph_queries';
+import { UPDATE_USER_INFO } from '../../lib/graph_queries';
 
 export interface SerializedAuthUser {
   id: string;

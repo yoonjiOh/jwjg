@@ -8,7 +8,12 @@ import Layout from '../../../components/Layout';
 import style from './new.module.css';
 import { initializeApollo } from '../../../apollo/apolloClient';
 import Loading from '../../../components/Loading';
-import { GET_USERS, SINGLE_UPLOAD_IMG } from '../../../lib/queries';
+import { GET_USERS, SINGLE_UPLOAD_IMG } from '../../../lib/graph_queries';
+import {
+  GetServerSidePropsContextWithUser,
+  requireAuthentication,
+} from '../../../lib/requireAuthentication';
+import { User } from 'next-auth';
 
 interface Stance {
   title: String;
@@ -65,6 +70,7 @@ const CREATE_TAG = gql`
 const reducer = (state, action) => {
   switch (action.type) {
     case 'CHANGE_ISSUE_INPUT':
+      // eslint-disable-next-line no-case-declarations
       const { key, value } = action.payload;
       return {
         ...state,
@@ -120,26 +126,28 @@ const reducer = (state, action) => {
   }
 };
 
-export const getServerSideProps = withAuthUserTokenSSR({})(async ({ AuthUser }) => {
-  const apolloClient = initializeApollo(null);
-  const { data } = await apolloClient.query({
-    query: GET_TAGS,
-  });
+export const getServerSideProps = requireAuthentication(
+  async (context: GetServerSidePropsContextWithUser) => {
+    const apolloClient = initializeApollo(null);
+    const { data } = await apolloClient.query({
+      query: GET_TAGS,
+    });
 
-  const meData = await apolloClient.query({
-    query: GET_USERS,
-    variables: { firebaseUID: AuthUser.id },
-  });
+    return {
+      props: {
+        user: context.user,
+        data,
+      },
+    };
+  },
+);
 
-  return {
-    props: {
-      data: data,
-      me: meData.data.userByFirebase || null,
-    },
-  };
-});
+interface Props {
+  user: User;
+  data: any;
+}
 
-const NewIssue = props => {
+const NewIssue = (props: Props) => {
   const router = useRouter();
   const initial_state = {
     issue: {
@@ -274,7 +282,7 @@ const NewIssue = props => {
           title: issue.title,
           content: issue.content,
           imageUrl: issue.imageUrl,
-          authorId: props.me.id,
+          authorId: props.user.id,
         },
       })
         .then(result => {
@@ -421,4 +429,4 @@ const NewIssue = props => {
   );
 };
 /* @ts-ignore */
-export default withAuthUser()(NewIssue);
+export default NewIssue;

@@ -1,4 +1,3 @@
-import { withAuthUser, AuthAction } from 'next-firebase-auth';
 import Layout from '../../components/Layout';
 import TextField from '@material-ui/core/TextField';
 import { useState } from 'react';
@@ -80,8 +79,4 @@ function ResetPassword() {
   );
 }
 
-export default withAuthUser({
-  whenAuthed: AuthAction.REDIRECT_TO_APP,
-  whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
-  whenUnauthedAfterInit: AuthAction.RENDER,
-})(ResetPassword);
+export default ResetPassword;

@@ -8,13 +8,13 @@ import { gql, useMutation } from '@apollo/client';
 import { initializeApollo } from '../../apollo/apolloClient';
 import _ from 'lodash';
 import { empty_string_if_null } from '../../utils/string_utils';
-import { GET_USERS, SINGLE_UPLOAD_IMG } from '../../lib/queries';
+import { GET_USERS, SINGLE_UPLOAD_IMG } from '../../lib/graph_queries';
 import { getSession, useSession } from 'next-auth/client';
 import {
   GetServerSidePropsContextWithUser,
   requireAuthentication,
-} from '../libs/requireAuthentication';
-import { UPDATE_USER_INFO } from './graph_queries';
+} from '../../lib/requireAuthentication';
+import { UPDATE_USER_INFO } from '../../lib/graph_queries';
 import { User } from 'next-auth';
 
 export const getServerSideProps = requireAuthentication(
