@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-// import { withAuthUserTokenSSR, AuthAction, AuthUser } from 'next-firebase-auth';
 import Layout from '../../components/Layout';
 import common_style from '../index.module.scss';
 import u_style from './users.module.scss';
@@ -11,7 +10,6 @@ import { initializeApollo } from '../../apollo/apolloClient';
 import { getSession } from 'next-auth/client';
 import { User } from '.prisma/client';
 import { UPDATE_USER_INFO } from './graph_queries';
-// import { createUserFromFirebaseUser } from '../../lib/users';
 
 export interface SerializedAuthUser {
   id: string;
@@ -28,14 +26,9 @@ export const getServerSideProps = async context => {
       },
     };
   }
-  // const firebaseUser: SerializedAuthUser = {
-  //   id: AuthUser.id,
-  //   email: AuthUser.email,
-  // };
   return {
     props: {
       user: session.user,
-      // firebaseUser: firebaseUser,
     },
   };
 };
@@ -46,7 +39,6 @@ interface Props {
 
 const AdditionalInformation = (props: Props) => {
   const router = useRouter();
-  const apolloClient = initializeApollo(null);
   const [name, setName] = useState('@');
 
   const [updateUserInfo] = useMutation(UPDATE_USER_INFO);

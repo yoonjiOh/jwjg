@@ -1,39 +1,11 @@
-import Link from 'next/link';
-import React, { useState } from 'react';
+import React from 'react';
 import Layout from '../../components/Layout';
 // import { doEmailLogin } from '../../lib/users';
 import common_style from '../index.module.scss';
 import RegistrationWidget from './RegistrationWidget';
 import s from './users.module.scss';
-import { useRouter } from 'next/router';
 
 const LoginForm = () => {
-  const [state, setState] = useState({ email: '', password: '' });
-  const { email, password } = state;
-  const router = useRouter();
-
-  const handleEmailChange = event => {
-    setState(prevState => {
-      return { ...prevState, email: event.target.value };
-    });
-  };
-
-  const handlePasswordChange = event => {
-    setState(prevState => {
-      return { ...prevState, password: event.target.value };
-    });
-  };
-
-  const handleSubmit = event => {
-    event.preventDefault();
-    // try {
-    //   doEmailLogin(email, password);
-    //   router.push('/');
-    // } catch (e) {
-    //   console.error(e);
-    // }
-  };
-
   return (
     <Layout title={'login'} headerInfo={{ headerType: 'common' }} isDimmed={false}>
       <main className={common_style.main}>

@@ -1,23 +1,8 @@
 import { signIn } from 'next-auth/client';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
 import React from 'react';
-// import { startFacebookSigninFlow } from '../../lib/users';
 import s from './users.module.scss';
 
 function RegistrationWidget() {
-  // const router = useRouter();
-
-  // const handleFacebookLogin = async e => {
-  //   e.preventDefault();
-  //   try {
-  //     await startFacebookSigninFlow();
-  //   } catch (err) {
-  //     console.log(err);
-  //     return;
-  //   }
-  // };
-
   return (
     <div className={s.registrationWidgetWrapper}>
       <button

@@ -1,6 +1,5 @@
 import { gql } from '@apollo/client';
 import _ from 'lodash';
-// import { withAuthUser, withAuthUserTokenSSR } from 'next-firebase-auth';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';

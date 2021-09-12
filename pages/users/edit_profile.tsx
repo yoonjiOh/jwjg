@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 
 import Layout from '../../components/Layout';
-import { Users } from '@prisma/client';
 import s from './users.module.scss';
 import { useRouter } from 'next/router';
 
 import { gql, useMutation } from '@apollo/client';
 import { initializeApollo } from '../../apollo/apolloClient';
-// import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
 import _ from 'lodash';
 import { empty_string_if_null } from '../../utils/string_utils';
 import { GET_USERS, SINGLE_UPLOAD_IMG } from '../../lib/queries';
@@ -18,30 +16,6 @@ import {
 } from '../libs/requireAuthentication';
 import { UPDATE_USER_INFO } from './graph_queries';
 import { User } from 'next-auth';
-
-// export const UPDATE_PROFILE = gql`
-//   mutation updateUserProfile(
-//     $id: Int!
-//     $name: String
-//     $nickname: String
-//     $intro: String
-//     $image: String
-//   ) {
-//     updateUserProfile(
-//       id: $id
-//       name: $name
-//       nickname: $nickname
-//       intro: $intro
-//       image: $image
-//     ) {
-//       id
-//       name
-//       nickname
-//       intro
-//       image
-//     }
-//   }
-// `;
 
 export const getServerSideProps = requireAuthentication(
   async (context: GetServerSidePropsContextWithUser) => {

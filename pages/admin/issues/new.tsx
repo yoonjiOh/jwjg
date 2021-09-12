@@ -8,7 +8,6 @@ import Layout from '../../../components/Layout';
 import style from './new.module.css';
 import { initializeApollo } from '../../../apollo/apolloClient';
 import Loading from '../../../components/Loading';
-// import { withAuthUser, withAuthUserTokenSSR } from 'next-firebase-auth';
 import { GET_USERS, SINGLE_UPLOAD_IMG } from '../../../lib/queries';
 
 interface Stance {

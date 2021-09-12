@@ -1,5 +1,4 @@
 import { gql, useQuery } from '@apollo/client';
-import { Users } from '@prisma/client';
 import _ from 'lodash';
 import { User } from 'next-auth';
 import { signOut } from 'next-auth/client';
@@ -163,10 +162,6 @@ function UserPage(props: any) {
 
 export const getServerSideProps = requireAuthentication(
   async (context: GetServerSidePropsContextWithUser) => {
-    // const { data } = await apolloClient.query({
-    //   query: GET_MYPAGE_DATA,
-    //   variables: { id: userId },
-    // });
     return {
       props: {
         user: context.user,
@@ -175,33 +170,7 @@ export const getServerSideProps = requireAuthentication(
   },
 );
 
-//   const { data } = await apolloClient.query({
-//     query: GET_MYPAGE_DATA,
-//     variables: { id: userId },
-//   });
-
-//   const issues = await apolloClient.query({
-//     query: GET_ISSUES,
-//   });
-
-//   const stances = await apolloClient.query({
-//     query: GET_STANCES,
-//   });
-
-//   return {
-//     props: {
-//       user: userData,
-//       data: data,
-//       issues_data: issues.data,
-//       stances_data: stances.data,
-//     },
-//   };
-// });
-
 interface Props {
-  // data: any;
-  // issues_data: any;
-  // stances_data: any;
   children?: ReactNode;
   user: User;
 }

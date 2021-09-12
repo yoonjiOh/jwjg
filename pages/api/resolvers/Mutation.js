@@ -238,20 +238,6 @@ async function doLikeActionToOpinionComment(parent, args, context) {
   return result;
 }
 
-// async function updateUserProfile(parent, args, context) {
-//   const result = await context.prisma.user.update({
-//     where: {
-//       id: args.id,
-//     },
-//     data: {
-//       name: args.name,
-//       nickname: args.nickname,
-//       intro: args.intro,
-//       profileImageUrl: args.profileImageUrl,
-//     },
-//   });
-// }
-
 async function updateUserInfo(_, { id, name, nickname, intro, image, consentToSAt }, { prisma }) {
   return await prisma.user.update({
     where: {
@@ -338,7 +324,6 @@ export default {
   createOpinionComment,
   doLikeActionToOpinion,
   doLikeActionToOpinionComment,
-  // updateUserProfile,
   updateUserInfo,
   createUserInfo,
   manageIssuePublishStatus,

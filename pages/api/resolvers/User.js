@@ -1,11 +1,3 @@
-// async function user(parent, args, context) {
-//   return await context.prisma.user.findUnique({
-//     where: {
-//       id: parent.id,
-//     },
-//   });
-// }
-
 async function userStance(parent, args, context) {
   return await context.prisma.userStances.findFirst({
     where: {
@@ -53,11 +45,4 @@ async function myOpinion(parent, args, context) {
   });
 }
 
-export default {
-  // userStance,
-  // userStances,
-  // userInfo,
-  // myOpinion,
-  // opinions,
-  // opinionComments,
-};
+export default {};

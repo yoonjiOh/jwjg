@@ -28,7 +28,7 @@ const GET_USER = gql`
   }
 `;
 
-function UserInfo({ userInfo }) {
+function UserInfo({ userInfo }: any) {
   if (!userInfo) {
     return null;
   }
@@ -61,11 +61,6 @@ const WelcomePage = (props: Props) => {
 
   const user = props.user;
   const userInfo = data.userInfo;
-  // const { data: myData, refetch: refetchUser } = useQuery(GET_USERS, {
-  //   variables: { firebaseUID: AuthUser.id },
-  // });
-
-  // const userId = myData?.userByFirebase?.id;
 
   return (
     <div className={s.main} style={{ marginTop: '0', height: '100vh' }}>

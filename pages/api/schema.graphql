@@ -47,25 +47,6 @@ type Account {
   user: User
 }
 
-# type Users {
-#   id: Int!
-#   firebaseUID: String
-#   name: String
-#   nickname: String
-#   intro: String
-#   profileImageUrl: String
-#   isAdmin: Int
-#   createdAt: DateTime
-#   updatedAt: DateTime
-#   userStance(issuesId: Int): UserStance
-#   userStances: [UserStance]
-#   userInfo: UserInfo
-#   user: User
-#   myOpinion(issuesId: Int): Opinion
-#   opinions: [Opinion]
-#   opinionComments: [OpinionComment]
-# }
-
 type UserInfo {
   userId: Int
   age: Int
@@ -249,13 +230,6 @@ type Mutation {
     opinionCommentsId: Int!
     like: Boolean!
   ): OpinionCommentReact
-  # updateUserProfile(
-  #   id: Int!
-  #   name: String
-  #   nickname: String
-  #   intro: String
-  #   profileImageUrl: String
-  # ): Users
   updateUserInfo(
     id: String!
     name: String

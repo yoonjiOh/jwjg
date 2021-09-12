@@ -10,10 +10,6 @@ export default NextAuth({
   callbacks: {
     async signIn(user, account, profile) {
       return true;
-      // if (user.consentToSAt) {
-      //   return '/';
-      // }
-      // return '/users/terms_of_service';
     },
     async redirect(url, baseUrl) {
       // It's for security, see https://github.com/nextauthjs/next-auth/issues/591

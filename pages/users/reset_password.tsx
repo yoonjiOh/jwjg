@@ -29,19 +29,6 @@ function ResetPassword() {
       setErrorText('Email address format is invalid.');
       return;
     }
-
-    // await auth
-    //   .sendPasswordResetEmail(email)
-    //   .then(async () => {
-    //     setOpenSnackbar(true);
-    //     await new Promise(r => setTimeout(r, 1000)).then(() => {
-    //       router.push('/');
-    //     });
-    //   })
-    //   .catch(function (error) {
-    //     setError(true);
-    //     setErrorText(error.code);
-    //   });
   };
 
   const headerInfo = {

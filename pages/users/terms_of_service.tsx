@@ -33,23 +33,6 @@ export const getServerSideProps = requireAuthentication(
   },
 );
 
-// export const getServerSideProps = async context => {
-//   const session = await getSession(context);
-
-//   if (session && session.user.consentToSAt) {
-//     return {
-//       redirect: {
-//         destination: '/',
-//         permanent: false,
-//       },
-//     };
-//   }
-
-//   return {
-//     props: {}, // will be passed to the page component as props
-//   };
-// };
-
 interface Props {
   user: User;
 }
