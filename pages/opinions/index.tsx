@@ -137,7 +137,7 @@ const Opinions = props => {
     try {
       await doLikeActionToOpinion({
         variables: {
-          usersId: +userId,
+          userId: +userId,
           opinionsId: +opinionId,
           like: isLikedByMe ? false : true,
         },

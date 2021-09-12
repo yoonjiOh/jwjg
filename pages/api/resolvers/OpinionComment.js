@@ -1,6 +1,5 @@
-
 async function user(parent, _args, context) {
-  const user = await context.prisma.users.findUnique({
+  const user = await context.prisma.user.findUnique({
     where: { id: parent.usersId },
   });
   return user;

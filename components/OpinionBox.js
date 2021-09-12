@@ -48,7 +48,7 @@ const OpinionBox = ({ opinion, issueId }) => {
     try {
       await doLikeActionToOpinion({
         variables: {
-          usersId: Number(userId),
+          userId: Number(userId),
           opinionsId: Number(opinion.id),
           like: isLikedByMe ? false : true,
         },

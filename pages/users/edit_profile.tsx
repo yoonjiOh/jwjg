@@ -17,6 +17,7 @@ import {
   requireAuthentication,
 } from '../libs/requireAuthentication';
 import { UPDATE_USER_INFO } from './graph_queries';
+import { User } from 'next-auth';
 
 // export const UPDATE_PROFILE = gql`
 //   mutation updateUserProfile(
@@ -53,7 +54,7 @@ export const getServerSideProps = requireAuthentication(
 );
 
 interface Props {
-  user: Users;
+  user: User;
 }
 
 const EditProfile = (props: Props) => {
@@ -95,13 +96,14 @@ const EditProfile = (props: Props) => {
   const handleSubmit = async event => {
     event.preventDefault();
     console.log(props.user);
+    console.log(name, nickname, intro, profileImageUrl);
     await updateUserInfo({
       variables: {
         id: props.user.id,
-        name: name,
-        nickname: nickname,
-        intro: intro,
-        profileImageUrl: profileImageUrl,
+        name: '',
+        nickname: '',
+        intro: '',
+        profileImageUrl: '',
       },
     })
       .then(result => {

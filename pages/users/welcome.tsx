@@ -2,10 +2,16 @@ import s from './users.module.scss';
 import React from 'react';
 
 import { useRouter } from 'next/router';
-import { withAuthUser, useAuthUser } from 'next-firebase-auth';
 
 import { gql, useQuery } from '@apollo/client';
 import Loading from '../../components/Loading';
+import { signIn, useSession } from 'next-auth/client';
+import {
+  GetServerSidePropsContextWithUser,
+  requireAuthentication,
+} from '../libs/requireAuthentication';
+import { User } from 'next-auth';
+import { GET_USER_INFO } from './graph_queries';
 
 const GET_USER = gql`
   query userByFirebase($firebaseUID: String) {
@@ -24,12 +30,10 @@ const GET_USER = gql`
   }
 `;
 
-function UserInfo(props) {
-  if (!props.userInfo) {
+function UserInfo({ userInfo }) {
+  if (!userInfo) {
     return null;
   }
-
-  const userInfo = props.userInfo;
 
   return (
     <span>
@@ -38,19 +42,30 @@ function UserInfo(props) {
   );
 }
 
-const welcomePage = () => {
+export const getServerSideProps = requireAuthentication(
+  async (context: GetServerSidePropsContextWithUser) => {
+    return {
+      props: {
+        user: context.user,
+      },
+    };
+  },
+);
+
+interface Props {
+  user: User;
+}
+
+const WelcomePage = (props: Props) => {
   const router = useRouter();
-  const AuthUser = useAuthUser();
+  const user = props.user;
+  const { data } = useQuery(GET_USER_INFO);
+  const userInfo = data.
+  // const { data: myData, refetch: refetchUser } = useQuery(GET_USERS, {
+  //   variables: { firebaseUID: AuthUser.id },
+  // });
 
-  const { data: userData } = useQuery(GET_USER, {
-    variables: { firebaseUID: AuthUser.id },
-  });
-
-  const user = userData?.userByFirebase;
-
-  if (!user) {
-    return <Loading />;
-  }
+  // const userId = myData?.userByFirebase?.id;
 
   return (
     <div className={s.main} style={{ marginTop: '0', height: '100vh' }}>
@@ -97,4 +112,4 @@ const welcomePage = () => {
   );
 };
 
-export default withAuthUser()(welcomePage);
+export default WelcomePage;

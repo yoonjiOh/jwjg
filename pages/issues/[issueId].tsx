@@ -108,8 +108,8 @@ const GET_USER = gql`
 `;
 
 const CREATE_USER_STANCE = gql`
-  mutation createUserStance($usersId: Int, $issuesId: Int, $stancesId: Int) {
-    createUserStance(usersId: $usersId, issuesId: $issuesId, stancesId: $stancesId) {
+  mutation createUserStance($userId: Int, $issuesId: Int, $stancesId: Int) {
+    createUserStance(userId: $userId, issuesId: $issuesId, stancesId: $stancesId) {
       usersId
       issuesId
       stancesId
@@ -118,8 +118,8 @@ const CREATE_USER_STANCE = gql`
 `;
 
 const DELETE_USER_STANCE = gql`
-  mutation deleteUserStance($usersId: Int, $issuesId: Int) {
-    deleteUserStance(usersId: $usersId, issuesId: $issuesId) {
+  mutation deleteUserStance($userId: Int, $issuesId: Int) {
+    deleteUserStance(userId: $userId, issuesId: $issuesId) {
       usersId
       issuesId
     }
@@ -195,14 +195,14 @@ const Issue: any = () => {
       if (userStance?.stancesId === stancesId) {
         await deleteUserStance({
           variables: {
-            usersId: userId,
+            userId: userId,
             issuesId: issue.id,
           },
         });
       } else {
         await createUserStance({
           variables: {
-            usersId: userId,
+            userId: userId,
             issuesId: issue.id,
             stancesId,
           },

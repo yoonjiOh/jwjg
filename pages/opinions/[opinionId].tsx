@@ -93,13 +93,13 @@ export const getServerSideProps = withAuthUserTokenSSR({
 const CREATE_OPINION_COMMENT = gql`
   mutation createOpinionComment(
     $content: String!
-    $usersId: Int!
+    $userId: Int!
     $opinionsId: Int!
     $stancesId: Int!
   ) {
     createOpinionComment(
       content: $content
-      usersId: $usersId
+      userId: $userId
       opinionsId: $opinionsId
       stancesId: $stancesId
     ) {
@@ -109,8 +109,8 @@ const CREATE_OPINION_COMMENT = gql`
 `;
 
 const GET_MY_STANCE = gql`
-  query myStance($issuesId: Int, $usersId: Int) {
-    myStance(issuesId: $issuesId, usersId: $usersId) {
+  query myStance($issuesId: Int, $userId: Int) {
+    myStance(issuesId: $issuesId, userId: $userId) {
       usersId
       issuesId
       stancesId
@@ -124,8 +124,8 @@ const GET_MY_STANCE = gql`
 `;
 
 const CREATE_USER_STANCE = gql`
-  mutation createUserStance($usersId: Int, $issuesId: Int, $stancesId: Int) {
-    createUserStance(usersId: $usersId, issuesId: $issuesId, stancesId: $stancesId) {
+  mutation createUserStance($userId: Int, $issuesId: Int, $stancesId: Int) {
+    createUserStance(userId: $userId, issuesId: $issuesId, stancesId: $stancesId) {
       usersId
       issuesId
       stancesId
@@ -155,7 +155,7 @@ const Opinion = props => {
   const { data: myStanceData } = useQuery(GET_MY_STANCE, {
     variables: {
       issuesId: issueId,
-      usersId: userId,
+      userId: userId,
     },
   });
 
@@ -176,7 +176,7 @@ const Opinion = props => {
       await createOpinionComment({
         variables: {
           content: opinionComment,
-          usersId: Number(userId),
+          userId: Number(userId),
           opinionsId: Number(opinionId),
           stancesId: myStanceData.myStance.stancesId,
         },
@@ -190,7 +190,7 @@ const Opinion = props => {
     try {
       await doLikeActionToOpinion({
         variables: {
-          usersId: Number(userId),
+          userId: Number(userId),
           opinionsId: Number(opinionId),
           like: isLikedByMe ? false : true,
         },
@@ -208,7 +208,7 @@ const Opinion = props => {
   const onStanceClick = async stancesId => {
     await createUserStance({
       variables: {
-        usersId: Number(userId),
+        userId: Number(userId),
         issuesId: Number(issueId),
         stancesId,
       },

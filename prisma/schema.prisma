@@ -42,14 +42,15 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  nickname        String?
-  intro           String?
-  profileImageUrl String?
-  consentToSAt  DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   accounts      Account[]
   sessions      Session[]
+
+  nickname        String?
+  intro           String?
+  consentToSAt  DateTime?
+  UserInfo      UserInfo[]
 }
 
 // TODO(jurampark): update doc about schema.prisma convention.
@@ -118,14 +119,14 @@ model UserStances {
 }
 
 model UserInfo {
-  user    Users   @relation(fields: [usersId], references: [id])
+  user    User   @relation(fields: [userId], references: [id])
   
-  usersId     Int
+  userId     String
   age         Int?
   gender      String?
   residence   String?
 
-  @@id([usersId])
+  @@id([userId])
 }
 
 model HashTags {

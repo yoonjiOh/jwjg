@@ -34,7 +34,7 @@ const CommentBox = ({ comment, me }) => {
     try {
       await doLikeActionToOpinionComment({
         variables: {
-          usersId: Number(me.id),
+          userId: Number(me.id),
           opinionCommentsId: Number(opinionCommentsId),
           like: isLikedByMe ? false : true,
         },
