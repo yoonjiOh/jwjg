@@ -4,7 +4,7 @@ import { useMutation, useQuery } from '@apollo/client';
 import s from './Utils.module.scss';
 import { useRouter } from 'next/router';
 
-import { GET_OPINION_REACTS_AND_COMMENTS, DO_LIKE_ACTION_TO_OPINION } from '../lib/queries';
+import { GET_OPINION_REACTS_AND_COMMENTS, DO_LIKE_ACTION_TO_OPINION } from '../lib/graph_queries';
 
 import _ from 'lodash';
 import { fruits } from '../utils/getFruitForStanceTitle';
@@ -35,7 +35,7 @@ const OpinionBox = (props: Props) => {
   const myReact =
     opinion &&
     opinion.opinionReacts.length &&
-    opinion.opinionReacts.filter(react => react.usersId === Number(userId));
+    opinion.opinionReacts.filter(react => react.userId === Number(userId));
 
   const isLikedByMe = !_.isEmpty(myReact) && _.head(myReact).like;
 

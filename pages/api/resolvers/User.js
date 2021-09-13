@@ -45,4 +45,4 @@ async function myOpinion(parent, args, context) {
   });
 }
 
-export default {};
+export default { userStances };

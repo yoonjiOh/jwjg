@@ -8,8 +8,8 @@ import common_style from '../index.module.scss';
 import {
   GetServerSidePropsContextWithUser,
   requireAuthentication,
-} from '../libs/requireAuthentication';
-import { UPDATE_USER_INFO } from './graph_queries';
+} from '../../lib/requireAuthentication';
+import { UPDATE_USER_INFO } from '../../lib/graph_queries';
 import u_style from './users.module.scss';
 
 const headerTitle = '약관 동의';

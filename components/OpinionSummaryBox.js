@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 
-import { GET_OPINION_REACTS_AND_COMMENTS } from '../lib/queries';
+import { GET_OPINION_REACTS_AND_COMMENTS } from '../lib/graph_queries';
 import { fruits } from '../utils/getFruitForStanceTitle';
 
 const OpinionSummaryBox = ({ opinion, issues, stances }) => {

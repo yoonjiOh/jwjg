@@ -109,7 +109,7 @@ type Issue {
   title: String!
   content: String!
   imageUrl: String
-  authorId: Int
+  authorId: String
   isPublished: Int
   createdAt: DateTime
   updatedAt: DateTime
@@ -196,10 +196,11 @@ type Query {
   myStance(issuesId: Int, userId: Int): UserStance
   # For new user model (at 2021/09/11)
   userInfo(userId: String!): UserInfo
+  userStance(userId: String!, issuesId: Int!): UserStance
 }
 
 type Mutation {
-  createIssue(title: String, content: String, imageUrl: String, authorId: Int): Issue
+  createIssue(title: String, content: String, imageUrl: String, authorId: String): Issue
   updateIssue(
     id: Int!
     title: String

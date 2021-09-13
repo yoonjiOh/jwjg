@@ -10,17 +10,22 @@ import s from './users.module.scss';
 import { gql } from '@apollo/client';
 import { initializeApollo } from '../../apollo/apolloClient';
 import _ from 'lodash';
-import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
-import { GET_USERS, GET_STANCES, GET_ISSUES } from '../../lib/queries';
+import { GET_USERS, GET_STANCES, GET_ISSUES } from '../../lib/graph_queries';
 import { getPubDate } from '../../lib/util';
+import { User } from 'next-auth';
+import {
+  GetServerSidePropsContextWithUser,
+  requireAuthentication,
+} from '../../lib/requireAuthentication';
+import { GET_OPINIONS } from '../../lib/graph_queries';
 
 const GET_MY_OPINIONS_DATA = gql`
-  query user($id: Int!) {
+  query user($id: String!) {
     user(id: $id) {
       id
       name
       intro
-      profileImageUrl
+      image
       opinions {
         id
         content
@@ -32,55 +37,94 @@ const GET_MY_OPINIONS_DATA = gql`
   }
 `;
 
-export const getServerSideProps = withAuthUserTokenSSR({
-  whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
-  authPageURL: '/users',
-})(async ({ AuthUser }) => {
-  const apolloClient = initializeApollo(null);
-  const meData = await apolloClient.query({
-    query: GET_USERS,
-    variables: { firebaseUID: AuthUser.id },
-  });
-  const userId = meData?.data?.userByFirebase?.id;
+// export const getServerSideProps = withAuthUserTokenSSR({
+//   whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
+//   authPageURL: '/users',
+// })(async ({ AuthUser }) => {
+//   const apolloClient = initializeApollo(null);
+//   const meData = await apolloClient.query({
+//     query: GET_USERS,
+//     variables: { firebaseUID: AuthUser.id },
+//   });
+//   const userId = meData?.data?.userByFirebase?.id;
 
-  const { data } = await apolloClient.query({
-    query: GET_MY_OPINIONS_DATA,
-    variables: { id: parseInt(userId) },
-  });
+//   const { data } = await apolloClient.query({
+//     query: GET_MY_OPINIONS_DATA,
+//     variables: { id: parseInt(userId) },
+//   });
 
-  const issues = await apolloClient.query({
-    query: GET_ISSUES,
-  });
+//   const issues = await apolloClient.query({
+//     query: GET_ISSUES,
+//   });
 
-  const stances = await apolloClient.query({
-    query: GET_STANCES,
-  });
+//   const stances = await apolloClient.query({
+//     query: GET_STANCES,
+//   });
 
-  return {
-    props: {
-      data: data,
-      issues_data: issues.data,
-      stances_data: stances.data,
-    },
-  };
-});
+//   return {
+//     props: {
+//       data: data,
+//       issues_data: issues.data,
+//       stances_data: stances.data,
+//     },
+//   };
+// });
 
-const MyOpinions = props => {
-  const { user } = props.data;
+export const getServerSideProps = requireAuthentication(
+  async (context: GetServerSidePropsContextWithUser) => {
+    const apolloClient = initializeApollo();
+    const { data } = await apolloClient.query({
+      query: GET_MY_OPINIONS_DATA,
+      variables: { id: context.user.id },
+    });
+
+    const issues = await apolloClient.query({
+      query: GET_ISSUES,
+    });
+
+    const stances = await apolloClient.query({
+      query: GET_STANCES,
+    });
+    const opinions = await apolloClient.query({
+      query: GET_OPINIONS,
+      variables: { id: Number(context.query.id) },
+    });
+    return {
+      props: {
+        user: context.user,
+        data: data,
+        issues_data: issues.data,
+        stances_data: stances.data,
+        opinions_data: opinions.data,
+      },
+    };
+  },
+);
+
+interface Props {
+  user: User;
+  data: any;
+  issues_data: any;
+  stances_data: any;
+  opinions_data: any;
+}
+
+const MyOpinions = (props: Props) => {
+  const user = props.user;
   const headerInfo = {
     headerType: 'editMode',
     subTitle: '작성한 의견',
   };
+  const opinions = props.opinions_data;
 
   const router = useRouter();
 
   return (
     <Layout title={'작성한 의견'} headerInfo={headerInfo} isDimmed={false}>
       <main className={s.main}>
-        {user &&
-          user.opinions &&
-          user.opinions.length &&
-          user.opinions.map(opinion => (
+        {opinions &&
+          opinions.length &&
+          opinions.map(opinion => (
             <div
               key={opinion.id}
               onClick={() => {

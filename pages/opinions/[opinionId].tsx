@@ -5,13 +5,12 @@ import Layout from '../../components/Layout';
 import CommentBox from '../../components/CommentBox';
 
 import { useRouter } from 'next/router';
-import { withAuthUser, AuthAction, useAuthUser, withAuthUserTokenSSR } from 'next-firebase-auth';
 
 import common_style from './index.module.scss';
 import s from './[opinionId].module.css';
 import util_s from '../../components/Utils.module.scss';
 import user_s from '../users/users.module.scss';
-import { GET_USERS, DO_LIKE_ACTION_TO_OPINION } from '../../lib/queries';
+import { GET_USERS, DO_LIKE_ACTION_TO_OPINION } from '../../lib/graph_queries';
 
 import _ from 'lodash';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -19,81 +18,18 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { fruits } from '../../utils/getFruitForStanceTitle';
 import { getPubDate } from '../../lib/util';
 import { parseCommentContent } from '../../utils/parseContent';
-
-const GET_DATA = gql`
-  query opinions($id: Int!) {
-    opinions(id: $id) {
-      id
-      content
-      issuesId
-      issueStances {
-        id
-        title
-        orderNum
-        issuesId
-      }
-      stancesId
-      stance {
-        id
-        orderNum
-        title
-      }
-      createdAt
-      user {
-        id
-        name
-        intro
-        profileImageUrl
-      }
-      opinionComments {
-        id
-        content
-        createdAt
-        usersId
-        stancesId
-        stance {
-          id
-          orderNum
-          title
-        }
-        user {
-          id
-          name
-          intro
-          profileImageUrl
-        }
-      }
-      opinionReacts {
-        like
-        usersId
-      }
-      opinionReactsSum
-    }
-  }
-`;
-
-export const getServerSideProps = withAuthUserTokenSSR({
-  whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
-  authPageURL: '/users',
-})(async ({ query }) => {
-  const apolloClient = initializeApollo(null);
-  const { opinionId: id } = query;
-  const { data } = await apolloClient.query({
-    query: GET_DATA,
-    variables: { id: Number(id) },
-  });
-
-  return {
-    props: {
-      data: data,
-    },
-  };
-});
+import {
+  GetServerSidePropsContextWithUser,
+  requireAuthentication,
+} from '../../lib/requireAuthentication';
+import { User } from 'next-auth';
+import { GET_OPINIONS } from '../../lib/graph_queries';
+import { ConfigurationServicePlaceholders } from 'aws-sdk/lib/config_service_placeholders';
 
 const CREATE_OPINION_COMMENT = gql`
   mutation createOpinionComment(
     $content: String!
-    $userId: Int!
+    $userId: String!
     $opinionsId: Int!
     $stancesId: Int!
   ) {
@@ -109,7 +45,7 @@ const CREATE_OPINION_COMMENT = gql`
 `;
 
 const GET_MY_STANCE = gql`
-  query myStance($issuesId: Int, $userId: Int) {
+  query myStance($issuesId: Int, $userId: String) {
     myStance(issuesId: $issuesId, userId: $userId) {
       usersId
       issuesId
@@ -124,7 +60,7 @@ const GET_MY_STANCE = gql`
 `;
 
 const CREATE_USER_STANCE = gql`
-  mutation createUserStance($userId: Int, $issuesId: Int, $stancesId: Int) {
+  mutation createUserStance($userId: String, $issuesId: Int, $stancesId: Int) {
     createUserStance(userId: $userId, issuesId: $issuesId, stancesId: $stancesId) {
       usersId
       issuesId
@@ -133,7 +69,46 @@ const CREATE_USER_STANCE = gql`
   }
 `;
 
-const Opinion = props => {
+// export const getServerSideProps = withAuthUserTokenSSR({
+//   whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
+//   authPageURL: '/users',
+// })(async ({ query }) => {
+//   const apolloClient = initializeApollo(null);
+//   const { opinionId: id } = query;
+//   const { data } = await apolloClient.query({
+//     query: GET_OPINIONS,
+//     variables: { id: Number(id) },
+//   });
+
+//   return {
+//     props: {
+//       data: data,
+//     },
+//   };
+// });
+
+export const getServerSideProps = requireAuthentication(
+  async (context: GetServerSidePropsContextWithUser) => {
+    const apolloClient = initializeApollo();
+    const { data } = await apolloClient.query({
+      query: GET_OPINIONS,
+      variables: { id: Number(context.query.id) },
+    });
+    return {
+      props: {
+        user: context.user,
+        data: data,
+      },
+    };
+  },
+);
+
+interface Props {
+  user: User;
+  data: any;
+}
+
+const Opinion = (props: Props) => {
   const [opinionComment, setOpinionComment] = useState('');
 
   const [createOpinionComment] = useMutation(CREATE_OPINION_COMMENT);
@@ -145,12 +120,7 @@ const Opinion = props => {
   const issueId = _.head(props.data.opinions).issuesId;
   const opinion = _.head(props.data.opinions);
 
-  const AuthUser = useAuthUser();
-  const { data: myData, refetch: refetchUser } = useQuery(GET_USERS, {
-    variables: { firebaseUID: AuthUser.id },
-  });
-
-  const userId = myData?.userByFirebase?.id;
+  const userId = props.user.id;
 
   const { data: myStanceData } = useQuery(GET_MY_STANCE, {
     variables: {
@@ -159,8 +129,7 @@ const Opinion = props => {
     },
   });
 
-  const myReact =
-    opinion && opinion.opinionReacts.filter(react => react.usersId === Number(userId));
+  const myReact = opinion && opinion.opinionReacts.filter(react => react.userId === Number(userId));
   const isLikedByMe = !_.isEmpty(myReact) && _.head(myReact).like;
 
   const handleChangeCommentInput = e => {
@@ -350,4 +319,4 @@ const Opinion = props => {
   );
 };
 
-export default withAuthUser()(Opinion);
+export default Opinion;

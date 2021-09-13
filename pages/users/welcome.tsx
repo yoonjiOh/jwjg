@@ -7,9 +7,9 @@ import { gql, useQuery } from '@apollo/client';
 import {
   GetServerSidePropsContextWithUser,
   requireAuthentication,
-} from '../libs/requireAuthentication';
+} from '../../lib/requireAuthentication';
 import { User } from 'next-auth';
-import { GET_USER_INFO } from './graph_queries';
+import { GET_USER_INFO } from '../../lib/graph_queries';
 
 const GET_USER = gql`
   query userByFirebase($firebaseUID: String) {
@@ -18,7 +18,7 @@ const GET_USER = gql`
       name
       nickname
       intro
-      profileImageUrl
+      image
       userInfo {
         age
         gender

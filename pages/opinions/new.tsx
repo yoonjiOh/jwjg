@@ -6,12 +6,15 @@ import Layout from '../../components/Layout';
 import { useRouter } from 'next/router';
 import s from './index.module.scss';
 import style from '../issues/[issueId].module.scss';
-import { GET_USERS, GET_STANCES_BY_ISSUE } from '../../lib/queries';
-
-import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
+import { GET_USERS, GET_STANCES_BY_ISSUE } from '../../lib/graph_queries';
 
 import _ from 'lodash';
 import { fruits } from '../../utils/getFruitForStanceTitle';
+import { User } from 'next-auth';
+import {
+  GetServerSidePropsContextWithUser,
+  requireAuthentication,
+} from '../../lib/requireAuthentication';
 
 const GET_STANCE = gql`
   query stances($id: Int!) {
@@ -24,7 +27,7 @@ const GET_STANCE = gql`
 `;
 
 const GET_MY_OPINION = gql`
-  query myOpinion($userId: Int, $issuesId: Int) {
+  query myOpinion($userId: String, $issuesId: Int) {
     myOpinion(userId: $userId, issuesId: $issuesId) {
       id
       content
@@ -32,42 +35,8 @@ const GET_MY_OPINION = gql`
   }
 `;
 
-export const getServerSideProps = withAuthUserTokenSSR({
-  whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
-  authPageURL: '/users',
-})(async ({ AuthUser, query }) => {
-  const apolloClient = initializeApollo(null);
-  const meData = await apolloClient.query({
-    query: GET_USERS,
-    variables: { firebaseUID: AuthUser.id },
-  });
-  const userId = meData?.data?.userByFirebase?.id;
-
-  const { issueId } = query;
-  const { data } = await apolloClient.query({
-    query: GET_STANCES_BY_ISSUE,
-    variables: { issuesId: +issueId },
-  });
-
-  const { data: opinionData } = await apolloClient.query({
-    query: GET_MY_OPINION,
-    variables: {
-      userId: +userId,
-      issuesId: +issueId,
-    },
-  });
-
-  return {
-    props: {
-      stances: data,
-      userId,
-      myOpinion: opinionData.myOpinion,
-    },
-  };
-});
-
 const CREATE_OPINION = gql`
-  mutation createOpinion($content: String!, $userId: Int!, $issuesId: Int!, $stancesId: Int!) {
+  mutation createOpinion($content: String!, $userId: String!, $issuesId: Int!, $stancesId: Int!) {
     createOpinion(content: $content, userId: $userId, issuesId: $issuesId, stancesId: $stancesId) {
       id
     }
@@ -83,7 +52,7 @@ const UPDATE_OPINION = gql`
 `;
 
 const CREATE_USER_STANCE = gql`
-  mutation createUserStance($userId: Int, $issuesId: Int, $stancesId: Int) {
+  mutation createUserStance($userId: String, $issuesId: Int, $stancesId: Int) {
     createUserStance(userId: $userId, issuesId: $issuesId, stancesId: $stancesId) {
       usersId
       issuesId
@@ -92,10 +61,75 @@ const CREATE_USER_STANCE = gql`
   }
 `;
 
-const New = props => {
+// export const getServerSideProps = withAuthUserTokenSSR({
+//   whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
+//   authPageURL: '/users',
+// })(async ({ AuthUser, query }) => {
+//   const apolloClient = initializeApollo(null);
+//   const meData = await apolloClient.query({
+//     query: GET_USERS,
+//     variables: { firebaseUID: AuthUser.id },
+//   });
+//   const userId = meData?.data?.userByFirebase?.id;
+
+//   const { issueId } = query;
+//   const { data } = await apolloClient.query({
+//     query: GET_STANCES_BY_ISSUE,
+//     variables: { issuesId: +issueId },
+//   });
+
+//   const { data: opinionData } = await apolloClient.query({
+//     query: GET_MY_OPINION,
+//     variables: {
+//       userId: +userId,
+//       issuesId: +issueId,
+//     },
+//   });
+
+//   return {
+//     props: {
+//       stances: data,
+//       userId,
+//       myOpinion: opinionData.myOpinion,
+//     },
+//   };
+// });
+
+export const getServerSideProps = requireAuthentication(
+  async (context: GetServerSidePropsContextWithUser) => {
+    const apolloClient = initializeApollo();
+    const { data } = await apolloClient.query({
+      query: GET_STANCES_BY_ISSUE,
+      variables: { issuesId: context.query.issueId },
+    });
+    const { data: opinionData } = await apolloClient.query({
+      query: GET_MY_OPINION,
+      variables: {
+        userId: context.user.id,
+        issuesId: context.query.issueId,
+      },
+    });
+
+    return {
+      props: {
+        user: context.user,
+        stances: data,
+        myOpinion: opinionData.myOpinion,
+      },
+    };
+  },
+);
+
+interface Props {
+  user: User;
+  stances: any;
+  myOpinion: any;
+}
+
+const New = (props: Props) => {
   const router = useRouter();
   const { issueId, stancesId } = router.query;
-  const { userId, myOpinion } = props;
+  const { myOpinion } = props;
 
   const initState = myOpinion ? myOpinion.content : '';
   const [opinionBody, setOpinionBody] = useState(initState);
@@ -132,7 +166,7 @@ const New = props => {
         const newOpinion = await createOpinion({
           variables: {
             content: opinionBody,
-            userId: Number(userId),
+            userId: props.user.id,
             issuesId: Number(issueId),
             stancesId: Number(stancesId),
           },
@@ -166,7 +200,7 @@ const New = props => {
   const onStanceClick = async stancesId => {
     await createUserStance({
       variables: {
-        userId: Number(userId),
+        userId: props.user.id,
         issuesId: Number(issueId),
         stancesId,
       },

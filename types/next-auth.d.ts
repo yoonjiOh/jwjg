@@ -13,6 +13,6 @@ declare module 'next-auth' {
     id: string;
     nickname?: string;
     intro?: string;
-    profileImageUrl?: string;
+    image?: string;
   }
 }
