@@ -1,17 +1,19 @@
 import { gql } from '@apollo/client';
 import _ from 'lodash';
-import { withAuthUser, withAuthUserTokenSSR } from 'next-firebase-auth';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
+import { GetServerSideProps } from 'next';
 import { initializeApollo } from '../apollo/apolloClient';
 import CurrentStances from '../components/issue/CurrentStances';
 import IssueCard from '../components/IssueCard';
 import ServiceCard from '../components/ServiceCard';
 import Layout from '../components/Layout';
-import { GET_USERS } from '../lib/queries';
+import { GET_USERS } from '../lib/graph_queries';
 import { fruits, getFruitForStanceTitle } from '../utils/getFruitForStanceTitle';
 import s from './index.module.scss';
+import { getSession } from 'next-auth/client';
+import { User } from 'next-auth';
 
 const GET_ISSUES_AND_OPINIONS = gql`
   query {
@@ -27,7 +29,7 @@ const GET_ISSUES_AND_OPINIONS = gql`
       }
       opinions {
         id
-        usersId
+        userId
         content
         stancesId
         stance {
@@ -48,66 +50,11 @@ const GET_ISSUES_AND_OPINIONS = gql`
   }
 `;
 
-export const getServerSideProps = withAuthUserTokenSSR({})(async ({ AuthUser }) => {
-  const apolloClient = initializeApollo(null);
-  const issuesData = await apolloClient.query({
-    query: GET_ISSUES_AND_OPINIONS,
-  });
-  const issues = issuesData.data.publishedIssues.map(issue => {
-    const { opinions, stances, userStances } = issue;
-    let sortedOpinions;
-    if (opinions.length <= 2) {
-      sortedOpinions = opinions;
-    }
-    sortedOpinions = _.chain(opinions)
-      .sortBy(o => o.opinionReactsSum)
-      .slice(0, 2)
-      .value();
-    const newStances = getFruitForStanceTitle(stances).reduce((acc, stance) => {
-      const { id, title, fruit } = stance;
-      const result = { title: '', sum: 0, fruit };
-      for (const userStance of userStances) {
-        if (id === userStance.stancesId) {
-          result.title = fruit + ' ' + title;
-          result.sum += 1;
-        }
-      }
-      if (result.sum !== 0) {
-        acc.push(result);
-      }
-      return acc;
-    }, []);
-    return {
-      ...issue,
-      opinions: sortedOpinions,
-      opinionsSum: opinions?.length || 0,
-      userStancesSum: userStances?.length || 0,
-      newStances,
-    };
-  });
-
-  const meData = await apolloClient.query({
-    query: GET_USERS,
-    variables: { firebaseUID: AuthUser.id },
-  });
-
-  return {
-    props: {
-      data: {
-        issues,
-        me: meData.data.userByFirebase || null,
-      },
-    },
-  };
-});
-
-function HotIssueCard(props) {
+function HotIssueCard({ user, issue: hotIssue }: any) {
   const router = useRouter();
-  if (!props.issue) {
+  if (!hotIssue) {
     return null;
   }
-  const hotIssue = props.issue;
-  const me = props.me;
 
   return (
     <div key={hotIssue.id}>
@@ -164,7 +111,7 @@ function HotIssueCard(props) {
               <div
                 onClick={() => {
                   const path = `/issues/${hotIssue.id}/opinions/${hotIssue.opinions[0]?.id}`;
-                  if (!me) {
+                  if (!user) {
                     router.push(`/users`);
                     return;
                   }
@@ -206,8 +153,64 @@ function HotIssueCard(props) {
   );
 }
 
-const Main = props => {
-  const { issues, me } = props.data;
+export const getServerSideProps = async context => {
+  const apolloClient = initializeApollo(null);
+  const issuesData = await apolloClient.query({
+    query: GET_ISSUES_AND_OPINIONS,
+  });
+  console.log(issuesData);
+  const issues = issuesData.data.publishedIssues.map(issue => {
+    const { opinions, stances, userStances } = issue;
+    let sortedOpinions;
+    if (opinions.length <= 2) {
+      sortedOpinions = opinions;
+    }
+    sortedOpinions = _.chain(opinions)
+      .sortBy(o => o.opinionReactsSum)
+      .slice(0, 2)
+      .value();
+    const newStances = getFruitForStanceTitle(stances).reduce((acc, stance) => {
+      const { id, title, fruit } = stance;
+      const result = { title: '', sum: 0, fruit };
+      for (const userStance of userStances) {
+        if (id === userStance.stancesId) {
+          result.title = fruit + ' ' + title;
+          result.sum += 1;
+        }
+      }
+      if (result.sum !== 0) {
+        acc.push(result);
+      }
+      return acc;
+    }, []);
+    return {
+      ...issue,
+      opinions: sortedOpinions,
+      opinionsSum: opinions?.length || 0,
+      userStancesSum: userStances?.length || 0,
+      newStances,
+    };
+  });
+
+  const session = await getSession(context);
+
+  return {
+    props: {
+      user: session?.user || null,
+      data: {
+        issues,
+      },
+    },
+  };
+};
+
+interface Props {
+  user: User;
+  data: any;
+}
+
+const Main = (props: Props) => {
+  const issues = props.data.issues;
   // const hotIssue = _.maxBy(issues, i => i.opinions.length);
   //const hotIssue = issues && issues[0];
   const hotIssue = _.find(issues, i => i.isHotIssue == true);
@@ -220,7 +223,7 @@ const Main = props => {
           <h2 className={s.issue}>🔥 지금 핫한 이슈</h2>
           <article className={s.issueCardWrap}>
             <section className={s.issueCard}>
-              <HotIssueCard issue={hotIssue} me={me} />
+              <HotIssueCard issue={hotIssue} user={props.user} />
             </section>
           </article>
         </div>
@@ -238,4 +241,4 @@ const Main = props => {
   );
 };
 
-export default withAuthUser()(Main);
+export default Main;

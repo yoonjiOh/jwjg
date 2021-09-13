@@ -1,7 +1,7 @@
-import { gql } from '@apollo/client';
-import { Users } from '@prisma/client';
+import { gql, useQuery } from '@apollo/client';
 import _ from 'lodash';
-import { AuthAction, useAuthUser, withAuthUser, withAuthUserTokenSSR } from 'next-firebase-auth';
+import { User } from 'next-auth';
+import { signOut } from 'next-auth/client';
 import { useRouter } from 'next/router';
 import { ReactNode } from 'react';
 import { initializeApollo } from '../../apollo/apolloClient';
@@ -9,39 +9,15 @@ import Divider from '../../components/Divider';
 import HashTag from '../../components/HashTag';
 import Layout from '../../components/Layout';
 import OpinionSummaryBox from '../../components/OpinionSummaryBox';
-import { GET_ISSUES, GET_STANCES, GET_USERS } from '../../lib/queries';
+import { GET_ISSUES, GET_STANCES, GET_USERS } from '../../lib/graph_queries';
+import {
+  GetServerSidePropsContextWithUser,
+  requireAuthentication,
+} from '../../lib/requireAuthentication';
+import { GET_USER_DETAILS } from '../../lib/graph_queries';
 import s from './users.module.scss';
 
-const GET_MYPAGE_DATA = gql`
-  query user($id: Int!) {
-    user(id: $id) {
-      id
-      name
-      intro
-      profileImageUrl
-      isAdmin
-      opinions {
-        id
-        content
-        createdAt
-        issuesId
-        stancesId
-      }
-      opinionComments {
-        id
-        content
-        createdAt
-        opinionsId
-        stancesId
-      }
-      userStances {
-        issuesId
-      }
-    }
-  }
-`;
-
-function UserPage(props) {
+function UserPage(props: any) {
   if (!props.user) {
     return null;
   }
@@ -53,7 +29,7 @@ function UserPage(props) {
     <main className={s.main}>
       <div className={s.profileWrapper}>
         <div className={s.profileImgContainer}>
-          <img src={user && user.profileImageUrl} />
+          <img src={user && user.image} />
         </div>
         <p>{user && user.name}</p>
         <div>
@@ -149,91 +125,54 @@ function UserPage(props) {
             />
           ))
         ) : (
-            <div className={s.noOpinions}>
-              <p>아직 작성한 의견이 없어요 🍊</p>
-              <img src={'https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/Capybara2.png'} />
-            </div>
-          )}
+          <div className={s.noOpinions}>
+            <p>아직 작성한 의견이 없어요 🍊</p>
+            <img src={'https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/Capybara2.png'} />
+          </div>
+        )}
       </div>
     </main>
   );
 }
 
-export const getServerSideProps = withAuthUserTokenSSR({
-  whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
-  authPageURL: '/users',
-})(async ({ AuthUser }) => {
-  const apolloClient = initializeApollo(null);
-  const {
-    error,
-    data: { userByFirebase: userData },
-  }: { error?: any, data: { userByFirebase: Users } } = await apolloClient.query({
-    query: GET_USERS,
-    variables: { firebaseUID: AuthUser.id },
-  });
-
-  if (!userData) {
-    return null;
-  }
-
-  const userId = userData.id;
-  const { data } = await apolloClient.query({
-    query: GET_MYPAGE_DATA,
-    variables: { id: userId },
-  });
-
-  const issues = await apolloClient.query({
-    query: GET_ISSUES,
-  });
-
-  const stances = await apolloClient.query({
-    query: GET_STANCES,
-  });
-
-  return {
-    props: {
-      user: userData,
-      data: data,
-      issues_data: issues.data,
-      stances_data: stances.data,
-    },
-  };
-});
+export const getServerSideProps = requireAuthentication(
+  async (context: GetServerSidePropsContextWithUser) => {
+    return {
+      props: {
+        user: context.user,
+      },
+    };
+  },
+);
 
 interface Props {
-  data: any;
-  issues_data: any;
-  stances_data: any;
   children?: ReactNode;
-  user: any;
+  user: User;
 }
 
 const MyPage = (props: Props) => {
-  const AuthUser = useAuthUser();
   const router = useRouter();
-  // useEffect(() => {
-  //   if (!props.data) {
-  //     // AuthUser.signOut();
-  //     // router.push('/');
-  //   }
-  // }, []);
 
-  if (!props.data) {
-    AuthUser.signOut().then(() => {
-      router.push('/');
-    });
+  const { data, loading } = useQuery(GET_USER_DETAILS, { variables: { id: props.user.id } });
+  const { data: issues_data, loading: loadingIssues } = useQuery(GET_ISSUES);
+  const { data: stances_data, loading: loadingStances } = useQuery(GET_STANCES);
+
+  if (loading || loadingIssues || loadingStances) return null;
+
+  if (!data) {
+    signOut();
   }
 
   const tagsMap = {};
   const user = props.user;
-  if (props.data && user) {
+  if (data && user) {
     const relatedIssueIds = _.uniq(
-      props.data.user.opinions.map(opinion => opinion.issuesId),
-      props.data.user.userStances.map(stance => stance.issuesId),
+      data.user.opinions?.map(opinion => opinion.issuesId),
+      data.user.userStances?.map(stance => stance.issuesId),
     );
 
     relatedIssueIds.map(issueId => {
-      const matchIssue = _.find(props.issues_data.issues, issue => issue.id === issueId);
+      const matchIssue = _.find(issues_data.issues, issue => issue.id === issueId);
       if (matchIssue && matchIssue.issueHashTags.length) {
         matchIssue.issueHashTags.forEach(issueHashTag => {
           const targetTag = issueHashTag.hashTags[0].name;
@@ -250,9 +189,15 @@ const MyPage = (props: Props) => {
 
   return (
     <Layout title={'마이페이지'} headerInfo={{ headerType: 'common' }} isDimmed={false}>
-      <UserPage user={props.user} router={router} tagsMap={tagsMap} />
+      <UserPage
+        user={props.user}
+        router={router}
+        tagsMap={tagsMap}
+        issues_data={issues_data}
+        stances_data={stances_data}
+      />
     </Layout>
   );
 };
 
-export default withAuthUser()(MyPage);
+export default MyPage;

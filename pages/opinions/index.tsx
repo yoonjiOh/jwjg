@@ -2,7 +2,6 @@ import React, { useState, useReducer } from 'react';
 
 import { initializeApollo } from '../../apollo/apolloClient';
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { withAuthUser, useAuthUser } from 'next-firebase-auth';
 
 import Layout from '../../components/Layout';
 import CommentBox from '../../components/CommentBox';
@@ -13,9 +12,14 @@ import user_s from '../users/users.module.scss';
 import util_s from '../../components/Utils.module.scss';
 import _ from 'lodash';
 
-import { DO_LIKE_ACTION_TO_OPINION } from '../../lib/queries';
+import { DO_LIKE_ACTION_TO_OPINION } from '../../lib/graph_queries';
 import { fruits } from '../../utils/getFruitForStanceTitle';
 import { getPubDate } from '../../lib/util';
+import {
+  GetServerSidePropsContextWithUser,
+  requireAuthentication,
+} from '../../lib/requireAuthentication';
+import { User } from 'next-auth';
 
 const GET_OPINIONS_COMMENTS_DATA = gql`
   query opinions($issuesId: Int!) {
@@ -29,7 +33,7 @@ const GET_OPINIONS_COMMENTS_DATA = gql`
       user {
         id
         name
-        profileImageUrl
+        image
       }
       stance {
         id
@@ -50,7 +54,7 @@ const GET_OPINIONS_COMMENTS_DATA = gql`
         user {
           id
           name
-          profileImageUrl
+          image
         }
         opinionsId
         stancesId
@@ -72,7 +76,7 @@ const GET_USER = gql`
       firebaseUID
       name
       intro
-      profileImageUrl
+      image
       userStance {
         issuesId
         usersId
@@ -82,31 +86,46 @@ const GET_USER = gql`
   }
 `;
 
-export const getServerSideProps = async context => {
-  const apolloClient = initializeApollo(null);
-  const { data } = await apolloClient.query({
-    query: GET_OPINIONS_COMMENTS_DATA,
-    variables: { issuesId: Number(context.query.issueId) },
-  });
+// export const getServerSideProps = async context => {
+//   const apolloClient = initializeApollo(null);
+//   const { data } = await apolloClient.query({
+//     query: GET_OPINIONS_COMMENTS_DATA,
+//     variables: { issuesId: Number(context.query.issueId) },
+//   });
 
-  return {
-    props: {
-      data: data,
-    },
-  };
-};
+//   return {
+//     props: {
+//       data: data,
+//     },
+//   };
+// };
 
-const Opinions = props => {
+export const getServerSideProps = requireAuthentication(
+  async (context: GetServerSidePropsContextWithUser) => {
+    const apolloClient = initializeApollo(null);
+    const { data } = await apolloClient.query({
+      query: GET_OPINIONS_COMMENTS_DATA,
+      variables: { issuesId: Number(context.query.issueId) },
+    });
+    return {
+      props: {
+        user: context.user,
+        data,
+      },
+    };
+  },
+);
+
+interface Props {
+  user: User;
+  data: any;
+}
+
+const Opinions = (props: Props) => {
   const [selectedFilter, setFilter] = useState('opinionReactsSum');
   const [isOpenFilter, setOpenFilter] = useState(false);
   const [doLikeActionToOpinion] = useMutation(DO_LIKE_ACTION_TO_OPINION);
   const router = useRouter();
-
-  const AuthUser = useAuthUser();
-  const { data: userData, refetch } = useQuery(GET_USER, {
-    variables: { firebaseUID: AuthUser.id },
-  });
-  const userId = userData?.userByFirebase?.id;
 
   const sortedData =
     selectedFilter === 'createdAt'
@@ -137,8 +156,8 @@ const Opinions = props => {
     try {
       await doLikeActionToOpinion({
         variables: {
-          usersId: +userId,
-          opinionsId: +opinionId,
+          userId: props.user.id,
+          opinionsId: opinionId,
           like: isLikedByMe ? false : true,
         },
       }).then(() => {
@@ -156,7 +175,7 @@ const Opinions = props => {
           {isOpenFilter ? '▼' : '▲'} {filterMap[selectedFilter]} 순
         </div>
         {sortedData.map(opinion => {
-          const myReact = opinion.opinionReacts.filter(react => react.usersId === Number(userId));
+          const myReact = opinion.opinionReacts.filter(react => react.userId === props.user.id);
           const isLikedByMe = !_.isEmpty(myReact) && _.head(myReact).like;
           const isContentOver = opinion?.content?.length > 128;
           const cutContent = isContentOver
@@ -171,7 +190,7 @@ const Opinions = props => {
                 <div className={util_s.commentWrapper}>
                   <div className={user_s.smallProfileWrapper}>
                     <div>
-                      <img src={opinion.user.profileImageUrl} />
+                      <img src={opinion.user.image} />
                     </div>
                     <div className={user_s.profileInfo}>
                       <p className={user_s.name}>{opinion.user.name}</p>
@@ -264,7 +283,7 @@ const Opinions = props => {
               <div>
                 {opinion.opinionComments &&
                   opinion.opinionComments.map(comment => (
-                    <CommentBox comment={comment} me={{ id: Number(userId) }} key={comment.id} />
+                    <CommentBox comment={comment} me={{ id: props.user.id }} key={comment.id} />
                   ))}
               </div>
             </div>
@@ -295,4 +314,4 @@ const Opinions = props => {
     </Layout>
   );
 };
-export default withAuthUser()(Opinions);
+export default Opinions;

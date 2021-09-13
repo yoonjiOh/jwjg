@@ -3,7 +3,7 @@ import { gql, useQuery, useMutation } from '@apollo/client';
 import s from './Utils.module.scss';
 import _ from 'lodash';
 
-import { DO_LIKE_ACTION_TO_OPINION_COMMENT } from '../lib/queries';
+import { DO_LIKE_ACTION_TO_OPINION_COMMENT } from '../lib/graph_queries';
 import { getPubDate } from '../lib/util';
 import { fruits } from '../utils/getFruitForStanceTitle';
 
@@ -27,14 +27,14 @@ const CommentBox = ({ comment, me }) => {
     data.opinionCommentReacts.filter(react => !!react.like).length;
 
   const myReact =
-    data && data.opinionCommentReacts.filter(react => react.usersId === Number(me && me.id));
+    data && data.opinionCommentReacts.filter(react => react.userId === Number(me && me.id));
   const isLikedByMe = !_.isEmpty(myReact) && _.head(myReact).like;
 
   const handleClickLike = async (opinionCommentsId, isLikedByMe) => {
     try {
       await doLikeActionToOpinionComment({
         variables: {
-          usersId: Number(me.id),
+          userId: Number(me.id),
           opinionCommentsId: Number(opinionCommentsId),
           like: isLikedByMe ? false : true,
         },
@@ -52,7 +52,7 @@ const CommentBox = ({ comment, me }) => {
       <div className={s[`stanceMark-${comment.stance.orderNum}`]} />
       <div className={s.commentWrapper}>
         <div className={s.profileWrapper}>
-          <img className={s.profilePlaceholder} src={comment.user.profileImageUrl} />
+          <img className={s.profilePlaceholder} src={comment.user.image} />
           <div className={s.profileName}>{comment.user.name}</div>
           <div className={s.ago}>{getPubDate(comment.createdAt)}</div>
         </div>

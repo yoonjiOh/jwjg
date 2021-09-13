@@ -1,60 +1,34 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Layout from '../../components/Layout';
-import { Users } from '@prisma/client';
 import s from './users.module.scss';
 import { useRouter } from 'next/router';
 
 import { gql, useMutation } from '@apollo/client';
 import { initializeApollo } from '../../apollo/apolloClient';
-import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
 import _ from 'lodash';
 import { empty_string_if_null } from '../../utils/string_utils';
-import { GET_USERS, SINGLE_UPLOAD_IMG } from '../../lib/queries';
+import { GET_USERS, SINGLE_UPLOAD_IMG } from '../../lib/graph_queries';
+import { getSession, useSession } from 'next-auth/client';
+import {
+  GetServerSidePropsContextWithUser,
+  requireAuthentication,
+} from '../../lib/requireAuthentication';
+import { UPDATE_USER_INFO } from '../../lib/graph_queries';
+import { User } from 'next-auth';
 
-export const UPDATE_PROFILE = gql`
-  mutation updateUserProfile(
-    $id: Int!
-    $name: String
-    $nickname: String
-    $intro: String
-    $profileImageUrl: String
-  ) {
-    updateUserProfile(
-      id: $id
-      name: $name
-      nickname: $nickname
-      intro: $intro
-      profileImageUrl: $profileImageUrl
-    ) {
-      id
-      name
-      nickname
-      intro
-      profileImageUrl
-    }
-  }
-`;
-
-export const getServerSideProps = withAuthUserTokenSSR({
-  whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
-  authPageURL: '/users',
-})(async ({ AuthUser }) => {
-  const apolloClient = initializeApollo(null);
-  const { data } = await apolloClient.query({
-    query: GET_USERS,
-    variables: { firebaseUID: AuthUser.id },
-  });
-
-  return {
-    props: {
-      user: data.userByFirebase,
-    },
-  };
-});
+export const getServerSideProps = requireAuthentication(
+  async (context: GetServerSidePropsContextWithUser) => {
+    return {
+      props: {
+        user: context.user,
+      },
+    };
+  },
+);
 
 interface Props {
-  user: Users;
+  user: User;
 }
 
 const EditProfile = (props: Props) => {
@@ -62,13 +36,13 @@ const EditProfile = (props: Props) => {
     name: props.user.name,
     nickname: empty_string_if_null(props.user.nickname),
     intro: empty_string_if_null(props.user.intro),
-    profileImageUrl: empty_string_if_null(props.user.profileImageUrl),
+    image: empty_string_if_null(props.user.image),
   };
   const [state, setState] = useState(initState);
   const [mutate, { loading, error }] = useMutation(SINGLE_UPLOAD_IMG);
-  const [updateUserProfile, { data }] = useMutation(UPDATE_PROFILE);
+  const [updateUserInfo, { data }] = useMutation(UPDATE_USER_INFO);
 
-  const { name, nickname, intro, profileImageUrl } = state;
+  const { name, nickname, intro, image } = state;
   const router = useRouter();
   const { isFirst } = router.query;
 
@@ -88,30 +62,34 @@ const EditProfile = (props: Props) => {
         })
         .then(() => {
           setState(prevState => {
-            return { ...prevState, profileImageUrl: uploadedS3Url };
+            return { ...prevState, image: uploadedS3Url };
           });
         }));
   };
 
   const handleSubmit = async event => {
     event.preventDefault();
-    await updateUserProfile({
+    console.log(props.user);
+    await updateUserInfo({
       variables: {
-        // @ts-ignore
-        id: parseInt(props.user.id),
+        id: props.user.id,
         name: name,
         nickname: nickname,
         intro: intro,
-        profileImageUrl: profileImageUrl,
+        image: image,
       },
-    }).then(result => {
-      if (result.data) {
-        // @ts-ignore
-        router.push(isFirst ? '/users/user_info' : '/users/mypage');
-      } else {
-        console.error('프로필 편집에 문제가 생겼습니다.');
-      }
-    });
+    })
+      .then(result => {
+        if (result.data) {
+          // @ts-ignore
+          router.push(isFirst ? '/users/user_info' : '/users/mypage');
+        } else {
+          console.error('프로필 편집에 문제가 생겼습니다.');
+        }
+      })
+      .catch(error => {
+        console.error(JSON.stringify(error, null, 2));
+      });
   };
 
   const handleChange = (e, key) => {
@@ -148,7 +126,7 @@ const EditProfile = (props: Props) => {
     >
       <main className={s.main} style={{ height: '100vh' }}>
         <div style={{ padding: '20px' }}>
-          {!profileImageUrl ? (
+          {!image ? (
             <div
               className={s.profileImgContainer}
               style={{
@@ -177,7 +155,7 @@ const EditProfile = (props: Props) => {
                 margin: '0 auto',
               }}
             >
-              <img src={profileImageUrl} style={{ width: '50%', height: '50%' }} />
+              <img src={image} style={{ width: '50%', height: '50%' }} />
             </div>
           )}
 
@@ -192,16 +170,16 @@ const EditProfile = (props: Props) => {
             <span className={s.inputTitle}>이름</span>
             <input
               type="text"
-              value={nickname}
-              onChange={e => handleChange(e, 'nickname')}
+              value={name}
+              onChange={e => handleChange(e, 'name')}
               placeholder="이름"
               className={s.inputForm}
             />
             <span className={s.inputTitle}>사용자 이름</span>
             <input
               type="text"
-              value={name}
-              onChange={e => handleChange(e, 'name')}
+              value={nickname}
+              onChange={e => handleChange(e, 'nickname')}
               placeholder="사용자 이름"
               className={s.inputForm}
             />

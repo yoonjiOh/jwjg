@@ -10,7 +10,6 @@
   "prettier.tslintIntegration": true,
   "prettier.arrowParens": "always",
   "prettier.bracketSpacing": false,
-  "eslint.autoFixOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "html.format.indentHandlebars": true,
   "html.format.indentInnerHtml": true,
@@ -19,8 +18,9 @@
   "git.confirmSync": false,
   "editor.renderWhitespace": "boundary",
   "diffEditor.ignoreTrimWhitespace": false,
-  "editor.codeActionsOnSave": {"source.fixAll": true,
-    "source.fixAll.eslint": true
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true,
+    // "source.fixAll.eslint": true
   },
   "workbench.startupEditor": "newUntitledFile",
   "cSpell.userWords": [
@@ -37,8 +37,8 @@
     "javascriptreact",
   ],
   "javascript.format.enable": false,
-  "editor.formatOnSave": true,
-  "window.zoomLevel": 2,
+  // "editor.formatOnSave": true,
+  "window.zoomLevel": 1,
   "terminal.integrated.tabs.enabled": true,
   "[typescriptreact]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"

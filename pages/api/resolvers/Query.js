@@ -2,15 +2,23 @@
 import { AuthenticationError } from 'apollo-server';
 
 async function user(parent, args, context) {
-  return await context.prisma.users.findUnique({
+  return await context.prisma.user.findUnique({
     where: { id: args.id },
+  });
+}
+
+async function userInfo(parent, args, context) {
+  const userId = args.userId;
+  if (!userId) return null;
+  return await context.prisma.userInfo.findUnique({
+    where: { userId: userId },
   });
 }
 
 async function userByFirebase(parent, args, context) {
   const firebaseUID = args.firebaseUID;
   if (!firebaseUID) return null;
-  return await context.prisma.users.findUnique({
+  return await context.prisma.user.findUnique({
     where: { firebaseUID: args.firebaseUID },
   });
 }
@@ -18,13 +26,13 @@ async function userByFirebase(parent, args, context) {
 async function userByFirebaseWithIssuesId(parent, args, context) {
   const firebaseUID = args.firebaseUID;
   if (!firebaseUID) return null;
-  return await context.prisma.users.findUnique({
+  return await context.prisma.user.findUnique({
     where: { firebaseUID: args.firebaseUID },
   });
 }
 
 async function users(parent, args, context) {
-  return await context.prisma.users.findMany();
+  return await context.prisma.user.findMany();
 }
 
 async function stances(parent, args, context) {
@@ -88,10 +96,9 @@ async function issueHashTags(parent, args, context) {
 
 async function opinions(parent, args, context) {
   const where = args.id ? { id: args.id } : {};
-  const opinions = await context.prisma.opinions.findMany({
+  return await context.prisma.opinions.findMany({
     where,
   });
-  return opinions;
 }
 
 async function opinionsWithIssuesId(parent, args, context) {
@@ -118,26 +125,27 @@ async function opinionCommentReacts(parent, args, context) {
   });
 }
 
-async function myStance(parent, args, context) {
-  return await context.prisma.userStances.findFirst({
+async function myOpinion(parent, args, context) {
+  return await context.prisma.opinions.findFirst({
     where: {
+      userId: args.userId,
       issuesId: args.issuesId,
-      usersId: args.usersId,
     },
   });
 }
 
-async function myOpinion(parent, args, context) {
+async function userStance(parent, { userId, issuesId }, context) {
   return await context.prisma.opinions.findFirst({
     where: {
-      usersId: args.usersId,
-      issuesId: args.issuesId,
+      userId,
+      issuesId,
     },
   });
 }
 
 export default {
   user,
+  userInfo,
   userByFirebase,
   users,
   issue,
@@ -152,6 +160,6 @@ export default {
   opinionsWithIssuesId,
   opinionCommentReacts,
   userByFirebaseWithIssuesId,
-  myStance,
   myOpinion,
+  userStance,
 };

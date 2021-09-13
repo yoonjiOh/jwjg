@@ -5,7 +5,7 @@ import _ from 'lodash';
 import Layout from '../../../components/Layout';
 import style from './new.module.css';
 import { initializeApollo } from '../../../apollo/apolloClient';
-import { GET_STANCES_BY_ISSUE, SINGLE_UPLOAD_IMG } from '../../../lib/queries';
+import { GET_STANCES_BY_ISSUE, SINGLE_UPLOAD_IMG } from '../../../lib/graph_queries';
 
 interface Stance {
   title: String;

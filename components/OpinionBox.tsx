@@ -3,19 +3,22 @@ import { useMutation, useQuery } from '@apollo/client';
 
 import s from './Utils.module.scss';
 import { useRouter } from 'next/router';
-import { withAuthUser, useAuthUser } from 'next-firebase-auth';
 
-import {
-  GET_USERS,
-  GET_OPINION_REACTS_AND_COMMENTS,
-  DO_LIKE_ACTION_TO_OPINION,
-} from '../lib/queries';
+import { GET_OPINION_REACTS_AND_COMMENTS, DO_LIKE_ACTION_TO_OPINION } from '../lib/graph_queries';
 
 import _ from 'lodash';
 import { fruits } from '../utils/getFruitForStanceTitle';
+import { User } from 'next-auth';
 import { getPubDate } from '../lib/util';
 
-const OpinionBox = ({ opinion, issueId }) => {
+interface Props {
+  user: User;
+  opinion: any;
+  issueId: any;
+}
+
+const OpinionBox = (props: Props) => {
+  const { user, opinion, issueId } = props;
   const { data, refetch: refetchOpinion } = useQuery(GET_OPINION_REACTS_AND_COMMENTS, {
     variables: { id: opinion.id },
   });
@@ -26,17 +29,13 @@ const OpinionBox = ({ opinion, issueId }) => {
   const likeCount = data && data.opinions && data.opinions[0].opinionReactsSum;
   const commentCount = data && data.opinions && data.opinions[0].opinionCommentsSum;
 
-  const AuthUser = useAuthUser();
-  const { data: userData } = useQuery(GET_USERS, {
-    variables: { firebaseUID: AuthUser.id },
-  });
-
-  const userId = userData?.userByFirebase?.id;
+  // const AuthUser = useAuthUser();
+  const userId = props.user.id;
 
   const myReact =
     opinion &&
     opinion.opinionReacts.length &&
-    opinion.opinionReacts.filter(react => react.usersId === Number(userId));
+    opinion.opinionReacts.filter(react => react.userId === Number(userId));
 
   const isLikedByMe = !_.isEmpty(myReact) && _.head(myReact).like;
 
@@ -48,7 +47,7 @@ const OpinionBox = ({ opinion, issueId }) => {
     try {
       await doLikeActionToOpinion({
         variables: {
-          usersId: Number(userId),
+          userId: Number(userId),
           opinionsId: Number(opinion.id),
           like: isLikedByMe ? false : true,
         },
@@ -79,7 +78,7 @@ const OpinionBox = ({ opinion, issueId }) => {
       <div className={s.commentWrapper}>
         <div className={s.profileWrapper}>
           <div className={s.profilePlaceholder}>
-            <img src={opinion.user.profileImageUrl} />
+            <img src={opinion.user.image} />
           </div>
           <div className={s.profileName}>{opinion.user.nickname}</div>
           <div className={s.ago}>{getPubDate(opinion.createdAt)}</div>
@@ -124,4 +123,4 @@ const OpinionBox = ({ opinion, issueId }) => {
   );
 };
 
-export default withAuthUser()(OpinionBox);
+export default OpinionBox;

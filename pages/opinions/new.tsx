@@ -6,12 +6,15 @@ import Layout from '../../components/Layout';
 import { useRouter } from 'next/router';
 import s from './index.module.scss';
 import style from '../issues/[issueId].module.scss';
-import { GET_USERS, GET_STANCES_BY_ISSUE } from '../../lib/queries';
-
-import { withAuthUserTokenSSR, AuthAction } from 'next-firebase-auth';
+import { GET_USERS, GET_STANCES_BY_ISSUE } from '../../lib/graph_queries';
 
 import _ from 'lodash';
 import { fruits } from '../../utils/getFruitForStanceTitle';
+import { User } from 'next-auth';
+import {
+  GetServerSidePropsContextWithUser,
+  requireAuthentication,
+} from '../../lib/requireAuthentication';
 
 const GET_STANCE = gql`
   query stances($id: Int!) {
@@ -24,56 +27,17 @@ const GET_STANCE = gql`
 `;
 
 const GET_MY_OPINION = gql`
-  query myOpinion($usersId: Int, $issuesId: Int) {
-    myOpinion(usersId: $usersId, issuesId: $issuesId) {
+  query myOpinion($userId: String, $issuesId: Int) {
+    myOpinion(userId: $userId, issuesId: $issuesId) {
       id
       content
     }
   }
 `;
 
-export const getServerSideProps = withAuthUserTokenSSR({
-  whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
-  authPageURL: '/users',
-})(async ({ AuthUser, query }) => {
-  const apolloClient = initializeApollo(null);
-  const meData = await apolloClient.query({
-    query: GET_USERS,
-    variables: { firebaseUID: AuthUser.id },
-  });
-  const userId = meData?.data?.userByFirebase?.id;
-
-  const { issueId } = query;
-  const { data } = await apolloClient.query({
-    query: GET_STANCES_BY_ISSUE,
-    variables: { issuesId: +issueId },
-  });
-
-  const { data: opinionData } = await apolloClient.query({
-    query: GET_MY_OPINION,
-    variables: {
-      usersId: +userId,
-      issuesId: +issueId,
-    },
-  });
-
-  return {
-    props: {
-      stances: data,
-      userId,
-      myOpinion: opinionData.myOpinion,
-    },
-  };
-});
-
 const CREATE_OPINION = gql`
-  mutation createOpinion($content: String!, $usersId: Int!, $issuesId: Int!, $stancesId: Int!) {
-    createOpinion(
-      content: $content
-      usersId: $usersId
-      issuesId: $issuesId
-      stancesId: $stancesId
-    ) {
+  mutation createOpinion($content: String!, $userId: String!, $issuesId: Int!, $stancesId: Int!) {
+    createOpinion(content: $content, userId: $userId, issuesId: $issuesId, stancesId: $stancesId) {
       id
     }
   }
@@ -88,8 +52,8 @@ const UPDATE_OPINION = gql`
 `;
 
 const CREATE_USER_STANCE = gql`
-  mutation createUserStance($usersId: Int, $issuesId: Int, $stancesId: Int) {
-    createUserStance(usersId: $usersId, issuesId: $issuesId, stancesId: $stancesId) {
+  mutation createUserStance($userId: String, $issuesId: Int, $stancesId: Int) {
+    createUserStance(userId: $userId, issuesId: $issuesId, stancesId: $stancesId) {
       usersId
       issuesId
       stancesId
@@ -97,10 +61,75 @@ const CREATE_USER_STANCE = gql`
   }
 `;
 
-const New = props => {
+// export const getServerSideProps = withAuthUserTokenSSR({
+//   whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
+//   authPageURL: '/users',
+// })(async ({ AuthUser, query }) => {
+//   const apolloClient = initializeApollo(null);
+//   const meData = await apolloClient.query({
+//     query: GET_USERS,
+//     variables: { firebaseUID: AuthUser.id },
+//   });
+//   const userId = meData?.data?.userByFirebase?.id;
+
+//   const { issueId } = query;
+//   const { data } = await apolloClient.query({
+//     query: GET_STANCES_BY_ISSUE,
+//     variables: { issuesId: +issueId },
+//   });
+
+//   const { data: opinionData } = await apolloClient.query({
+//     query: GET_MY_OPINION,
+//     variables: {
+//       userId: +userId,
+//       issuesId: +issueId,
+//     },
+//   });
+
+//   return {
+//     props: {
+//       stances: data,
+//       userId,
+//       myOpinion: opinionData.myOpinion,
+//     },
+//   };
+// });
+
+export const getServerSideProps = requireAuthentication(
+  async (context: GetServerSidePropsContextWithUser) => {
+    const apolloClient = initializeApollo();
+    const { data } = await apolloClient.query({
+      query: GET_STANCES_BY_ISSUE,
+      variables: { issuesId: context.query.issueId },
+    });
+    const { data: opinionData } = await apolloClient.query({
+      query: GET_MY_OPINION,
+      variables: {
+        userId: context.user.id,
+        issuesId: context.query.issueId,
+      },
+    });
+
+    return {
+      props: {
+        user: context.user,
+        stances: data,
+        myOpinion: opinionData.myOpinion,
+      },
+    };
+  },
+);
+
+interface Props {
+  user: User;
+  stances: any;
+  myOpinion: any;
+}
+
+const New = (props: Props) => {
   const router = useRouter();
   const { issueId, stancesId } = router.query;
-  const { userId, myOpinion } = props;
+  const { myOpinion } = props;
 
   const initState = myOpinion ? myOpinion.content : '';
   const [opinionBody, setOpinionBody] = useState(initState);
@@ -137,7 +166,7 @@ const New = props => {
         const newOpinion = await createOpinion({
           variables: {
             content: opinionBody,
-            usersId: Number(userId),
+            userId: props.user.id,
             issuesId: Number(issueId),
             stancesId: Number(stancesId),
           },
@@ -171,7 +200,7 @@ const New = props => {
   const onStanceClick = async stancesId => {
     await createUserStance({
       variables: {
-        usersId: Number(userId),
+        userId: props.user.id,
         issuesId: Number(issueId),
         stancesId,
       },
@@ -205,22 +234,22 @@ const New = props => {
               </div>
             </div>
           ) : (
-              <div className={s.opinionHasStanceWrapper}>
-                <div className={s.stanceNoti}>
-                  {fruits[stance && stance.orderNum] + ' '}
-                  <span className={s.title}>{stance && stance.title}</span>
+            <div className={s.opinionHasStanceWrapper}>
+              <div className={s.stanceNoti}>
+                {fruits[stance && stance.orderNum] + ' '}
+                <span className={s.title}>{stance && stance.title}</span>
                 입장을 표하셨어요.
               </div>
-                <div className="stancesWrapper">
-                  <textarea
-                    className={s.opinionInput}
-                    placeholder="이슈에 대한 생각을 자유롭게 말해 주세요."
-                    value={opinionBody}
-                    onChange={handleChange}
-                  />
-                </div>
+              <div className="stancesWrapper">
+                <textarea
+                  className={s.opinionInput}
+                  placeholder="이슈에 대한 생각을 자유롭게 말해 주세요."
+                  value={opinionBody}
+                  onChange={handleChange}
+                />
               </div>
-            )}
+            </div>
+          )}
         </main>
       </Layout>
     </>

@@ -8,8 +8,12 @@ import Layout from '../../../components/Layout';
 import style from './new.module.css';
 import { initializeApollo } from '../../../apollo/apolloClient';
 import Loading from '../../../components/Loading';
-import { withAuthUser, withAuthUserTokenSSR } from 'next-firebase-auth';
-import { GET_USERS, SINGLE_UPLOAD_IMG } from '../../../lib/queries';
+import { GET_USERS, SINGLE_UPLOAD_IMG } from '../../../lib/graph_queries';
+import {
+  GetServerSidePropsContextWithUser,
+  requireAuthentication,
+} from '../../../lib/requireAuthentication';
+import { User } from 'next-auth';
 
 interface Stance {
   title: String;
@@ -27,7 +31,7 @@ const GET_TAGS = gql`
 `;
 
 const CREATE_ISSUE = gql`
-  mutation createIssue($title: String!, $content: String!, $imageUrl: String!, $authorId: Int!) {
+  mutation createIssue($title: String!, $content: String!, $imageUrl: String!, $authorId: String!) {
     createIssue(title: $title, content: $content, imageUrl: $imageUrl, authorId: $authorId) {
       id
       title
@@ -57,7 +61,7 @@ const CREATE_STANCES_BY_ISSUE = gql`
 const CREATE_TAG = gql`
   mutation createTag($name: String!) {
     createTag(name: $name) {
-      id,
+      id
       name
     }
   }
@@ -66,6 +70,7 @@ const CREATE_TAG = gql`
 const reducer = (state, action) => {
   switch (action.type) {
     case 'CHANGE_ISSUE_INPUT':
+      // eslint-disable-next-line no-case-declarations
       const { key, value } = action.payload;
       return {
         ...state,
@@ -101,8 +106,8 @@ const reducer = (state, action) => {
     case 'ADD_HASHTAG':
       return {
         ...state,
-        tags: state.tags.concat(action.tag)
-      }
+        tags: state.tags.concat(action.tag),
+      };
     case 'SET_HASHTAGS':
       return {
         ...state,
@@ -121,26 +126,28 @@ const reducer = (state, action) => {
   }
 };
 
-export const getServerSideProps = withAuthUserTokenSSR({})(async ({ AuthUser }) => {
-  const apolloClient = initializeApollo(null);
-  const { data } = await apolloClient.query({
-    query: GET_TAGS,
-  });
+export const getServerSideProps = requireAuthentication(
+  async (context: GetServerSidePropsContextWithUser) => {
+    const apolloClient = initializeApollo(null);
+    const { data } = await apolloClient.query({
+      query: GET_TAGS,
+    });
 
-  const meData = await apolloClient.query({
-    query: GET_USERS,
-    variables: { firebaseUID: AuthUser.id },
-  });
+    return {
+      props: {
+        user: context.user,
+        data,
+      },
+    };
+  },
+);
 
-  return {
-    props: {
-      data: data,
-      me: meData.data.userByFirebase || null,
-    },
-  };
-});
+interface Props {
+  user: User;
+  data: any;
+}
 
-const NewIssue = props => {
+const NewIssue = (props: Props) => {
   const router = useRouter();
   const initial_state = {
     issue: {
@@ -229,7 +236,7 @@ const NewIssue = props => {
     });
   };
 
-  const handleChangeTagInput = (value) => {
+  const handleChangeTagInput = value => {
     setAddTagErr(null);
     setNewTag(value);
   };
@@ -239,28 +246,32 @@ const NewIssue = props => {
       return setAddTagErr('태그명을 입력해주세요');
     }
 
-    if (tags.find(tag => { return tag.name === newTag.trim(); })) {
+    if (
+      tags.find(tag => {
+        return tag.name === newTag.trim();
+      })
+    ) {
       return setAddTagErr('이미 등록되어 있는 태그 입니다.');
     }
 
     try {
       await createTag({
         variables: {
-          name: newTag
-        }
-      }).then((result) => {
+          name: newTag,
+        },
+      }).then(result => {
         dispatch({
           type: 'ADD_HASHTAG',
           tag: {
             id: result.data.createTag.id,
             name: result.data.createTag.name,
-          }
+          },
         });
       });
     } catch (e) {
       console.error(e);
     }
-  }
+  };
 
   const handleSubmit = async () => {
     let createdIssueId;
@@ -271,7 +282,7 @@ const NewIssue = props => {
           title: issue.title,
           content: issue.content,
           imageUrl: issue.imageUrl,
-          authorId: props.me.id,
+          authorId: props.user.id,
         },
       })
         .then(result => {
@@ -334,8 +345,8 @@ const NewIssue = props => {
             {issue.imageUrl !== '' ? (
               <img src={issue.imageUrl} alt="new_issue_img" />
             ) : (
-                <input type="file" required onChange={handleFileChange} />
-              )}
+              <input type="file" required onChange={handleFileChange} />
+            )}
           </div>
           <div className={style.title}>
             <p className={style.title_sm}>이슈 제목</p>
@@ -343,7 +354,14 @@ const NewIssue = props => {
           </div>
           <div className={style.content}>
             <p className={style.title_sm}>이슈 설명</p>
-            <span className={style.comment}>링크 입력 시, <strong>[text](URL)</strong> (ex. [네이버](https://www.naver.com))로 입력해 주세요. <a style={{ color: "rgb(33, 111, 219)" }} href="">text</a> 형태로 출력됩니다.</span>
+            <span className={style.comment}>
+              링크 입력 시, <strong>[text](URL)</strong> (ex. [네이버](https://www.naver.com))로
+              입력해 주세요.{' '}
+              <a style={{ color: 'rgb(33, 111, 219)' }} href="">
+                text
+              </a>{' '}
+              형태로 출력됩니다.
+            </span>
             <textarea
               wrap="hard"
               value={issue.content}
@@ -402,7 +420,7 @@ const NewIssue = props => {
 
           <div className={style.option_wrapper}>
             <p style={{ color: 'red' }}>{addTagErr}</p>
-            <input onChange={(e) => handleChangeTagInput(e.target.value)} />
+            <input onChange={e => handleChangeTagInput(e.target.value)} />
             <button onClick={handleClickAddTagBtn}>+</button>
           </div>
         </div>
@@ -411,4 +429,4 @@ const NewIssue = props => {
   );
 };
 /* @ts-ignore */
-export default withAuthUser()(NewIssue);
+export default NewIssue;

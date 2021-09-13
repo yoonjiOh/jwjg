@@ -1,4 +1,3 @@
-import { withAuthUser, AuthAction } from 'next-firebase-auth';
 import Layout from '../../components/Layout';
 import TextField from '@material-ui/core/TextField';
 import { useState } from 'react';
@@ -6,13 +5,13 @@ import FormGroup from '@material-ui/core/FormGroup';
 import common_style from '../index.module.scss';
 import { useRouter } from 'next/router';
 import Button from '@material-ui/core/Button';
-import firebase from 'firebase/app';
+// import firebase from 'firebase/app';
 import Snackbar, { SnackbarOrigin } from '@material-ui/core/Snackbar';
 
 const headerTitle = '비밀번호 찾기';
 
 function ResetPassword() {
-  const auth = firebase.auth();
+  // const auth = firebase.auth();
 
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -29,19 +28,6 @@ function ResetPassword() {
       setErrorText('Email address format is invalid.');
       return;
     }
-
-    await auth
-      .sendPasswordResetEmail(email)
-      .then(async () => {
-        setOpenSnackbar(true);
-        await new Promise(r => setTimeout(r, 1000)).then(() => {
-          router.push('/');
-        });
-      })
-      .catch(function (error) {
-        setError(true);
-        setErrorText(error.code);
-      });
   };
 
   const headerInfo = {
@@ -93,8 +79,4 @@ function ResetPassword() {
   );
 }
 
-export default withAuthUser({
-  whenAuthed: AuthAction.REDIRECT_TO_APP,
-  whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
-  whenUnauthedAfterInit: AuthAction.RENDER,
-})(ResetPassword);
+export default ResetPassword;

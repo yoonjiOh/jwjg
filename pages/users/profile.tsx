@@ -1,10 +1,26 @@
-import { useAuthUser, withAuthUser, AuthAction } from 'next-firebase-auth';
+import { User } from 'next-auth';
 import Layout from '../../components/Layout';
 import common_style from '../index.module.scss';
+import {
+  GetServerSidePropsContextWithUser,
+  requireAuthentication,
+} from '../../lib/requireAuthentication';
 
-function Profile() {
-  const user = useAuthUser();
+export const getServerSideProps = requireAuthentication(
+  async (context: GetServerSidePropsContextWithUser) => {
+    return {
+      props: {
+        user: context.user,
+      },
+    };
+  },
+);
 
+interface Props {
+  user: User;
+}
+
+const Profile = (props: Props) => {
   return (
     <Layout
       title={'Profile'}
@@ -12,12 +28,10 @@ function Profile() {
       isDimmed={false}
     >
       <main className={common_style.main}>
-        <div>my email: {user.email}</div>
+        <div>my email: {props.user.email}</div>
       </main>
     </Layout>
   );
-}
+};
 
-export default withAuthUser({
-  whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
-})(Profile);
+export default Profile;

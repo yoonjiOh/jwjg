@@ -1,9 +1,8 @@
-import { AuthAction, withAuthUser } from 'next-firebase-auth';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import Layout from '../../components/Layout';
 import { EmailAlreadyExistError, WrongPasswordFormatError } from '../../lib/errors';
-import { firebaseUserSignup, validateEmail, validatePassword } from '../../lib/users';
+import { validateEmail, validatePassword } from '../../lib/users';
 import common_style from '../index.module.scss';
 import s from './users.module.scss';
 
@@ -45,7 +44,7 @@ function EmailRegistration() {
     try {
       await validateEmail(email);
       await validatePassword(pwd);
-      await firebaseUserSignup(email, pwd);
+      // await firebaseUserSignup(email, pwd);
     } catch (err) {
       handleSignupError(err);
       return;
@@ -100,8 +99,4 @@ function EmailRegistration() {
   );
 }
 
-export default withAuthUser({
-  whenAuthed: AuthAction.RENDER,
-  whenUnauthedBeforeInit: AuthAction.RETURN_NULL,
-  whenUnauthedAfterInit: AuthAction.RENDER,
-})(EmailRegistration);
+export default EmailRegistration;
