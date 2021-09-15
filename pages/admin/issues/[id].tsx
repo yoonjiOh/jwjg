@@ -10,7 +10,7 @@ import { GET_STANCES_BY_ISSUE, SINGLE_UPLOAD_IMG } from '../../../lib/graph_quer
 interface Stance {
   title: String;
   orderNum: Number;
-  issuesId: Number;
+  id: Number;
 }
 
 const GET_ISSUE = gql`
@@ -43,6 +43,14 @@ const CREATE_STANCES_BY_ISSUE = gql`
   }
 `;
 
+const UPSERT_STANCE = gql`
+  mutation upsertStance($id: Int!, $title: String, $orderNum: Int, $issuesId: Int) {
+    upsertStance(id: $id, title: $title, orderNum: $orderNum, issuesId: $issuesId) {
+      id
+    }
+  }
+`;
+
 const reducer = (state, action) => {
   switch (action.type) {
     case 'FETCH_ISSUE':
@@ -50,11 +58,16 @@ const reducer = (state, action) => {
         ...state,
         issue: action.data,
       };
-    case 'FETCH_STANCES':
-      return {
+    case 'FETCH_STANCES': {
+      const newState = {
         ...state,
         stances: action.data,
       };
+
+      return action.data?.reduce((acc, stance) => {
+        return { ...acc, [`stance_${stance.id}`]: stance };
+      }, newState)
+    }
     case 'CHANGE_ISSUE_INPUT':
       const { key, value } = action.payload;
       return {
@@ -74,12 +87,32 @@ const reducer = (state, action) => {
         ...state,
         newStance: action.value,
       };
-    case 'ADD_STANCE':
+    case 'ADD_STANCE': {
+      const { id, orderNum, title } = action.value
+      console.log('ADD_STANCE', action.value)
       return {
         ...state,
         stances: state.stances.concat(action.value),
+        [`stance_${id}`]: {
+          id,
+          orderNum,
+          title
+        },
         addStanceMode: false,
       };
+    }
+    case 'UPDATE_ISSUE_STANCES': {
+      const { value: title, id, orderNum } = action.payload;
+
+      return {
+        ...state,
+        [`stance_${id}`]: {
+          id,
+          orderNum,
+          title
+        },
+      };
+    }
     case 'SET_IMAGE_URL':
       return {
         ...state,
@@ -95,7 +128,7 @@ const reducer = (state, action) => {
 
 export const getServerSideProps = async context => {
   const apolloClient = initializeApollo(null);
-  const { issueId } = context.query;
+  const { id: issueId } = context.query;
   const { data } = await apolloClient.query({
     query: GET_ISSUE,
     variables: { id: parseInt(issueId) },
@@ -116,7 +149,6 @@ export const getServerSideProps = async context => {
 
 const IssueDetail = props => {
   const router = useRouter();
-  const issueId = Number(router.query.issueId);
 
   const issue_data = props.issue_data;
   const stances_data = props.stances_data;
@@ -135,10 +167,12 @@ const IssueDetail = props => {
 
   const [state, dispatch] = useReducer(reducer, initial_state);
   const { issue, addStanceMode, stances, newStance } = state;
+  console.log({ state })
 
   const [updateIssue, { data }] = useMutation(UPDATE_ISSUE);
   const [createStancesByIssue] = useMutation(CREATE_STANCES_BY_ISSUE);
   const [mutate, { loading, error }] = useMutation(SINGLE_UPLOAD_IMG);
+  const [upsertStance] = useMutation(UPSERT_STANCE);
 
   useEffect(() => {
     dispatch({
@@ -160,7 +194,14 @@ const IssueDetail = props => {
   const handleChange = (value, key) => {
     dispatch({
       type: 'CHANGE_ISSUE_INPUT',
-      payload: { key: key, value: value },
+      payload: { key, value },
+    });
+  };
+
+  const handleChangeStance = (value, stance) => {
+    dispatch({
+      type: 'UPDATE_ISSUE_STANCES',
+      payload: { value, id: stance.id, orderNum: stance.orderNum }
     });
   };
 
@@ -179,7 +220,7 @@ const IssueDetail = props => {
 
   const handleAddStanceBtn = () => {
     const stanceIdx = _.isEmpty(stances) ? 1 : _.size(stances) + 1;
-    const payload: Stance = { title: newStance, orderNum: stanceIdx, issuesId: issueId };
+    const payload: Stance = { title: newStance, orderNum: stanceIdx, id: stanceIdx };
 
     dispatch({
       type: 'ADD_STANCE',
@@ -219,20 +260,21 @@ const IssueDetail = props => {
             onClick={() =>
               updateIssue({
                 variables: {
-                  id: issueId,
+                  id: issue.id,
                   title: issue.title,
                   content: issue.content,
                   imageUrl: issue.imageUrl,
                 },
               }).then(async () => {
                 state.stances.map(async stance => {
-                  if (!_.has(stance, 'id')) {
-                    await createStancesByIssue({
-                      variables: {
-                        data: stance,
-                      },
-                    });
-                  }
+                  await upsertStance({
+                    variables: {
+                      id: stance.id,
+                      title: state[`stance_${stance.id}`].title,
+                      orderNum: stance.orderNum,
+                      issuesId: issue.id
+                    }
+                  })
                 });
               })
             }
@@ -266,7 +308,7 @@ const IssueDetail = props => {
           {!_.isEmpty(stances) &&
             _.map(stances, stance => (
               <li className={style.option} key={stance.title}>
-                {stance.title}
+                <input value={state[`stance_${stance.id}`]?.title} onChange={e => handleChangeStance(e.target.value, stance)} />
               </li>
             ))}
 

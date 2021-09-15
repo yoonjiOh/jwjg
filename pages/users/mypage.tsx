@@ -67,14 +67,17 @@ function UserPage(props: any) {
         >
           프로필 편집
         </button>
-        <button
-          style={{ marginTop: '10px' }}
-          onClick={() => {
-            router.push('/admin/issues/new');
-          }}
-        >
-          이슈 발제하기
-        </button>
+        {
+          user?.isAdmin ? <button
+            style={{ marginTop: '10px' }}
+            onClick={() => {
+              router.push('/admin/issues/new');
+            }}
+          >
+            이슈 발제하기
+        </button> : null
+        }
+
       </div>
       <Divider />
 

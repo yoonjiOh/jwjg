@@ -75,6 +75,28 @@ async function createStancesByIssue(parent, args, context) {
   }
 }
 
+async function upsertStance(parent, args, context) {
+  try {
+    const result = await context.prisma.stances.upsert({
+      where: {
+        id_issuesId: { id: args.id, issuesId: args.issuesId },
+      },
+      update: {
+        title: args.title,
+      },
+      create: {
+        issuesId: args.issuesId,
+        title: args.title,
+        orderNum: args.orderNum,
+      },
+    });
+
+    return result;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 async function createUserStance(parent, args, context) {
   try {
     const result = await context.prisma.userStances.upsert({
@@ -314,6 +336,7 @@ export default {
   createTagsByIssue,
   createTag,
   createStancesByIssue,
+  upsertStance,
   createUserStance,
   deleteUserStance,
   signup,

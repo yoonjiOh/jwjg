@@ -18,6 +18,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { fruits } from '../../utils/getFruitForStanceTitle';
 import { getPubDate } from '../../lib/util';
 import { parseCommentContent } from '../../utils/parseContent';
+
 import {
   GetServerSidePropsContextWithUser,
   requireAuthentication,
@@ -200,7 +201,7 @@ const Opinion = (props: Props) => {
                 <img src={opinion.user.image} />
               </div>
               <div className={user_s.profileInfo}>
-                <p className={user_s.name}>{opinion.user.name}</p>
+                <p className={user_s.name}>{opinion.user.nickname}</p>
                 <p className={user_s.ago}>{getPubDate(opinion.createdAt)}</p>
               </div>
             </div>
@@ -223,15 +224,15 @@ const Opinion = (props: Props) => {
                   {opinion.opinionReactsSum}
                 </div>
               ) : (
-                <label style={{ cursor: 'pointer' }}>
-                  <img
-                    src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
-                    alt="좋아요 버튼"
-                    style={{ marginRight: '5px' }}
-                  />{' '}
-                  {opinion.opinionReactsSum}
-                </label>
-              )}
+                  <label style={{ cursor: 'pointer' }}>
+                    <img
+                      src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
+                      alt="좋아요 버튼"
+                      style={{ marginRight: '5px' }}
+                    />{' '}
+                    {opinion.opinionReactsSum}
+                  </label>
+                )}
 
               <img
                 src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/bubble.svg"
@@ -253,14 +254,14 @@ const Opinion = (props: Props) => {
                 />{' '}
               </label>
             ) : (
-              <label style={{ cursor: 'pointer' }}>
-                <img
-                  src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
-                  alt="좋아요 버튼"
-                  style={{ marginRight: '5px' }}
-                />{' '}
-              </label>
-            )}
+                <label style={{ cursor: 'pointer' }}>
+                  <img
+                    src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
+                    alt="좋아요 버튼"
+                    style={{ marginRight: '5px' }}
+                  />{' '}
+                </label>
+              )}
           </div>
           <div className={s.action} onClick={handleClickCommentIcon}>
             <img
@@ -302,18 +303,18 @@ const Opinion = (props: Props) => {
             </div>
           </div>
         ) : (
-          <div className={s.stanceSelectorWrapper}>
-            <div className={s.guide}>댓글을 남기기 전, 입장을 선택하세요..</div>
-            <div className={s.stanceWrapper}>
-              {opinion.issueStances.map(stance => (
-                <div className={s.stance} key={stance.id} onClick={() => onStanceClick(stance.id)}>
-                  {fruits[stance.orderNum]}&nbsp;&nbsp;
-                  {stance.title}
-                </div>
-              ))}
+            <div className={s.stanceSelectorWrapper}>
+              <div className={s.guide}>댓글을 남기기 전, 입장을 선택하세요..</div>
+              <div className={s.stanceWrapper}>
+                {opinion.issueStances.map(stance => (
+                  <div className={s.stance} key={stance.id} onClick={() => onStanceClick(stance.id)}>
+                    {fruits[stance.orderNum]}&nbsp;&nbsp;
+                    {stance.title}
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
       </main>
     </Layout>
   );

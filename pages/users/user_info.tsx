@@ -1,10 +1,8 @@
 import s from './users.module.scss';
 import React, { useState } from 'react';
 
-import { gql, useMutation, useQuery } from '@apollo/client';
-// import { withAuthUser, useAuthUser } from 'next-firebase-auth';
+import { gql, useMutation } from '@apollo/client';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/client';
 import { CREATE_USER_INFO } from '../../lib/graph_queries';
 import {
   GetServerSidePropsContextWithUser,
