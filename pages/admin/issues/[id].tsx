@@ -89,6 +89,7 @@ const reducer = (state, action) => {
       };
     case 'ADD_STANCE': {
       const { id, orderNum, title } = action.value
+      console.log('ADD_STANCE', action.value)
       return {
         ...state,
         stances: state.stances.concat(action.value),
@@ -219,7 +220,7 @@ const IssueDetail = props => {
 
   const handleAddStanceBtn = () => {
     const stanceIdx = _.isEmpty(stances) ? 1 : _.size(stances) + 1;
-    const payload: Stance = { title: newStance, orderNum: stanceIdx, id: issue.id };
+    const payload: Stance = { title: newStance, orderNum: stanceIdx, id: stanceIdx };
 
     dispatch({
       type: 'ADD_STANCE',

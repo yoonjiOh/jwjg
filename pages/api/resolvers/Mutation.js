@@ -79,7 +79,7 @@ async function upsertStance(parent, args, context) {
   try {
     const result = await context.prisma.stances.upsert({
       where: {
-        id: args.id,
+        id_issuesId: { id: args.id, issuesId: args.issuesId },
       },
       update: {
         title: args.title,
