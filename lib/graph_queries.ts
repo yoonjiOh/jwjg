@@ -34,7 +34,7 @@ export const DO_LIKE_ACTION_TO_OPINION_COMMENT = gql`
       opinionCommentsId: $opinionCommentsId
       like: $like
     ) {
-      usersId
+      userId
       opinionCommentsId
       like
     }
@@ -44,7 +44,7 @@ export const DO_LIKE_ACTION_TO_OPINION_COMMENT = gql`
 export const DO_LIKE_ACTION_TO_OPINION = gql`
   mutation doLikeActionToOpinion($userId: String!, $opinionsId: Int!, $like: Boolean!) {
     doLikeActionToOpinion(userId: $userId, opinionsId: $opinionsId, like: $like) {
-      usersId
+      userId
       opinionsId
       like
     }

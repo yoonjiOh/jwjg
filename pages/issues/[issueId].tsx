@@ -103,7 +103,7 @@ const CREATE_USER_STANCE = gql`
 const DELETE_USER_STANCE = gql`
   mutation deleteUserStance($userId: String, $issuesId: Int) {
     deleteUserStance(userId: $userId, issuesId: $issuesId) {
-      usersId
+      userId
       issuesId
     }
   }

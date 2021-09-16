@@ -27,7 +27,7 @@ const GET_OPINIONS_COMMENTS_DATA = gql`
       id
       content
       createdAt
-      usersId
+      userId
       issuesId
       stancesId
       user {
@@ -42,7 +42,7 @@ const GET_OPINIONS_COMMENTS_DATA = gql`
       }
       opinionReacts {
         like
-        usersId
+        userId
       }
       opinionReactsSum
       opinionCommentsSum
@@ -50,7 +50,7 @@ const GET_OPINIONS_COMMENTS_DATA = gql`
         id
         content
         createdAt
-        usersId
+        userId
         user {
           id
           name
@@ -79,7 +79,7 @@ const GET_USER = gql`
       image
       userStance {
         issuesId
-        usersId
+        userId
         stancesId
       }
     }

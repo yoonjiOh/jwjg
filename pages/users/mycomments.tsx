@@ -29,7 +29,7 @@ const GET_MY_COMMENTS_DATA = gql`
         id
         content
         createdAt
-        usersId
+        userId
         opinionsId
         stancesId
         stance {

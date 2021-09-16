@@ -54,7 +54,7 @@ const UPDATE_OPINION = gql`
 const CREATE_USER_STANCE = gql`
   mutation createUserStance($userId: String, $issuesId: Int, $stancesId: Int) {
     createUserStance(userId: $userId, issuesId: $issuesId, stancesId: $stancesId) {
-      usersId
+      userId
       issuesId
       stancesId
     }

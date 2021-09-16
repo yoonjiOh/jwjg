@@ -13,23 +13,23 @@ INSERT INTO jwjg.Stances (id, title, orderNum, issuesId) VALUES (2, '중립', 2,
 INSERT INTO jwjg.Stances (id, title, orderNum, issuesId) VALUES (3, '찬성', 3, 1);
 
 --Opinions
-INSERT INTO jwjg.Opinions (id, content, createdAt, usersId, issuesId, stancesId) VALUES (1, '이것은 opinion 의견 예시이다. 배구 스타 학폭 관련에 단 opinion 의견이다.', '2021-05-13 13:28:44.946', 7, 1, 1);
-INSERT INTO jwjg.Opinions (id, content, createdAt, usersId, issuesId, stancesId) VALUES (2, 'opinion 의견 예시 두 번째.', '2021-05-13 13:53:40.762', 8, 1, 2);
+INSERT INTO jwjg.Opinions (id, content, createdAt, userId, issuesId, stancesId) VALUES (1, '이것은 opinion 의견 예시이다. 배구 스타 학폭 관련에 단 opinion 의견이다.', '2021-05-13 13:28:44.946', 7, 1, 1);
+INSERT INTO jwjg.Opinions (id, content, createdAt, userId, issuesId, stancesId) VALUES (2, 'opinion 의견 예시 두 번째.', '2021-05-13 13:53:40.762', 8, 1, 2);
 
 --OpinionReacts
-INSERT INTO jwjg.OpinionReacts (`like`, usersId, opinionsId) VALUES (1, 7, 1);
-INSERT INTO jwjg.OpinionReacts (`like`, usersId, opinionsId) VALUES (0, 8, 1);
+INSERT INTO jwjg.OpinionReacts (`like`, userId, opinionsId) VALUES (1, 7, 1);
+INSERT INTO jwjg.OpinionReacts (`like`, userId, opinionsId) VALUES (0, 8, 1);
 
 --UserStances
-INSERT INTO jwjg.UserStances (usersId, issuesId, stancesId) VALUES (7, 1, 1);
+INSERT INTO jwjg.UserStances (userId, issuesId, stancesId) VALUES (7, 1, 1);
 
 --OpinionComments
-INSERT INTO jwjg.OpinionComments (id, content, createdAt, usersId, opinionsId, stancesId) VALUES (1, '이것은 opinion comment 예시 이다. ', '2021-05-13 13:32:41.814', 7, 1, 2);
-INSERT INTO jwjg.OpinionComments (id, content, createdAt, usersId, opinionsId, stancesId) VALUES (2, '이것은 opinion comment 예시 두 번째ㅔ이다. ', '2021-05-13 13:54:05.701', 8, 1, 3);
-INSERT INTO jwjg.OpinionComments (id, content, createdAt, usersId, opinionsId, stancesId) VALUES (3, '댓글 입력 테스트 아아', '2021-05-13 14:56:52.360', 7, 1, 1);
+INSERT INTO jwjg.OpinionComments (id, content, createdAt, userId, opinionsId, stancesId) VALUES (1, '이것은 opinion comment 예시 이다. ', '2021-05-13 13:32:41.814', 7, 1, 2);
+INSERT INTO jwjg.OpinionComments (id, content, createdAt, userId, opinionsId, stancesId) VALUES (2, '이것은 opinion comment 예시 두 번째ㅔ이다. ', '2021-05-13 13:54:05.701', 8, 1, 3);
+INSERT INTO jwjg.OpinionComments (id, content, createdAt, userId, opinionsId, stancesId) VALUES (3, '댓글 입력 테스트 아아', '2021-05-13 14:56:52.360', 7, 1, 1);
 
 --OpinionCommentReacts
-INSERT INTO jwjg.OpinionCommentReacts (`like`, usersId, opinionCommentsId) VALUES (1, 7, 1);
+INSERT INTO jwjg.OpinionCommentReacts (`like`, userId, opinionCommentsId) VALUES (1, 7, 1);
 
 --Hashtags
 INSERT INTO jwjg.HashTags (id, content) VALUES (1, '사회');

@@ -48,7 +48,7 @@ const CREATE_OPINION_COMMENT = gql`
 const GET_MY_STANCE = gql`
   query myStance($issuesId: Int, $userId: String) {
     myStance(issuesId: $issuesId, userId: $userId) {
-      usersId
+      userId
       issuesId
       stancesId
       stances {
@@ -63,7 +63,7 @@ const GET_MY_STANCE = gql`
 const CREATE_USER_STANCE = gql`
   mutation createUserStance($userId: String, $issuesId: Int, $stancesId: Int) {
     createUserStance(userId: $userId, issuesId: $issuesId, stancesId: $stancesId) {
-      usersId
+      userId
       issuesId
       stancesId
     }
@@ -224,15 +224,15 @@ const Opinion = (props: Props) => {
                   {opinion.opinionReactsSum}
                 </div>
               ) : (
-                  <label style={{ cursor: 'pointer' }}>
-                    <img
-                      src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
-                      alt="좋아요 버튼"
-                      style={{ marginRight: '5px' }}
-                    />{' '}
-                    {opinion.opinionReactsSum}
-                  </label>
-                )}
+                <label style={{ cursor: 'pointer' }}>
+                  <img
+                    src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
+                    alt="좋아요 버튼"
+                    style={{ marginRight: '5px' }}
+                  />{' '}
+                  {opinion.opinionReactsSum}
+                </label>
+              )}
 
               <img
                 src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/bubble.svg"
@@ -254,14 +254,14 @@ const Opinion = (props: Props) => {
                 />{' '}
               </label>
             ) : (
-                <label style={{ cursor: 'pointer' }}>
-                  <img
-                    src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
-                    alt="좋아요 버튼"
-                    style={{ marginRight: '5px' }}
-                  />{' '}
-                </label>
-              )}
+              <label style={{ cursor: 'pointer' }}>
+                <img
+                  src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/like.svg"
+                  alt="좋아요 버튼"
+                  style={{ marginRight: '5px' }}
+                />{' '}
+              </label>
+            )}
           </div>
           <div className={s.action} onClick={handleClickCommentIcon}>
             <img
@@ -303,18 +303,18 @@ const Opinion = (props: Props) => {
             </div>
           </div>
         ) : (
-            <div className={s.stanceSelectorWrapper}>
-              <div className={s.guide}>댓글을 남기기 전, 입장을 선택하세요..</div>
-              <div className={s.stanceWrapper}>
-                {opinion.issueStances.map(stance => (
-                  <div className={s.stance} key={stance.id} onClick={() => onStanceClick(stance.id)}>
-                    {fruits[stance.orderNum]}&nbsp;&nbsp;
-                    {stance.title}
-                  </div>
-                ))}
-              </div>
+          <div className={s.stanceSelectorWrapper}>
+            <div className={s.guide}>댓글을 남기기 전, 입장을 선택하세요..</div>
+            <div className={s.stanceWrapper}>
+              {opinion.issueStances.map(stance => (
+                <div className={s.stance} key={stance.id} onClick={() => onStanceClick(stance.id)}>
+                  {fruits[stance.orderNum]}&nbsp;&nbsp;
+                  {stance.title}
+                </div>
+              ))}
             </div>
-          )}
+          </div>
+        )}
       </main>
     </Layout>
   );

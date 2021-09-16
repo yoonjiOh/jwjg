@@ -11,7 +11,7 @@ const GET_OPINION_COMMENT_REACTS = gql`
   query opinionComment($id: Int!) {
     opinionCommentReacts(id: $id) {
       like
-      usersId
+      userId
       opinionCommentsId
     }
   }
