@@ -158,7 +158,6 @@ export const getServerSideProps = async context => {
   const issuesData = await apolloClient.query({
     query: GET_ISSUES_AND_OPINIONS,
   });
-  console.log(issuesData);
   const issues = issuesData.data.publishedIssues.map(issue => {
     const { opinions, stances, userStances } = issue;
     let sortedOpinions;
