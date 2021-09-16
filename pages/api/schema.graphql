@@ -48,14 +48,14 @@ type Account {
 }
 
 type UserInfo {
-  userId: Int
+  userId: String
   age: Int
   gender: String
   residence: String
 }
 
 type UserStance {
-  userId: Int
+  userId: String
   issuesId: Int
   stancesId: Int
   stances: [Stance]
@@ -65,7 +65,7 @@ type Opinion {
   id: Int
   content: String
   createdAt: DateTime
-  userId: Int
+  userId: String
   issuesId: Int
   stancesId: Int
   user: User
@@ -83,7 +83,7 @@ type OpinionComment {
   id: Int
   content: String
   createdAt: DateTime
-  userId: Int
+  userId: String
   opinionsId: Int
   stancesId: Int
   stance: Stance
@@ -94,13 +94,13 @@ type OpinionComment {
 
 type OpinionCommentReact {
   like: Int
-  userId: Int
+  userId: String
   opinionCommentsId: Int
 }
 
 type OpinionReact {
   like: Int
-  userId: Int
+  userId: String
   opinionsId: Int
 }
 
@@ -184,7 +184,7 @@ type Query {
   issues(id: Int): [Issue]
   publishedIssues(id: Int): [Issue]
   opinions(id: Int): [Opinion]
-  myOpinion(userId: Int, issuesId: Int): Opinion
+  myOpinion(userId: String, issuesId: Int): Opinion
   opinionsWithIssuesId(issuesId: Int): [Opinion]
   stances(id: Int): [Stance]
   stancesByIssueId(issuesId: Int): [Stance]
@@ -193,7 +193,7 @@ type Query {
   opinionCommentReacts(id: Int!): [OpinionCommentReact]
   issueHashTags(id: Int): [IssueHashTag]
   hashTags(id: Int): [HashTag]
-  myStance(issuesId: Int, userId: Int): UserStance
+  myStance(issuesId: Int, userId: String): UserStance
   # For new user model (at 2021/09/11)
   userInfo(userId: String!): UserInfo
   userStance(userId: String!, issuesId: Int!): UserStance
@@ -213,22 +213,22 @@ type Mutation {
   updateStancesByIssue(id: Int, title: String!, orderNum: Int!, issuesId: Int!): Stance
   createStancesByIssue(data: [IssueStancesInput]): bulkInsertCount
   upsertStance(id: Int!, title: String, orderNum: Int, issuesId: Int): Stance
-  createUserStance(userId: Int, issuesId: Int, stancesId: Int): UserStance
-  deleteUserStance(userId: Int, issuesId: Int): UserStance
+  createUserStance(userId: String, issuesId: Int, stancesId: Int): UserStance
+  deleteUserStance(userId: String, issuesId: Int): UserStance
   signup(email: String!, password: String!, name: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload
   singleUpload(file: Upload!): UploadedFileResponse!
-  createOpinion(content: String, userId: Int!, issuesId: Int!, stancesId: Int!): Opinion
+  createOpinion(content: String, userId: String!, issuesId: Int!, stancesId: Int!): Opinion
   updateOpinion(id: Int, content: String, stancesId: Int): Opinion
   createOpinionComment(
     content: String
-    userId: Int!
+    userId: String!
     opinionsId: Int!
     stancesId: Int!
   ): OpinionComment
-  doLikeActionToOpinion(userId: Int!, opinionsId: Int!, like: Boolean!): OpinionReact
+  doLikeActionToOpinion(userId: String!, opinionsId: Int!, like: Boolean!): OpinionReact
   doLikeActionToOpinionComment(
-    userId: Int!
+    userId: String!
     opinionCommentsId: Int!
     like: Boolean!
   ): OpinionCommentReact
