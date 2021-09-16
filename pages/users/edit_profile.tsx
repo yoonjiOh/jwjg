@@ -69,7 +69,6 @@ const EditProfile = (props: Props) => {
 
   const handleSubmit = async event => {
     event.preventDefault();
-    console.log(props.user);
     await updateUserInfo({
       variables: {
         id: props.user.id,

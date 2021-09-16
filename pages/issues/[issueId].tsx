@@ -93,7 +93,7 @@ const GET_ISSUE = gql`
 const CREATE_USER_STANCE = gql`
   mutation createUserStance($userId: String, $issuesId: Int, $stancesId: Int) {
     createUserStance(userId: $userId, issuesId: $issuesId, stancesId: $stancesId) {
-      usersId
+      userId
       issuesId
       stancesId
     }
@@ -112,7 +112,6 @@ const DELETE_USER_STANCE = gql`
 export const getServerSideProps = requireAuthentication(
   async (context: GetServerSidePropsContextWithUser) => {
     const apolloClient = initializeApollo();
-    console.log(context.user.id, context.query.issueId);
 
     const { data } = await apolloClient.query({
       query: GET_USER_STANCE,

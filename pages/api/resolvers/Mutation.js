@@ -101,7 +101,7 @@ async function createUserStance(parent, args, context) {
   try {
     const result = await context.prisma.userStances.upsert({
       where: {
-        usersId_issuesId: { userId: args.userId, issuesId: args.issuesId },
+        userId_issuesId: { userId: args.userId, issuesId: args.issuesId },
       },
       update: {
         stancesId: args.stancesId,
