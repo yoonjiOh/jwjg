@@ -46,6 +46,7 @@ model User {
   updatedAt     DateTime  @updatedAt
   accounts      Account[]
   sessions      Session[]
+  Issues        Issues[]
 
   nickname        String?
   intro           String?
@@ -102,6 +103,7 @@ model Issues {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
   authorId    String
+  author      User @relation(fields: [authorId], references: [id])
   isDeleted   Boolean  @default(false)
   isHotIssue  Boolean  @default(false)
 

@@ -17,13 +17,25 @@ import {
 import { GET_USER_DETAILS } from '../../lib/graph_queries';
 import s from './users.module.scss';
 
-function UserPage(props: any) {
+interface UserPageProps {
+  user: User;
+  router: any;
+  tagsMap: any;
+  issues_data: any;
+  stances_data: any;
+  opinions: any;
+  opinionComments: any;
+}
+
+function UserPage(props: UserPageProps) {
   if (!props.user) {
     return null;
   }
   const router = props.router;
   const user = props.user;
   const tagsMap = props.tagsMap;
+  const opinions = props.opinions;
+  const opinionComments = props.opinionComments;
 
   return (
     <main className={s.main}>
@@ -33,7 +45,7 @@ function UserPage(props: any) {
         </div>
         <p>{user && user.name}</p>
         <div>
-          <span className={s.count}>{user && user.opinions && user.opinions.length}</span>
+          <span className={s.count}>{opinions && opinions.length}</span>
           <span
             onClick={() => {
               router.push(`/users/myopinions`);
@@ -41,9 +53,7 @@ function UserPage(props: any) {
           >
             의견
           </span>
-          <span className={s.count}>
-            {user && user.opinionComments && user.opinionComments.length}
-          </span>
+          <span className={s.count}>{opinionComments && opinionComments.length}</span>
           <span
             onClick={() => {
               router.push(`/users/mycomments`);
@@ -67,17 +77,16 @@ function UserPage(props: any) {
         >
           프로필 편집
         </button>
-        {
-          user?.isAdmin ? <button
+        {user?.isAdmin ? (
+          <button
             style={{ marginTop: '10px' }}
             onClick={() => {
               router.push('/admin/issues/new');
             }}
           >
             이슈 발제하기
-        </button> : null
-        }
-
+          </button>
+        ) : null}
       </div>
       <Divider />
 
@@ -111,12 +120,12 @@ function UserPage(props: any) {
           }}
         >
           <h3 className={s.title}>작성한 의견</h3>
-          <p className={s.hashTagSum}>{user && user.opinions && user.opinions.length}</p>
+          <p className={s.hashTagSum}>{opinions && opinions.length}</p>
           <div className={s.goNext} />
         </div>
 
-        {user && user.opinions && user.opinions.length ? (
-          user.opinions.map(opinion => (
+        {opinions && opinions.length ? (
+          opinions.map(opinion => (
             <OpinionSummaryBox
               opinion={opinion}
               issues={props.issues_data.issues}
@@ -195,6 +204,8 @@ const MyPage = (props: Props) => {
         tagsMap={tagsMap}
         issues_data={issues_data}
         stances_data={stances_data}
+        opinions={data.user.opinions}
+        opinionComments={data.user.opinionComments}
       />
     </Layout>
   );

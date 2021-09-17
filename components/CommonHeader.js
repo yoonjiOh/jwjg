@@ -17,6 +17,11 @@ const CommonHeader = ({ isDimmed }) => {
           />
         </Link>
       </h1>
+      {session && session.user.isAdmin ? (
+        <Link href={`/admin`}>
+          <span className={s.actionBtn}>관리페이지</span>
+        </Link>
+      ) : null}
       {!session ? (
         <Link href="/users">
           <span className={s.actionBtn}>로그인</span>

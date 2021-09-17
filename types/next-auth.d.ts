@@ -14,5 +14,6 @@ declare module 'next-auth' {
     nickname?: string;
     intro?: string;
     image?: string;
+    isAdmin: boolean;
   }
 }
