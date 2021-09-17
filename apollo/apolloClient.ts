@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
-import { ApolloClient, HttpLink, InMemoryCache, NormalizedCacheObject } from '@apollo/client';
+import { ApolloClient, HttpLink, InMemoryCache, NormalizedCacheObject, from } from '@apollo/client';
+import { onError } from '@apollo/client/link/error';
 import { createUploadLink } from 'apollo-upload-client';
 
 import merge from 'deepmerge';
@@ -7,12 +8,23 @@ import merge from 'deepmerge';
 let apolloClient: ApolloClient<NormalizedCacheObject> = null;
 const prod = process.env.NODE_ENV === 'production';
 
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors)
+    graphQLErrors.forEach(({ message, locations, path }) =>
+      console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`),
+    );
+
+  if (networkError) console.log(`[Network error]: ${networkError}`);
+});
+
+const httpLink = createUploadLink({
+    uri: prod ? 'https://jwjg.kr/api' : 'http://localhost:3000/api',
+});
+
 function createApolloClient() {
   return new ApolloClient({
     ssrMode: typeof window === 'undefined',
-    link: createUploadLink({
-      uri: prod ? 'https://jwjg.kr/api' : 'http://localhost:3000/api',
-    }),
+    link: from([errorLink, httpLink]),
     cache: new InMemoryCache(),
   });
 }
