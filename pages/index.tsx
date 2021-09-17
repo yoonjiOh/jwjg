@@ -3,13 +3,11 @@ import _ from 'lodash';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { GetServerSideProps } from 'next';
 import { initializeApollo } from '../apollo/apolloClient';
 import CurrentStances from '../components/issue/CurrentStances';
 import IssueCard from '../components/IssueCard';
 import ServiceCard from '../components/ServiceCard';
 import Layout from '../components/Layout';
-import { GET_USERS } from '../lib/graph_queries';
 import { fruits, getFruitForStanceTitle } from '../utils/getFruitForStanceTitle';
 import s from './index.module.scss';
 import { getSession } from 'next-auth/client';
@@ -38,7 +36,7 @@ const GET_ISSUES_AND_OPINIONS = gql`
         }
         user {
           id
-          name
+          nickname
         }
         opinionReactsSum
       }
@@ -124,26 +122,29 @@ function HotIssueCard({ user, issue: hotIssue }: any) {
                 <p className={s.issueCardCommentTitle}>
                   {fruits[hotIssue.opinions[0]?.stance?.orderNum] +
                     ' ' +
-                    hotIssue.opinions[0]?.stance?.title}
+                    hotIssue.opinions[0]?.stance?.title ?? null}
                 </p>
-                <p className={s.commentContent}>{hotIssue.opinions[0]?.content}</p>
-                <p className={s.commentUsername}>{hotIssue.opinions[0]?.user.name}</p>
+                <p className={s.commentContent}>{hotIssue.opinions[0]?.content ?? null}</p>
+                <p className={s.commentUsername}>{hotIssue.opinions[0]?.user.nickname ?? null}</p>
               </div>
               <div
                 onClick={() =>
                   router.push({
-                    pathname: `issues/${hotIssue.id}/opinions/${hotIssue.opinions[0]?.id}`,
+                    pathname: `issues/${hotIssue.id}/opinions/${hotIssue.opinions[1]?.id}`,
                   })
                 }
                 className={s.issueCardComment}
               >
-                <p className={s.issueCardCommentTitle}>
-                  {fruits[hotIssue.opinions[1]?.stance?.orderNum] +
-                    ' ' +
-                    hotIssue.opinions[1]?.stance?.title}
-                </p>
-                <p className={s.commentContent}>{hotIssue.opinions[1]?.content}</p>
-                <p className={s.commentUsername}>{hotIssue.opinions[0]?.user.name}</p>
+              {
+                hotIssue.opinions[1]?.stance ?
+                    <p className={s.issueCardCommentTitle}>
+                      {fruits[hotIssue.opinions[1]?.stance?.orderNum] +
+                        ' ' +
+                        hotIssue.opinions[1]?.stance?.title}
+                    </p> : null
+              }
+                <p className={s.commentContent}>{hotIssue.opinions[1]?.content ?? null}</p>
+                <p className={s.commentUsername}>{hotIssue.opinions[1]?.user.nickname ?? null}</p>
               </div>
             </div>
           </div>
@@ -210,8 +211,6 @@ interface Props {
 
 const Main = (props: Props) => {
   const issues = props.data.issues;
-  // const hotIssue = _.maxBy(issues, i => i.opinions.length);
-  //const hotIssue = issues && issues[0];
   const hotIssue = _.find(issues, i => i.isHotIssue == true);
   const other_issues = issues.filter(i => i.id !== hotIssue.id);
 

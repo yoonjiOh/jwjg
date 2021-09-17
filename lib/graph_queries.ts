@@ -119,6 +119,7 @@ export const GET_OPINIONS = gql`
       user {
         id
         name
+        nickname
         intro
         image
       }

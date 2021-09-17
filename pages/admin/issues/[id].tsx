@@ -1,8 +1,8 @@
-import { useRouter } from 'next/router';
 import React, { useReducer, useEffect } from 'react';
 import { gql, useMutation } from '@apollo/client';
 import _ from 'lodash';
 import Layout from '../../../components/Layout';
+import config from '../../../config';
 import style from './new.module.css';
 import { initializeApollo } from '../../../apollo/apolloClient';
 import { GET_STANCES_BY_ISSUE, SINGLE_UPLOAD_IMG } from '../../../lib/graph_queries';
@@ -31,14 +31,6 @@ const UPDATE_ISSUE = gql`
       title
       content
       imageUrl
-    }
-  }
-`;
-
-const CREATE_STANCES_BY_ISSUE = gql`
-  mutation createStancesByIssue($data: [IssueStancesInput]) {
-    createStancesByIssue(data: $data) {
-      count
     }
   }
 `;
@@ -148,8 +140,6 @@ export const getServerSideProps = async context => {
 };
 
 const IssueDetail = props => {
-  const router = useRouter();
-
   const issue_data = props.issue_data;
   const stances_data = props.stances_data;
 
@@ -167,10 +157,8 @@ const IssueDetail = props => {
 
   const [state, dispatch] = useReducer(reducer, initial_state);
   const { issue, addStanceMode, stances, newStance } = state;
-  console.log({ state })
 
   const [updateIssue, { data }] = useMutation(UPDATE_ISSUE);
-  const [createStancesByIssue] = useMutation(CREATE_STANCES_BY_ISSUE);
   const [mutate, { loading, error }] = useMutation(SINGLE_UPLOAD_IMG);
   const [upsertStance] = useMutation(UPSERT_STANCE);
 
@@ -257,27 +245,38 @@ const IssueDetail = props => {
           <button
             className={style.btn_submit}
             style={{ marginTop: '50px' }}
-            onClick={() =>
-              updateIssue({
-                variables: {
-                  id: issue.id,
-                  title: issue.title,
-                  content: issue.content,
-                  imageUrl: issue.imageUrl,
-                },
-              }).then(async () => {
-                state.stances.map(async stance => {
-                  await upsertStance({
-                    variables: {
-                      id: stance.id,
-                      title: state[`stance_${stance.id}`].title,
-                      orderNum: stance.orderNum,
-                      issuesId: issue.id
-                    }
-                  })
-                });
-              })
-            }
+            onClick={() => {
+              try {
+                updateIssue({
+                  variables: {
+                    id: issue.id,
+                    title: issue.title,
+                    content: issue.content,
+                    imageUrl: issue.imageUrl,
+                  },
+                }).then(async () => {
+                  state.stances.map(async stance => {
+                    await upsertStance({
+                      variables: {
+                        id: stance.id,
+                        title: state[`stance_${stance.id}`].title,
+                        orderNum: stance.orderNum,
+                        issuesId: issue.id
+                      }
+                    })
+                  });
+                })
+
+                if (
+                  confirm('수정이 완료되었습니다. 인덱스 페이지로 넘어갑니다.')
+                ) {
+                  window.location.href = `${config.host}/issues/${issue.id}`;
+                }
+              } catch (e) {
+                alert('이슈 수정 중에 문제가 생겼어요! 개발자에게 문의해주세요')
+                console.error(e)
+              }
+            }}
           >
             수정
           </button>

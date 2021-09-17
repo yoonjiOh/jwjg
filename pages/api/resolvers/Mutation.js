@@ -62,19 +62,6 @@ async function createTag(parent, args, context) {
   }
 }
 
-async function createStancesByIssue(parent, args, context) {
-  try {
-    const result = await context.prisma.stances.createMany({
-      data: args.data,
-      skipDuplicates: true,
-    });
-
-    return result;
-  } catch (e) {
-    console.error(e);
-  }
-}
-
 async function upsertStance(parent, args, context) {
   try {
     const result = await context.prisma.stances.upsert({
@@ -335,7 +322,6 @@ export default {
   updateIssue,
   createTagsByIssue,
   createTag,
-  createStancesByIssue,
   upsertStance,
   createUserStance,
   deleteUserStance,

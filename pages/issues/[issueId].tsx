@@ -167,6 +167,7 @@ const Issue: any = (props: Props) => {
   const userId = props.user.id;
   const userStance = props.userStance;
   const myStanceId = props.userStance?.stancesId;
+  console.log('userStance', userStance)
 
   const newStances = getFruitForStanceTitle(issue?.stances).reduce((acc, stance) => {
     const { id, title, fruit } = stance;

@@ -6,7 +6,7 @@ import Layout from '../../components/Layout';
 import { useRouter } from 'next/router';
 import s from './index.module.scss';
 import style from '../issues/[issueId].module.scss';
-import { GET_USERS, GET_STANCES_BY_ISSUE } from '../../lib/graph_queries';
+import { GET_STANCES_BY_ISSUE } from '../../lib/graph_queries';
 
 import _ from 'lodash';
 import { fruits } from '../../utils/getFruitForStanceTitle';
@@ -61,52 +61,19 @@ const CREATE_USER_STANCE = gql`
   }
 `;
 
-// export const getServerSideProps = withAuthUserTokenSSR({
-//   whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
-//   authPageURL: '/users',
-// })(async ({ AuthUser, query }) => {
-//   const apolloClient = initializeApollo(null);
-//   const meData = await apolloClient.query({
-//     query: GET_USERS,
-//     variables: { firebaseUID: AuthUser.id },
-//   });
-//   const userId = meData?.data?.userByFirebase?.id;
-
-//   const { issueId } = query;
-//   const { data } = await apolloClient.query({
-//     query: GET_STANCES_BY_ISSUE,
-//     variables: { issuesId: +issueId },
-//   });
-
-//   const { data: opinionData } = await apolloClient.query({
-//     query: GET_MY_OPINION,
-//     variables: {
-//       userId: +userId,
-//       issuesId: +issueId,
-//     },
-//   });
-
-//   return {
-//     props: {
-//       stances: data,
-//       userId,
-//       myOpinion: opinionData.myOpinion,
-//     },
-//   };
-// });
-
 export const getServerSideProps = requireAuthentication(
   async (context: GetServerSidePropsContextWithUser) => {
-    const apolloClient = initializeApollo();
+    const apolloClient = initializeApollo(null);
     const { data } = await apolloClient.query({
       query: GET_STANCES_BY_ISSUE,
-      variables: { issuesId: context.query.issueId },
+      variables: { issuesId: +context.query.issueId },
     });
+
     const { data: opinionData } = await apolloClient.query({
       query: GET_MY_OPINION,
       variables: {
         userId: context.user.id,
-        issuesId: context.query.issueId,
+        issuesId: +context.query.issueId,
       },
     });
 
@@ -155,11 +122,11 @@ const New = (props: Props) => {
     let newOpinionId;
     try {
       if (myOpinion) {
-        const result = await updateOpinion({
+        await updateOpinion({
           variables: {
-            id: myOpinion.id,
+            id: +myOpinion.id,
             content: opinionBody,
-            stancesId: Number(stancesId),
+            stancesId: +stancesId,
           },
         });
       } else {
@@ -167,17 +134,16 @@ const New = (props: Props) => {
           variables: {
             content: opinionBody,
             userId: props.user.id,
-            issuesId: Number(issueId),
-            stancesId: Number(stancesId),
+            issuesId: +issueId,
+            stancesId: +stancesId,
           },
         });
 
         newOpinionId = newOpinion.data.createOpinion.id;
       }
 
-      const path = `/issues/${issueId}/opinions/${myOpinion ? myOpinion.id : newOpinionId}`;
       router.push({
-        pathname: path,
+        pathname: `/issues/${issueId}/opinions/${myOpinion ? myOpinion.id : newOpinionId}`,
       });
     } catch (e) {
       window.alert('의견 등록에 실패하였습니다. 다시 시도해 주세요');

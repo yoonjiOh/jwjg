@@ -211,7 +211,6 @@ type Mutation {
   createTagsByIssue(data: [IssueHashTagInput]): bulkInsertCount
   createTag(name: String!): HashTag
   updateStancesByIssue(id: Int, title: String!, orderNum: Int!, issuesId: Int!): Stance
-  createStancesByIssue(data: [IssueStancesInput]): bulkInsertCount
   upsertStance(id: Int!, title: String, orderNum: Int, issuesId: Int): Stance
   createUserStance(userId: String, issuesId: Int, stancesId: Int): UserStance
   deleteUserStance(userId: String, issuesId: Int): UserStance
