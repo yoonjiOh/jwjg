@@ -139,7 +139,6 @@ const EditProfile = (props: Props) => {
             >
               <img
                 src={'https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/add_btn_dark_gray.svg'}
-                style={{ width: '50%', height: '50%' }}
               />
             </div>
           ) : (
@@ -154,7 +153,7 @@ const EditProfile = (props: Props) => {
                 margin: '0 auto',
               }}
             >
-              <img src={image} style={{ width: '50%', height: '50%' }} />
+              <img src={image} />
             </div>
           )}
 

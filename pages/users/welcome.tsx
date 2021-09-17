@@ -81,7 +81,7 @@ const WelcomePage = (props: Props) => {
               margin: '0 auto',
             }}
           >
-            <img src={user.image} style={{ width: '50%', height: '50%' }} />
+            <img src={user.image} />
           </div>
 
           <span>{user.nickname}</span>

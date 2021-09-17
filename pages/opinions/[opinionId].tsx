@@ -6,11 +6,10 @@ import CommentBox from '../../components/CommentBox';
 
 import { useRouter } from 'next/router';
 
-import common_style from './index.module.scss';
 import s from './[opinionId].module.css';
 import util_s from '../../components/Utils.module.scss';
 import user_s from '../users/users.module.scss';
-import { GET_USERS, DO_LIKE_ACTION_TO_OPINION } from '../../lib/graph_queries';
+import { DO_LIKE_ACTION_TO_OPINION } from '../../lib/graph_queries';
 
 import _ from 'lodash';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -25,7 +24,6 @@ import {
 } from '../../lib/requireAuthentication';
 import { User } from 'next-auth';
 import { GET_OPINIONS } from '../../lib/graph_queries';
-import { ConfigurationServicePlaceholders } from 'aws-sdk/lib/config_service_placeholders';
 
 const CREATE_OPINION_COMMENT = gql`
   mutation createOpinionComment(
@@ -70,30 +68,12 @@ const CREATE_USER_STANCE = gql`
   }
 `;
 
-// export const getServerSideProps = withAuthUserTokenSSR({
-//   whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
-//   authPageURL: '/users',
-// })(async ({ query }) => {
-//   const apolloClient = initializeApollo(null);
-//   const { opinionId: id } = query;
-//   const { data } = await apolloClient.query({
-//     query: GET_OPINIONS,
-//     variables: { id: Number(id) },
-//   });
-
-//   return {
-//     props: {
-//       data: data,
-//     },
-//   };
-// });
-
 export const getServerSideProps = requireAuthentication(
   async (context: GetServerSidePropsContextWithUser) => {
     const apolloClient = initializeApollo();
     const { data } = await apolloClient.query({
       query: GET_OPINIONS,
-      variables: { id: Number(context.query.id) },
+      variables: { id: +context.query.opinionId },
     });
     return {
       props: {
