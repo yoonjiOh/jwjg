@@ -29,13 +29,12 @@ const OpinionBox = (props: Props) => {
   const likeCount = data && data.opinions && data.opinions[0].opinionReactsSum;
   const commentCount = data && data.opinions && data.opinions[0].opinionCommentsSum;
 
-  // const AuthUser = useAuthUser();
-  const userId = props.user.id;
+  const userId = user.id;
 
   const myReact =
     opinion &&
     opinion.opinionReacts.length &&
-    opinion.opinionReacts.filter(react => react.userId === Number(userId));
+    opinion.opinionReacts.filter(react => react.userId === userId);
 
   const isLikedByMe = !_.isEmpty(myReact) && _.head(myReact).like;
 
@@ -47,7 +46,7 @@ const OpinionBox = (props: Props) => {
     try {
       await doLikeActionToOpinion({
         variables: {
-          userId: Number(userId),
+          userId,
           opinionsId: Number(opinion.id),
           like: isLikedByMe ? false : true,
         },
