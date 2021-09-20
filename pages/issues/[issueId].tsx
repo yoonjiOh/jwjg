@@ -111,17 +111,9 @@ const DELETE_USER_STANCE = gql`
 
 export const getServerSideProps = requireAuthentication(
   async (context: GetServerSidePropsContextWithUser) => {
-    const apolloClient = initializeApollo();
-
-    const { data } = await apolloClient.query({
-      query: GET_USER_STANCE,
-      variables: { userId: context.user.id, issuesId: +context.query.issueId },
-    });
-
     return {
       props: {
         user: context.user,
-        userStance: data?.userStance,
       },
     };
   },
@@ -129,7 +121,6 @@ export const getServerSideProps = requireAuthentication(
 
 interface Props {
   user: User;
-  userStance: UserStances;
 }
 
 const Issue: any = (props: Props) => {
@@ -145,19 +136,23 @@ const Issue: any = (props: Props) => {
     variables: { id: issueId },
   });
 
+  const { 
+    data: userStanceData,
+    refetch: refetchUserStance,
+  } = useQuery(GET_USER_STANCE, {
+    variables: { userId: props.user.id, issuesId: issueId },
+  });
+
   const [createUserStance, { loading: mutationLoading, error: mutationError }] =
     useMutation(CREATE_USER_STANCE);
 
   useEffect(() => {
     refetchIssue({ id: issueId });
+    refetchUserStance({ userId: props.user.id, issuesId: issueId });
   }, []);
 
   const [deleteUserStance, { loading: mutationDeleteLoading, error: mutationDeleteError }] =
     useMutation(DELETE_USER_STANCE);
-
-  useEffect(() => {
-    refetchIssue({ id: issueId });
-  }, []);
 
   if (loading) return <Loading />;
   if (error) return `Error! ${error && error.message}`;
@@ -165,9 +160,8 @@ const Issue: any = (props: Props) => {
   const issue = issueData.issue;
   const tags = issue.issueHashTags.map(issueHashTag => issueHashTag.hashTags[0].name);
   const userId = props.user.id;
-  const userStance = props.userStance;
-  const myStanceId = props.userStance?.stancesId;
-  console.log('userStance', userStance)
+  const userStance = userStanceData?.userStance;
+  const myStanceId = userStanceData?.userStance?.stancesId;
 
   const newStances = getFruitForStanceTitle(issue?.stances).reduce((acc, stance) => {
     const { id, title, fruit } = stance;
@@ -212,6 +206,7 @@ const Issue: any = (props: Props) => {
     }
 
     refetchIssue({ id: issueId });
+    refetchUserStance({ userId: props.user.id, issuesId: issueId });
   };
 
   return (
@@ -302,7 +297,7 @@ const Issue: any = (props: Props) => {
               {issue.opinions.map(opinion => (
                 <div key={opinion.id} className={s.opinionContainer}>
                   {/* @ts-ignore */}
-                  <OpinionBox user={user} opinion={opinion} issueId={issue.id} />
+                  <OpinionBox user={props.user} opinion={opinion} issueId={issue.id} />
                 </div>
               ))}
             </div>

@@ -6,7 +6,7 @@ async function user(parent, _args, context) {
 }
 
 async function stance(parent, _args, context) {
-  return await context.prisma.stances.findUnique({
+  return await context.prisma.stances.findFirst({
     where: { id: parent.stancesId },
   });
 }

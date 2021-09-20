@@ -110,7 +110,7 @@ const Opinion = (props: Props) => {
     },
   });
 
-  const myReact = opinion && opinion.opinionReacts.filter(react => react.userId === Number(userId));
+  const myReact = opinion && opinion.opinionReacts.filter(react => react.userId === userId);
   const isLikedByMe = !_.isEmpty(myReact) && _.head(myReact).like;
 
   const handleChangeCommentInput = e => {
@@ -126,7 +126,7 @@ const Opinion = (props: Props) => {
       await createOpinionComment({
         variables: {
           content: opinionComment,
-          userId: Number(userId),
+          userId,
           opinionsId: Number(opinionId),
           stancesId: myStanceData.myStance.stancesId,
         },
@@ -140,7 +140,7 @@ const Opinion = (props: Props) => {
     try {
       await doLikeActionToOpinion({
         variables: {
-          userId: Number(userId),
+          userId,
           opinionsId: Number(opinionId),
           like: isLikedByMe ? false : true,
         },
@@ -158,7 +158,7 @@ const Opinion = (props: Props) => {
   const onStanceClick = async stancesId => {
     await createUserStance({
       variables: {
-        userId: Number(userId),
+        userId: userId,
         issuesId: Number(issueId),
         stancesId,
       },
@@ -250,7 +250,7 @@ const Opinion = (props: Props) => {
             />
             <span>댓글 달기</span>
           </div>
-          <CopyToClipboard text={`https://jwjg.kr/opinions/${opinionId}`}>
+          <CopyToClipboard text={`https://jwjg.kr/issues/${issueId}opinions/${opinionId}`}>
             <div className={s.action}>
               <img
                 src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/share.svg"
