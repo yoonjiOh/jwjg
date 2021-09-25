@@ -39,16 +39,16 @@ interface Props {
 
 const AdditionalInformation = (props: Props) => {
   const router = useRouter();
-  const [name, setName] = useState('@');
+  const [nickname, setNickname] = useState('@');
 
   const [updateUserInfo] = useMutation(UPDATE_USER_INFO);
 
-  const handleNameChange = event => {
-    setName('@' + event.target.value.substr(1));
+  const handleNicknameChange = event => {
+    setNickname('@' + event.target.value.substr(1));
   };
 
   const handleDeleteInput = () => {
-    setName('@');
+    setNickname('@');
   };
 
   const handleSubmit = async e => {
@@ -58,7 +58,7 @@ const AdditionalInformation = (props: Props) => {
     await updateUserInfo({
       variables: {
         id: props.user.id,
-        name: name.substr(1),
+        name: nickname.substr(1),
       },
     })
       .then(result => {
@@ -77,8 +77,8 @@ const AdditionalInformation = (props: Props) => {
     subTitle: '회원가입',
     action: (
       <button
-        className={`${u_style.headerBtn} ${name.length === 1 && u_style.disabled}`}
-        disabled={name.length === 1}
+        className={`${u_style.headerBtn} ${nickname.length === 1 && u_style.disabled}`}
+        disabled={nickname.length === 1}
         onClick={handleSubmit}
       >
         완료
@@ -90,16 +90,16 @@ const AdditionalInformation = (props: Props) => {
     <Layout title={'유저 상세 정보 입력'} headerInfo={headerInfo} isDimmed={false}>
       <main className={common_style.main}>
         <div className={u_style.wrapper}>
-          <div className={u_style.bigHeader}>사용자 이름을 정해 주세요</div>
+          <div className={u_style.bigHeader}>닉네임을 정해 주세요</div>
           <form className={u_style.formWrapper} onSubmit={handleSubmit}>
             <label className={u_style.label}>
-              사용자 이름
+              닉네임
               <div className={u_style.inputWrapper}>
                 <input
                   className={u_style.inputForm}
-                  name="name"
-                  value={name}
-                  onChange={handleNameChange}
+                  name="nickname"
+                  value={nickname}
+                  onChange={handleNicknameChange}
                 />
                 <img
                   src="https://jwjg-icons.s3.ap-northeast-2.amazonaws.com/ico_x.png"

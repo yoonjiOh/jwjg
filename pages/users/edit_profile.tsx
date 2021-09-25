@@ -32,6 +32,7 @@ interface Props {
 }
 
 const EditProfile = (props: Props) => {
+  console.log(props);
   const initState = {
     name: props.user.name,
     nickname: empty_string_if_null(props.user.nickname),
@@ -41,9 +42,10 @@ const EditProfile = (props: Props) => {
   const [state, setState] = useState(initState);
   const [mutate, { loading, error }] = useMutation(SINGLE_UPLOAD_IMG);
   const [updateUserInfo, { data }] = useMutation(UPDATE_USER_INFO);
+  const router = useRouter();
 
   const { name, nickname, intro, image } = state;
-  const router = useRouter();
+
   const { isFirst } = router.query;
 
   const handleFileChange = async ({
@@ -79,8 +81,11 @@ const EditProfile = (props: Props) => {
       },
     })
       .then(result => {
+        console.log(result);
         if (result.data) {
+          console.log('jhere');
           // @ts-ignore
+          // router.push('/');
           router.push(isFirst ? '/users/user_info' : '/users/mypage');
         } else {
           console.error('프로필 편집에 문제가 생겼습니다.');
@@ -173,12 +178,12 @@ const EditProfile = (props: Props) => {
               placeholder="이름"
               className={s.inputForm}
             />
-            <span className={s.inputTitle}>사용자 이름</span>
+            <span className={s.inputTitle}>닉네임</span>
             <input
               type="text"
               value={nickname}
               onChange={e => handleChange(e, 'nickname')}
-              placeholder="사용자 이름"
+              placeholder="닉네임"
               className={s.inputForm}
             />
             <span className={s.inputTitle}>소개</span>

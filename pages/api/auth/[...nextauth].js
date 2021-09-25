@@ -20,6 +20,7 @@ export default NextAuth({
       session.user.intro = user.intro;
       session.user.consentToSAt = user.consentToSAt;
       session.user.isAdmin = user.isAdmin;
+      session.user.nickname = user.nickname;
       return session;
     },
     async jwt(token, user, account, profile, isNewUser) {

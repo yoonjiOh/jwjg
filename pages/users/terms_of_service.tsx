@@ -16,6 +16,7 @@ const headerTitle = '약관 동의';
 
 export const getServerSideProps = requireAuthentication(
   async (context: GetServerSidePropsContextWithUser) => {
+    console.log(context);
     if (context.user.consentToSAt) {
       return {
         redirect: {

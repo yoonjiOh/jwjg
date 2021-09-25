@@ -12,6 +12,9 @@ import path from 'path';
 import { getUserId } from './utils';
 import prisma from '../../lib/db';
 import cors from 'micro-cors';
+import { send } from 'micro';
+import { MicroRequest } from 'apollo-server-micro/dist/types';
+import { ServerResponse } from 'http';
 
 const resolvers = {
   Query,
@@ -42,7 +45,7 @@ export const config = {
   },
 };
 
-const optionsHandler = (req, res) => {
+const optionsHandler = async (req, res) => {
   if (req.method === 'OPTIONS') {
     res.end();
     return;
@@ -51,3 +54,9 @@ const optionsHandler = (req, res) => {
 };
 
 export default cors()(optionsHandler);
+
+// export default apolloServer.start().then(() => {
+//   const handler = apolloServer.createHandler({ path: '/api' });
+//   /* @ts-ignore */
+//   return cors((req, res) => (req.method === 'OPTIONS' ? send(res, 200, 'ok') : handler(req, res)));
+// });
