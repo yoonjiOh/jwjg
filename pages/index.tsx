@@ -135,14 +135,13 @@ function HotIssueCard({ user, issue: hotIssue }: any) {
                 }
                 className={s.issueCardComment}
               >
-              {
-                hotIssue.opinions[1]?.stance ?
-                    <p className={s.issueCardCommentTitle}>
-                      {fruits[hotIssue.opinions[1]?.stance?.orderNum] +
-                        ' ' +
-                        hotIssue.opinions[1]?.stance?.title}
-                    </p> : null
-              }
+                {hotIssue.opinions[1]?.stance ? (
+                  <p className={s.issueCardCommentTitle}>
+                    {fruits[hotIssue.opinions[1]?.stance?.orderNum] +
+                      ' ' +
+                      hotIssue.opinions[1]?.stance?.title}
+                  </p>
+                ) : null}
                 <p className={s.commentContent}>{hotIssue.opinions[1]?.content ?? null}</p>
                 <p className={s.commentUsername}>{hotIssue.opinions[1]?.user.nickname ?? null}</p>
               </div>
@@ -193,6 +192,15 @@ export const getServerSideProps = async context => {
   });
 
   const session = await getSession(context);
+
+  if (session && session.user && !session.user.consentToSAt) {
+    return {
+      redirect: {
+        destination: '/users/terms_of_service',
+        permanent: false,
+      },
+    };
+  }
 
   return {
     props: {

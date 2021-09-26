@@ -69,23 +69,6 @@ const GET_OPINIONS_COMMENTS_DATA = gql`
   }
 `;
 
-const GET_USER = gql`
-  query userByFirebase($firebaseUID: String) {
-    userByFirebase(firebaseUID: $firebaseUID) {
-      id
-      firebaseUID
-      name
-      intro
-      image
-      userStance {
-        issuesId
-        userId
-        stancesId
-      }
-    }
-  }
-`;
-
 // export const getServerSideProps = async context => {
 //   const apolloClient = initializeApollo(null);
 //   const { data } = await apolloClient.query({

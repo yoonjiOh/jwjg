@@ -4,11 +4,12 @@ import { useRouter } from 'next/router';
 import _ from 'lodash';
 import config from '../../../config';
 import Layout from '../../../components/Layout';
+import Select from 'react-select';
 
 import style from './new.module.css';
 import { initializeApollo } from '../../../apollo/apolloClient';
 import Loading from '../../../components/Loading';
-import { GET_USERS, SINGLE_UPLOAD_IMG } from '../../../lib/graph_queries';
+import { GET_ALL_USERS, GET_USERS, SINGLE_UPLOAD_IMG } from '../../../lib/graph_queries';
 import {
   GetServerSidePropsContextWithUser,
   requireAuthentication,
@@ -132,10 +133,14 @@ export const getServerSideProps = requireAuthentication(
     const { data } = await apolloClient.query({
       query: GET_TAGS,
     });
+    const { data: usersData } = await apolloClient.query({
+      query: GET_ALL_USERS,
+    });
 
     return {
       props: {
         user: context.user,
+        users: usersData.users,
         data,
       },
     };
@@ -144,6 +149,7 @@ export const getServerSideProps = requireAuthentication(
 
 interface Props {
   user: User;
+  users: [User];
   data: any;
 }
 
@@ -163,6 +169,7 @@ const NewIssue = (props: Props) => {
   };
 
   const [state, dispatch] = useReducer(reducer, initial_state);
+  const [selectedUser, setSelectedUser] = useState(null);
   const { issue, addStanceMode, newStance, stances, tags, selected_tags } = state;
 
   const [newTag, setNewTag] = useState('');
@@ -173,6 +180,10 @@ const NewIssue = (props: Props) => {
   const [createTag] = useMutation(CREATE_TAG);
 
   const [mutate, { loading, error }] = useMutation(SINGLE_UPLOAD_IMG);
+
+  const usersForSelect = props.users.map(user => {
+    return { value: user.id, label: user.email };
+  });
 
   const handleSetStanceMode = () => {
     dispatch({
@@ -282,7 +293,7 @@ const NewIssue = (props: Props) => {
           title: issue.title,
           content: issue.content,
           imageUrl: issue.imageUrl,
-          authorId: props.user.id,
+          authorId: selectedUser ? selectedUser.value : props.user.id,
         },
       })
         .then(result => {
@@ -303,11 +314,13 @@ const NewIssue = (props: Props) => {
             return { title: stance.title, orderNum: stance.orderNum, issuesId: createdIssueId };
           });
 
-          await createStancesByIssue({
-            variables: {
-              data: stancesPayload,
-            },
-          });
+          if (stancesPayload && stancesPayload.length) {
+            await createStancesByIssue({
+              variables: {
+                data: stancesPayload,
+              },
+            });
+          }
 
           if (
             window.confirm('이슈가 성공적으로 발제되었습니다. 해당 이슈 페이지로 넘어가시겠습니까?')
@@ -347,6 +360,10 @@ const NewIssue = (props: Props) => {
             ) : (
               <input type="file" required onChange={handleFileChange} />
             )}
+          </div>
+          <div className={style.title}>
+            <p className={style.title_sm}>작성자 이메일</p>
+            <Select value={selectedUser} onChange={setSelectedUser} options={usersForSelect} />
           </div>
           <div className={style.title}>
             <p className={style.title_sm}>이슈 제목</p>

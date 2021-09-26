@@ -17,10 +17,6 @@ module.exports = {
         source: '/issues/:issueId/opinions/:opinionId',
         destination: '/opinions/:opinionId',
       },
-      {
-        source: '/admin',
-        destination: '/admin/issues',
-      },
     ];
   },
 };

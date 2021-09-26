@@ -7,14 +7,14 @@ import Layout from '../../components/Layout';
 import common_style from '../index.module.scss';
 import {
   GetServerSidePropsContextWithUser,
-  requireAuthentication,
+  requireAuthenticationWhileSignUp,
 } from '../../lib/requireAuthentication';
 import { UPDATE_USER_INFO } from '../../lib/graph_queries';
 import u_style from './users.module.scss';
 
 const headerTitle = '약관 동의';
 
-export const getServerSideProps = requireAuthentication(
+export const getServerSideProps = requireAuthenticationWhileSignUp(
   async (context: GetServerSidePropsContextWithUser) => {
     console.log(context);
     if (context.user.consentToSAt) {

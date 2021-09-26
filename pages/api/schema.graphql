@@ -239,6 +239,7 @@ type Mutation {
     image: String
     consentToSAt: DateTime
   ): User
+  createUser(email: String!, name: String, nickname: String): User
   createUserInfo(userId: String!, gender: String, age: Int, residence: String): UserInfo
   manageIssuePublishStatus(id: Int!, isPublished: Boolean!): Issue
   deleteIssue(id: Int!): Issue

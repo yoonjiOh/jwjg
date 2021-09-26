@@ -262,6 +262,16 @@ async function updateUserInfo(_, { id, name, nickname, intro, image, consentToSA
   });
 }
 
+async function createUser(parent, args, context) {
+  return await context.prisma.user.create({
+    data: {
+      email: args.email,
+      name: args.name,
+      nickname: args.nickname,
+    },
+  });
+}
+
 async function createUserInfo(parent, args, context) {
   return await context.prisma.userInfo.create({
     data: {
@@ -334,6 +344,7 @@ export default {
   doLikeActionToOpinion,
   doLikeActionToOpinionComment,
   updateUserInfo,
+  createUser,
   createUserInfo,
   manageIssuePublishStatus,
   deleteIssue,

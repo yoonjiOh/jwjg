@@ -1,5 +1,16 @@
 import { gql } from '@apollo/client';
 
+export const GET_ALL_USERS = gql`
+  query users {
+    users {
+      id
+      email
+      name
+      nickname
+    }
+  }
+`;
+
 export const GET_USERS = gql`
   query ($firebaseUID: String) {
     userByFirebase(firebaseUID: $firebaseUID) {
@@ -173,6 +184,16 @@ export const UPDATE_USER_INFO = gql`
       intro
       image
       consentToSAt
+    }
+  }
+`;
+
+export const CREATE_USER = gql`
+  mutation createUser($email: String!, $name: String, $nickname: String) {
+    createUser(email: $email, name: $name, nickname: $nickname) {
+      email
+      name
+      nickname
     }
   }
 `;
