@@ -245,6 +245,7 @@ type Mutation {
   deleteIssue(id: Int!): Issue
   manageApproveHotIssue(id: Int!, isHotIssue: Boolean!): Issue
   manageRollbackHotIssue(id: Int!, isHotIssue: Boolean): Issue
+  createStancesByIssue(data: [IssueStancesInput]): bulkInsertCount
 }
 
 scalar DateTime

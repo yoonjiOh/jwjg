@@ -327,10 +327,24 @@ async function manageRollbackHotIssue(parent, args, context) {
   });
 }
 
+async function createStancesByIssue(parent, args, context) {
+  try {
+    const result = await context.prisma.stances.createMany({
+      data: args.data,
+      skipDuplicates: true,
+    });
+
+    return result;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 export default {
   createIssue,
   updateIssue,
   createTagsByIssue,
+  createStancesByIssue,
   createTag,
   upsertStance,
   createUserStance,

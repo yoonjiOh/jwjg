@@ -9,7 +9,8 @@ import Select from 'react-select';
 import style from './new.module.css';
 import { initializeApollo } from '../../../apollo/apolloClient';
 import Loading from '../../../components/Loading';
-import { GET_ALL_USERS, GET_USERS, SINGLE_UPLOAD_IMG } from '../../../lib/graph_queries';
+import AddTags from '../../../components/issue/AddTags';
+import { GET_ALL_USERS, SINGLE_UPLOAD_IMG } from '../../../lib/graph_queries';
 import {
   GetServerSidePropsContextWithUser,
   requireAuthentication,
@@ -55,15 +56,6 @@ const CREATE_STANCES_BY_ISSUE = gql`
   mutation createStancesByIssue($data: [IssueStancesInput]) {
     createStancesByIssue(data: $data) {
       count
-    }
-  }
-`;
-
-const CREATE_TAG = gql`
-  mutation createTag($name: String!) {
-    createTag(name: $name) {
-      id
-      name
     }
   }
 `;
@@ -122,6 +114,14 @@ const reducer = (state, action) => {
           imageUrl: action.value,
         },
       };
+    case 'DELETE_IMAGE_URL':
+      return {
+        ...state,
+        issue: {
+          ...state.issue,
+          imageUrl: '',
+        }
+      }
     default:
       return;
   }
@@ -172,12 +172,9 @@ const NewIssue = (props: Props) => {
   const [selectedUser, setSelectedUser] = useState(null);
   const { issue, addStanceMode, newStance, stances, tags, selected_tags } = state;
 
-  const [newTag, setNewTag] = useState('');
-  const [addTagErr, setAddTagErr] = useState(null);
   const [createIssue] = useMutation(CREATE_ISSUE);
   const [createTagsByIssue] = useMutation(CREATE_TAGS_BY_ISSUE);
   const [createStancesByIssue] = useMutation(CREATE_STANCES_BY_ISSUE);
-  const [createTag] = useMutation(CREATE_TAG);
 
   const [mutate, { loading, error }] = useMutation(SINGLE_UPLOAD_IMG);
 
@@ -211,13 +208,6 @@ const NewIssue = (props: Props) => {
     });
   };
 
-  const handleSelectTag = e => {
-    dispatch({
-      type: 'SET_HASHTAGS',
-      tag: { id: e.target.id, value: +e.target.value },
-    });
-  };
-
   const handleFileChange = async ({
     target: {
       validity,
@@ -247,42 +237,11 @@ const NewIssue = (props: Props) => {
     });
   };
 
-  const handleChangeTagInput = value => {
-    setAddTagErr(null);
-    setNewTag(value);
-  };
-
-  const handleClickAddTagBtn = async () => {
-    if (newTag.length === 0) {
-      return setAddTagErr('태그명을 입력해주세요');
-    }
-
-    if (
-      tags.find(tag => {
-        return tag.name === newTag.trim();
-      })
-    ) {
-      return setAddTagErr('이미 등록되어 있는 태그 입니다.');
-    }
-
-    try {
-      await createTag({
-        variables: {
-          name: newTag,
-        },
-      }).then(result => {
-        dispatch({
-          type: 'ADD_HASHTAG',
-          tag: {
-            id: result.data.createTag.id,
-            name: result.data.createTag.name,
-          },
-        });
-      });
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  const handleDeleteImg = () => {
+    dispatch({
+      type: 'DELETE_IMAGE_URL',
+    })
+  }
 
   const handleSubmit = async () => {
     let createdIssueId;
@@ -356,9 +315,12 @@ const NewIssue = (props: Props) => {
             <p className={style.title_sm}>대표 이미지</p>
             <p>이미지를 업로드 해주세요</p>
             {issue.imageUrl !== '' ? (
-              <img src={issue.imageUrl} alt="new_issue_img" />
+              <div style={{ display: 'inline' }}>
+                <img src={issue.imageUrl} alt="new_issue_img" />
+                <button onClick={handleDeleteImg}>X</button>
+              </div>
             ) : (
-              <input type="file" required onChange={handleFileChange} />
+                <input type="file" required onChange={handleFileChange} />
             )}
           </div>
           <div className={style.title}>
@@ -406,40 +368,12 @@ const NewIssue = (props: Props) => {
             </button>
           ) : null}
 
-          <div>선택된 태그: {selected_tags.map(tag => tag.id).join(', ')}</div>
+          <AddTags 
+            selected_tags={selected_tags}
+            tags={tags}
+            dispatch={dispatch}
+          />
 
-          <div className={style.title_sm} style={{ marginBottom: '15px' }}>
-            태그 선택
-          </div>
-
-          <select name="tag" multiple id="tag-select" className={style.select}>
-            {tags &&
-              tags.map(tag => {
-                const isSelected = selected_tags.filter(t => t.value === tag.id).length;
-
-                return (
-                  <option
-                    onClick={handleSelectTag}
-                    disabled={!!isSelected}
-                    id={tag.name}
-                    value={tag.id}
-                    key={tag.id}
-                  >
-                    {tag.name}
-                  </option>
-                );
-              })}
-          </select>
-
-          <div className={style.title_sm} style={{ margin: '15px 0' }}>
-            태그 추가
-          </div>
-
-          <div className={style.option_wrapper}>
-            <p style={{ color: 'red' }}>{addTagErr}</p>
-            <input onChange={e => handleChangeTagInput(e.target.value)} />
-            <button onClick={handleClickAddTagBtn}>+</button>
-          </div>
         </div>
       </main>
     </Layout>

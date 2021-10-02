@@ -6,6 +6,7 @@ import config from '../../../config';
 import style from './new.module.css';
 import { initializeApollo } from '../../../apollo/apolloClient';
 import { GET_STANCES_BY_ISSUE, SINGLE_UPLOAD_IMG } from '../../../lib/graph_queries';
+import AddTags from '../../../components/issue/AddTags';
 
 interface Stance {
   title: String;
@@ -39,6 +40,15 @@ const UPSERT_STANCE = gql`
   mutation upsertStance($id: Int!, $title: String, $orderNum: Int, $issuesId: Int) {
     upsertStance(id: $id, title: $title, orderNum: $orderNum, issuesId: $issuesId) {
       id
+    }
+  }
+`;
+
+const GET_TAGS = gql`
+  query FetchTags {
+    hashTags {
+      id
+      name
     }
   }
 `;
@@ -113,6 +123,21 @@ const reducer = (state, action) => {
           imageUrl: action.value,
         },
       };
+    case 'FETCH_HASHTAGS':
+      return {
+        ...state,
+        tags: action.data,
+      };
+    case 'ADD_HASHTAG':
+      return {
+        ...state,
+        tags: state.tags.concat(action.tag),
+      };
+    case 'SET_HASHTAGS':
+      return {
+        ...state,
+        selected_tags: state.selected_tags.concat(action.tag),
+      };
     default:
       return;
   }
@@ -131,10 +156,15 @@ export const getServerSideProps = async context => {
     variables: { issuesId: parseInt(issueId) },
   });
 
+  const { data: tags } = await apolloClient.query({
+    query: GET_TAGS,
+  });
+
   return {
     props: {
       issue_data: data,
       stances_data: stances,
+      tags_data: tags,
     },
   };
 };
@@ -142,6 +172,7 @@ export const getServerSideProps = async context => {
 const IssueDetail = props => {
   const issue_data = props.issue_data;
   const stances_data = props.stances_data;
+  const tags_data = props.tags_data;
 
   const initial_state = {
     issue: {
@@ -153,10 +184,12 @@ const IssueDetail = props => {
     stances: [],
     addStanceMode: false,
     newStance: { title: '', orderNum: null, issuesId: null },
+    selected_tags: [],
+    tags: tags_data.hashTags || [],
   };
 
   const [state, dispatch] = useReducer(reducer, initial_state);
-  const { issue, addStanceMode, stances, newStance } = state;
+  const { issue, addStanceMode, stances, newStance, tags, selected_tags } = state;
 
   const [updateIssue, { data }] = useMutation(UPDATE_ISSUE);
   const [mutate, { loading, error }] = useMutation(SINGLE_UPLOAD_IMG);
@@ -321,6 +354,12 @@ const IssueDetail = props => {
           <button className={style.btn_add_option} onClick={handleSetStanceMode}>
             옵션 추가하기
           </button>
+
+          <AddTags
+            selected_tags={selected_tags}
+            tags={tags}
+            dispatch={dispatch}
+          />
         </div>
       </main>
     </Layout>
