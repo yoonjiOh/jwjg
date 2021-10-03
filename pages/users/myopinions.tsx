@@ -85,17 +85,12 @@ export const getServerSideProps = requireAuthentication(
     const stances = await apolloClient.query({
       query: GET_STANCES,
     });
-    const opinions = await apolloClient.query({
-      query: GET_OPINIONS,
-      variables: { id: Number(context.query.id) },
-    });
     return {
       props: {
         user: context.user,
         data: data,
         issues_data: issues.data,
         stances_data: stances.data,
-        opinions_data: opinions.data,
       },
     };
   },
@@ -115,7 +110,7 @@ const MyOpinions = (props: Props) => {
     headerType: 'editMode',
     subTitle: '작성한 의견',
   };
-  const opinions = props.opinions_data;
+  const opinions = props.data.user.opinions;
 
   const router = useRouter();
 
