@@ -15,11 +15,13 @@ type User {
   isAdmin: Boolean
 
   userInfo: [UserInfo]
+  userStance: UserStance
   userStances: [UserStance]
   opinions: [Opinion]
   opinionReacts: [OpinionReact]
   opinionComments: [OpinionComment]
   opinionCommentReacts: [OpinionCommentReact]
+  myOpinion: Opinion
 }
 
 type Session {
