@@ -4,6 +4,10 @@ export const parseIssueContent = text => {
     .replace(
       /(.*\[)(.*)(\]\()(https?:.+)(\))/g,
       '<a style="color:rgb(33, 111, 219);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" href=$4 target="_blank">$2</a>',
+    )
+    .replace(
+      /(https?:\/\/)([^ ]+)/g,
+      `<a style="color:rgb(33, 111, 219);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" href=$& target="_blank">$2</a>`,
     );
 };
 
