@@ -301,6 +301,7 @@ async function deleteIssue(parent, args, context) {
     },
     data: {
       isDeleted: true,
+      isPublished: false,
     },
   });
 }
