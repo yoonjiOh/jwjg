@@ -10,9 +10,10 @@ import { useRouter } from 'next/router';
 import s from './index.module.scss';
 import user_s from '../users/users.module.scss';
 import util_s from '../../components/Utils.module.scss';
+import FloatingNewOpinionBtn from '../../components/opinion/FloatingNewOpinionBtn';
 import _ from 'lodash';
 
-import { DO_LIKE_ACTION_TO_OPINION } from '../../lib/graph_queries';
+import { DO_LIKE_ACTION_TO_OPINION, GET_USER_STANCE } from '../../lib/graph_queries';
 import { fruits } from '../../utils/getFruitForStanceTitle';
 import { getPubDate } from '../../lib/util';
 import {
@@ -109,6 +110,13 @@ const Opinions = (props: Props) => {
   const [isOpenFilter, setOpenFilter] = useState(false);
   const [doLikeActionToOpinion] = useMutation(DO_LIKE_ACTION_TO_OPINION);
   const router = useRouter();
+  const issueId = props.data.opinionsWithIssuesId[0].issuesId;
+  const { 
+    data: userStanceData
+  } = useQuery(GET_USER_STANCE, {
+    variables: { userId: props.user.id, issuesId: issueId }
+  });
+  const myStanceId = userStanceData?.userStance?.stancesId;
 
   const sortedData =
     selectedFilter === 'createdAt'
@@ -293,6 +301,7 @@ const Opinions = (props: Props) => {
             })}
           </div>
         )}
+        {!!props.user.id && <FloatingNewOpinionBtn issueId={issueId} stancesId={myStanceId} />}
       </main>
     </Layout>
   );
